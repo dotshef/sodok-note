@@ -17,11 +17,12 @@
 
 ## 2. users (사용자)
 
-로그인 주체이자 방문 수행자. Supabase Auth와 1:1 연결.
+로그인 주체이자 방문 수행자. 자체 인증 (email + password_hash).
 
 - `id` (uuid, PK)
 - `tenant_id` (FK → tenants)
-- `auth_user_id` (FK → auth.users, unique)
+- `email` (text, unique)
+- `password_hash` (text)
 - `name` (사용자명)
 - `phone`
 - `role` (admin / member)

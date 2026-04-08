@@ -20,7 +20,7 @@
 
 | 기술 | 용도 |
 |------|------|
-| Supabase | PostgreSQL DB, Auth, Storage, Realtime |
+| Supabase | PostgreSQL DB, Storage (Auth는 사용하지 않음 — 자체 구현) |
 | @supabase/ssr | Next.js App Router용 서버/클라이언트 클라이언트 |
 | @supabase/supabase-js | Supabase JavaScript SDK |
 
@@ -49,6 +49,13 @@
 | 기술 | 용도 |
 |------|------|
 | @ducanh2912/next-pwa | Next.js PWA 지원 (next-pwa 후속) |
+
+## 인증
+
+| 기술 | 용도 |
+|------|------|
+| bcrypt (bcryptjs) | 비밀번호 해싱 |
+| jose | JWT 생성/검증 (Edge Runtime 호환) |
 
 ## 폼 / 유효성 검사
 
@@ -103,7 +110,7 @@ npm install -D prettier
 |------|------|
 | shadcn/ui | DaisyUI 사용으로 불필요 |
 | Prisma / Drizzle | Supabase 클라이언트로 직접 쿼리 |
-| NextAuth | Supabase Auth 사용 |
+| NextAuth | JWT + httpOnly 쿠키 자체 구현 |
 | Redux | 과도함, Zustand로 충분 |
 | Axios | fetch API + Supabase 클라이언트로 충분 |
 | Moment.js | date-fns가 더 가볍고 트리셰이킹 지원 |

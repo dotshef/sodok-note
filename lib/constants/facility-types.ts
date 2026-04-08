@@ -1,7 +1,7 @@
 /**
  * 시설 유형별 법정 소독 주기
  * 출처: 감염병예방법 시행규칙 [별표 7]
- * 원본: reference/disinfection-regulations.json
+ * 원본: reference/mandatory_disinfection_schedule.csv
  */
 
 export type FacilityTypeId =
@@ -37,9 +37,9 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
   { id: 'transport', code: '3',   label: '여객운송차량 및 대합실',                  cycleSummer: 1, cycleWinter: 2 },
   { id: 'retail',    code: '4',   label: '대형마트/백화점/쇼핑센터',                cycleSummer: 1, cycleWinter: 2 },
   { id: 'hospital',  code: '5',   label: '종합병원/병원/치과/한방병원',             cycleSummer: 1, cycleWinter: 2 },
-  { id: 'cafeteria', code: '6',   label: '집단급식소 (100인 이상)',                 cycleSummer: 1, cycleWinter: 2 },
-  { id: 'dormitory', code: '7',   label: '기숙사/합숙소 (50인 이상)',               cycleSummer: 1, cycleWinter: 2 },
-  { id: 'theater',   code: '8',   label: '공연장 (300석 이상)',                     cycleSummer: 1, cycleWinter: 2 },
+  { id: 'cafeteria', code: '6',   label: '집단급식소 (100인 이상)',                 cycleSummer: 2, cycleWinter: 3 },
+  { id: 'dormitory', code: '7',   label: '기숙사/합숙소 (50인 이상)',               cycleSummer: 2, cycleWinter: 3 },
+  { id: 'theater',   code: '8',   label: '공연장 (300석 이상)',                     cycleSummer: 2, cycleWinter: 3 },
   { id: 'school',    code: '8-2', label: '학교 (초/중/고/대)',                      cycleSummer: 2, cycleWinter: 3 },
   { id: 'academy',   code: '9',   label: '학원 (연면적 1,000㎡ 이상)',              cycleSummer: 2, cycleWinter: 3 },
   { id: 'office',    code: '10',  label: '사무실용 건축물 (연면적 2,000㎡ 이상)',    cycleSummer: 2, cycleWinter: 3 },

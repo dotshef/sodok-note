@@ -1,8 +1,3 @@
--- ============================================
--- 소독 방역 관리 SaaS - DB Schema
--- Supabase (PostgreSQL) 용
--- ============================================
-
 -- 1. tenants (방역업체)
 create table tenants (
   id uuid primary key default gen_random_uuid(),
@@ -21,7 +16,8 @@ create table tenants (
 create table users (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references tenants(id) on delete cascade,
-  auth_user_id uuid not null unique references auth.users(id) on delete cascade,
+  email text not null unique,
+  password_hash text not null,
   name text not null,
   phone text,
   role text not null default 'member' check (role in ('admin', 'member')),
