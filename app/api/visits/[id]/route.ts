@@ -104,5 +104,43 @@ export async function PATCH(
     return NextResponse.json({ success: true });
   }
 
+  // 완료 취소 (admin만)
+  if (body.action === "uncomplete") {
+    if (session.role !== "admin") {
+      return NextResponse.json({ error: "관리자만 취소할 수 있습니다" }, { status: 403 });
+    }
+
+    const { error: updateError } = await supabase
+      .from("visits")
+      .update({ status: "scheduled", completed_at: null })
+      .eq("id", id)
+      .eq("tenant_id", session.tenantId);
+
+    if (updateError) {
+      return NextResponse.json({ error: "취소에 실패했습니다" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  }
+
+  // 담당 기사 배정
+  if (body.action === "assign") {
+    if (session.role !== "admin") {
+      return NextResponse.json({ error: "관리자만 배정할 수 있습니다" }, { status: 403 });
+    }
+
+    const { error: updateError } = await supabase
+      .from("visits")
+      .update({ user_id: body.userId || null })
+      .eq("id", id)
+      .eq("tenant_id", session.tenantId);
+
+    if (updateError) {
+      return NextResponse.json({ error: "배정에 실패했습니다" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  }
+
   return NextResponse.json({ error: "잘못된 요청입니다" }, { status: 400 });
 }

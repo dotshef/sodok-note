@@ -219,7 +219,7 @@ export default function CalendarPage() {
                 {selectedVisits.map((visit) => (
                   <Link
                     key={visit.id}
-                    href={`/clients/${visit.clients?.id}`}
+                    href={`/visits/${visit.id}`}
                     className="block p-3 rounded-lg border border-base-300 hover:bg-base-200 transition-colors"
                   >
                     <div className="font-semibold text-sm">
