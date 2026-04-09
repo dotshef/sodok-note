@@ -138,7 +138,7 @@ export default function ClientsPage() {
             ) : (
               data?.clients.map((client) => (
                 <tr key={client.id} className="hover">
-                  <td>
+                  <td className="!text-base">
                     <Link
                       href={`/clients/${client.id}`}
                       className="font-medium text-primary hover:underline"
