@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   getCalendarDays,
-  getWeekDays,
   addMonths,
   subMonths,
   format,
@@ -30,12 +29,9 @@ interface Visit {
   } | null;
 }
 
-type ViewMode = "month" | "week";
-
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [visits, setVisits] = useState<Visit[] | null>(null);
 
   const loading = !visits;
@@ -65,6 +61,14 @@ export default function CalendarPage() {
     return (visits ?? []).filter((v) => v.scheduled_date === dateStr);
   }
 
+  function getDayTextClass(day: Date, isTodayDate: boolean, isCurrentMonth: boolean) {
+    if (isTodayDate) return "bg-primary text-primary-content font-bold";
+    if (!isCurrentMonth) return "text-base-content/30";
+    if (day.getDay() === 0) return "text-error";
+    if (day.getDay() === 6) return "text-primary";
+    return "";
+  }
+
   function getStatusColor(status: string) {
     switch (status) {
       case "completed": return "bg-success";
@@ -91,52 +95,34 @@ export default function CalendarPage() {
     setVisits(null);
   }
 
-  const days = viewMode === "month"
-    ? getCalendarDays(currentDate)
-    : getWeekDays(selectedDate);
+  const days = getCalendarDays(currentDate);
 
   const selectedVisits = getVisitsForDate(selectedDate);
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
 
   return (
-    <div className="flex gap-6 h-full">
-      {/* 좌측: 캘린더 */}
-      <div className="flex-1">
-        {/* 헤더 */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-bold">
-              {format(currentDate, "yyyy년 M월", { locale: ko })}
-            </h2>
-            <div className="flex gap-1">
-              <button onClick={handlePrev} className="btn btn-ghost btn-sm btn-square">
-                <ChevronLeft size={16} />
-              </button>
-              <button onClick={handleNext} className="btn btn-ghost btn-sm btn-square">
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-
-          {/* 월/주 토글 */}
-          <div className="join">
-            <button
-              className={`join-item btn btn-sm ${viewMode === "month" ? "btn-primary" : "btn-ghost"}`}
-              onClick={() => setViewMode("month")}
-            >
-              월
+    <div className="h-full">
+      {/* 헤더 */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold">
+            {format(currentDate, "yyyy년 M월", { locale: ko })}
+          </h2>
+          <div className="flex gap-1">
+            <button onClick={handlePrev} className="btn btn-ghost btn-sm btn-square">
+              <ChevronLeft size={16} />
             </button>
-            <button
-              className={`join-item btn btn-sm ${viewMode === "week" ? "btn-primary" : "btn-ghost"}`}
-              onClick={() => setViewMode("week")}
-            >
-              주
+            <button onClick={handleNext} className="btn btn-ghost btn-sm btn-square">
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>
+      </div>
 
+      {/* 캘린더 + 방문 일정 가로 병렬 */}
+      <div className="flex gap-6">
         {/* 캘린더 그리드 */}
-        <div className="bg-base-100 rounded-lg border border-base-300">
+        <div className="flex-1 bg-base-100 rounded-lg border border-base-300">
           {/* 요일 헤더 */}
           <div className="grid grid-cols-7 border-b border-base-300">
             {dayNames.map((day, i) => (
@@ -163,20 +149,12 @@ export default function CalendarPage() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDate(day)}
-                  className={`relative min-h-24 p-1.5 border-b border-r border-base-300 text-left transition-colors hover:bg-base-200 ${
-                    !isCurrentMonth ? "opacity-30" : ""
-                  } ${isSelected ? "bg-base-200" : ""}`}
+                  className={`relative min-h-30 p-1.5 border-b border-r border-base-300 text-left transition-colors hover:bg-base-200 flex flex-col items-start ${
+                    isSelected ? "bg-base-200" : ""
+                  }`}
                 >
                   <span
-                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-sm ${
-                      isTodayDate
-                        ? "bg-primary text-primary-content font-bold"
-                        : day.getDay() === 0
-                        ? "text-error"
-                        : day.getDay() === 6
-                        ? "text-primary"
-                        : ""
-                    }`}
+                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-sm ${getDayTextClass(day, isTodayDate, isCurrentMonth)}`}
                   >
                     {day.getDate()}
                   </span>
@@ -202,9 +180,8 @@ export default function CalendarPage() {
             })}
           </div>
         </div>
-      </div>
 
-      {/* 우측: 선택일 상세 */}
+        {/* 우측: 선택일 상세 */}
       <div className="hidden lg:block w-72 shrink-0">
         <div className="card bg-base-100 border border-base-300 sticky top-0">
           <div className="card-body">
@@ -212,7 +189,7 @@ export default function CalendarPage() {
               {format(selectedDate, "M월 d일 (EEE)", { locale: ko })}
             </h3>
             <p className="text-sm text-base-content/50 mb-3">
-              오늘 방문 예정 {selectedVisits.length}건
+              방문 일정 {selectedVisits.length}건
             </p>
 
             {loading ? (
@@ -269,6 +246,7 @@ export default function CalendarPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
