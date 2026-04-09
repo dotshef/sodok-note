@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Client {
   id: string;
@@ -67,7 +68,7 @@ export default function ClientsPage() {
       {/* 상단 헤더 */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold"></h2>
-        <Link href="/clients/new" className="btn btn-primary gap-2">
+        <Link href="/clients/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer">
           <Plus size={16} />
           고객 등록
         </Link>
@@ -75,14 +76,14 @@ export default function ClientsPage() {
 
       {/* 검색 + 필터 */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <div className="join">
-          <div className="join-item flex items-center px-3 bg-base-200">
+        <div className="flex">
+          <div className="flex items-center px-3 bg-base-200 border border-r-0 border-base-300 rounded-l-lg">
             <Search size={16} className="text-base-content/40" />
           </div>
           <input
             type="text"
             placeholder="시설명, 담당자명 검색"
-            className="input input-bordered input-md w-64"
+            className="w-64 !rounded-l-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -92,7 +93,6 @@ export default function ClientsPage() {
           />
         </div>
         <select
-          className="select select-bordered select-md"
           value={facilityType}
           onChange={(e) => {
             setFacilityType(e.target.value);
@@ -111,7 +111,7 @@ export default function ClientsPage() {
 
       {/* 테이블 */}
       <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
-        <table className="table table-md">
+        <table className="data-table">
           <thead>
             <tr>
               <th>시설명</th>
@@ -126,7 +126,7 @@ export default function ClientsPage() {
             {loading ? (
               <tr>
                 <td colSpan={6} className="text-center py-8">
-                  <span className="loading loading-spinner loading-md" />
+                  <Spinner size="md" />
                 </td>
               </tr>
             ) : data?.clients.length === 0 ? (
@@ -137,7 +137,7 @@ export default function ClientsPage() {
               </tr>
             ) : (
               data?.clients.map((client) => (
-                <tr key={client.id} className="hover">
+                <tr key={client.id}>
                   <td className="!text-base">
                     <Link
                       href={`/clients/${client.id}`}
@@ -161,19 +161,19 @@ export default function ClientsPage() {
       {/* 페이지네이션 */}
       {data && data.totalPages > 1 && (
         <div className="flex justify-center mt-4">
-          <div className="join">
+          <div className="flex">
             <button
-              className="join-item btn btn-md"
+              className="inline-flex items-center justify-center p-2 border border-base-300 bg-base-100 rounded-l-lg hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
               disabled={page <= 1}
               onClick={() => { setPage(page - 1); setData(null); }}
             >
               <ChevronLeft size={16} />
             </button>
-            <button className="join-item btn btn-md btn-disabled">
+            <button className="px-4 py-2 border-y border-base-300 bg-base-100 text-base" disabled>
               {page} / {data.totalPages}
             </button>
             <button
-              className="join-item btn btn-md"
+              className="inline-flex items-center justify-center p-2 border border-base-300 bg-base-100 rounded-r-lg hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
               disabled={page >= data.totalPages}
               onClick={() => { setPage(page + 1); setData(null); }}
             >

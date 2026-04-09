@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Calendar, CalendarCheck, AlertTriangle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
+import { Spinner } from "@/components/ui/spinner";
 
 interface DashboardData {
   todayCount: number;
@@ -67,20 +68,21 @@ export default function DashboardPage() {
   }
 
   function getStatusBadge(status: string) {
+    const base = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
     switch (status) {
       case "completed":
-        return <span className="badge badge-success badge-md">완료</span>;
+        return <span className={`${base} bg-success/10 text-success`}>완료</span>;
       case "missed":
-        return <span className="badge badge-error badge-md">미완료</span>;
+        return <span className={`${base} bg-error/10 text-error`}>미완료</span>;
       default:
-        return <span className="badge badge-primary badge-md">예정</span>;
+        return <span className={`${base} bg-primary/10 text-primary`}>예정</span>;
     }
   }
 
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -96,8 +98,8 @@ export default function DashboardPage() {
     <div>
       {/* 상단 요약 카드 4개 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body py-4 px-5">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Calendar size={20} className="text-primary" />
@@ -110,8 +112,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body py-4 px-5">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
                 <CalendarCheck size={20} className="text-info" />
@@ -124,8 +126,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body py-4 px-5">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center">
                 <AlertTriangle size={20} className="text-error" />
@@ -138,8 +140,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body py-4 px-5">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
                 <CheckCircle size={20} className="text-success" />
@@ -156,16 +158,16 @@ export default function DashboardPage() {
       {/* 하단 2컬럼 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* 좌측: 오늘 방문 예정 */}
-        <div className="lg:col-span-2 card bg-base-100 border border-base-300">
-          <div className="card-body">
-            <h3 className="card-title text-base mb-3">오늘 방문 예정</h3>
+        <div className="lg:col-span-2 rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6">
+            <h3 className="text-base font-semibold mb-3">오늘 방문 예정</h3>
             {data.todayVisits.length === 0 ? (
               <p className="text-base text-base-content/40 py-4 text-center">
                 오늘 예정된 방문이 없습니다
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="table table-md">
+                <table className="data-table">
                   <thead>
                     <tr>
                       <th>고객명</th>
@@ -179,7 +181,7 @@ export default function DashboardPage() {
                       const client = visit.clients as unknown as { id: string; name: string; facility_type: string } | null;
                       const user = visit.users as unknown as { id: string; name: string } | null;
                       return (
-                        <tr key={visit.id} className="hover">
+                        <tr key={visit.id}>
                           <td>
                             <Link
                               href={`/visits/${visit.id}`}
@@ -206,9 +208,9 @@ export default function DashboardPage() {
         {/* 우측 */}
         <div className="space-y-4">
           {/* 미완료 건 */}
-          <div className="card bg-base-100 border border-base-300">
-            <div className="card-body">
-              <h3 className="card-title text-base mb-3">미완료 건</h3>
+          <div className="rounded-xl bg-base-100 border border-base-300">
+            <div className="p-6">
+              <h3 className="text-base font-semibold mb-3">미완료 건</h3>
               {data.missedVisits.length === 0 ? (
                 <p className="text-base text-base-content/40 py-2 text-center">
                   미완료 건이 없습니다
@@ -222,7 +224,7 @@ export default function DashboardPage() {
                       <Link
                         key={visit.id}
                         href={`/visits/${visit.id}`}
-                        className="flex items-center justify-between p-2 rounded-lg hover:bg-base-200 transition-colors"
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
                       >
                         <div>
                           <p className="text-base font-medium">{client?.name || "-"}</p>
@@ -242,9 +244,9 @@ export default function DashboardPage() {
           </div>
 
           {/* 이번 주 요약 차트 */}
-          <div className="card bg-base-100 border border-base-300">
-            <div className="card-body">
-              <h3 className="card-title text-base mb-3">이번 주 요약</h3>
+          <div className="rounded-xl bg-base-100 border border-base-300">
+            <div className="p-6">
+              <h3 className="text-base font-semibold mb-3">이번 주 요약</h3>
               <div className="flex items-end gap-2 h-32">
                 {data.weeklyChart.map((day) => {
                   const total = day.completed + day.scheduled + day.missed;

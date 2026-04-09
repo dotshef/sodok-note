@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, UserCheck, UserX } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Member {
   id: string;
@@ -60,18 +61,20 @@ export default function MembersPage() {
     fetchMembers();
   }
 
+  const badgeBase = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">기사 관리</h2>
-        <Link href="/members/new" className="btn btn-primary btn-md gap-2">
+        <Link href="/members/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer">
           <Plus size={16} />
           기사 등록
         </Link>
       </div>
 
       <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
-        <table className="table table-md">
+        <table className="data-table">
           <thead>
             <tr>
               <th>이름</th>
@@ -87,7 +90,7 @@ export default function MembersPage() {
             {loading ? (
               <tr>
                 <td colSpan={7} className="text-center py-8">
-                  <span className="loading loading-spinner loading-md" />
+                  <Spinner size="md" />
                 </td>
               </tr>
             ) : members?.length === 0 ? (
@@ -98,14 +101,14 @@ export default function MembersPage() {
               </tr>
             ) : (
               members?.map((member) => (
-                <tr key={member.id} className="hover">
+                <tr key={member.id}>
                   <td className="font-medium">{member.name}</td>
                   <td className="text-base">{member.email}</td>
                   <td className="text-base">{member.phone || "-"}</td>
                   <td>
                     <span
-                      className={`badge badge-md ${
-                        member.role === "admin" ? "badge-primary" : "badge-ghost"
+                      className={`${badgeBase} ${
+                        member.role === "admin" ? "bg-primary/10 text-primary" : "bg-base-200 text-base-content"
                       }`}
                     >
                       {member.role === "admin" ? "관리자" : "기사"}
@@ -113,8 +116,8 @@ export default function MembersPage() {
                   </td>
                   <td>
                     <span
-                      className={`badge badge-md ${
-                        member.is_active ? "badge-success" : "badge-error"
+                      className={`${badgeBase} ${
+                        member.is_active ? "bg-success/10 text-success" : "bg-error/10 text-error"
                       }`}
                     >
                       {member.is_active ? "활성" : "비활성"}
@@ -128,13 +131,13 @@ export default function MembersPage() {
                       <div className="flex gap-1">
                         <Link
                           href={`/members/${member.id}/edit`}
-                          className="btn btn-ghost btn-md"
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
                         >
                           수정
                         </Link>
                         <button
                           onClick={() => handleToggleActive(member)}
-                          className={`btn btn-ghost btn-md ${
+                          className={`inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer ${
                             member.is_active ? "text-error" : "text-success"
                           }`}
                         >

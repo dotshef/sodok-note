@@ -13,7 +13,6 @@
     "@react-pdf/renderer": "^4.4.0",
     "@supabase/supabase-js": "^2.102.1",
     "bcryptjs": "^3.0.3",
-    "daisyui": "^5.5.19",
     "date-fns": "^4.1.0",
     "jose": "^6.2.2",
     "lucide-react": "^1.7.0",

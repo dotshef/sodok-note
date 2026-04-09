@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Pencil, Trash2, FileText } from "lucide-react";
 import Link from "next/link";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Visit {
   id: string;
@@ -91,7 +92,7 @@ export default function ClientDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -103,18 +104,20 @@ export default function ClientDetailPage() {
     (a, b) => new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime()
   );
 
+  const badgeBase = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
+
   return (
     <div>
       {/* 상단 */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/clients" className="btn btn-ghost btn-md btn-square">
+        <Link href="/clients" className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
           <ArrowLeft size={18} />
         </Link>
         <h2 className="text-2xl font-bold flex-1">{client.name}</h2>
-        <Link href={`/clients/${id}/edit`} className="btn btn-ghost btn-md gap-1">
+        <Link href={`/clients/${id}/edit`} className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer">
           <Pencil size={14} /> 수정
         </Link>
-        <button onClick={handleDelete} className="btn btn-ghost btn-md text-error gap-1">
+        <button onClick={handleDelete} className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors text-error cursor-pointer">
           <Trash2 size={14} /> 비활성화
         </button>
       </div>
@@ -122,9 +125,9 @@ export default function ClientDetailPage() {
       {/* 상단 카드 영역 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* 좌측: 시설 정보 */}
-        <div className="lg:col-span-2 card bg-base-100 border border-base-300">
-          <div className="card-body">
-            <h3 className="card-title text-base">시설 정보</h3>
+        <div className="lg:col-span-2 rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6">
+            <h3 className="text-base font-semibold">시설 정보</h3>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base mt-2">
               <div>
                 <span className="text-base-content/50">시설 유형</span>
@@ -168,11 +171,11 @@ export default function ClientDetailPage() {
         {/* 우측 */}
         <div className="space-y-4">
           {/* 다음 방문 예정 */}
-          <div className="card bg-base-100 border border-base-300">
-            <div className="card-body py-4">
+          <div className="rounded-xl bg-base-100 border border-base-300">
+            <div className="py-4 px-6">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-base">다음 방문 예정</h3>
-                <span className="badge badge-primary badge-md">방문 예정</span>
+                <span className={`${badgeBase} bg-primary/10 text-primary`}>방문 예정</span>
               </div>
               <p className="text-lg font-bold mt-1">
                 {activeSchedule
@@ -184,20 +187,20 @@ export default function ClientDetailPage() {
 
           {/* 요약 통계 */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="card bg-base-100 border border-base-300">
-              <div className="card-body py-3 px-4 items-center text-center">
+            <div className="rounded-xl bg-base-100 border border-base-300">
+              <div className="py-3 px-4 flex flex-col items-center text-center">
                 <p className="text-2xl font-bold">{client.stats.totalVisits}</p>
                 <p className="text-base text-base-content/50">총 방문</p>
               </div>
             </div>
-            <div className="card bg-base-100 border border-base-300">
-              <div className="card-body py-3 px-4 items-center text-center">
+            <div className="rounded-xl bg-base-100 border border-base-300">
+              <div className="py-3 px-4 flex flex-col items-center text-center">
                 <p className="text-2xl font-bold">{client.stats.completionRate}%</p>
                 <p className="text-base text-base-content/50">완료율</p>
               </div>
             </div>
-            <div className="card bg-base-100 border border-base-300">
-              <div className="card-body py-3 px-4 items-center text-center">
+            <div className="rounded-xl bg-base-100 border border-base-300">
+              <div className="py-3 px-4 flex flex-col items-center text-center">
                 <p className="text-2xl font-bold">{client.stats.certificateCount}</p>
                 <p className="text-base text-base-content/50">증명서</p>
               </div>
@@ -207,11 +210,11 @@ export default function ClientDetailPage() {
       </div>
 
       {/* 방문 이력 테이블 */}
-      <div className="card bg-base-100 border border-base-300">
-        <div className="card-body">
-          <h3 className="card-title text-base mb-3">방문 이력</h3>
+      <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="p-6">
+          <h3 className="text-base font-semibold mb-3">방문 이력</h3>
           <div className="overflow-x-auto">
-            <table className="table table-md">
+            <table className="data-table">
               <thead>
                 <tr>
                   <th>날짜</th>
@@ -239,12 +242,12 @@ export default function ClientDetailPage() {
                       </td>
                       <td>
                         <span
-                          className={`badge badge-md ${
+                          className={`${badgeBase} ${
                             visit.status === "completed"
-                              ? "badge-success"
+                              ? "bg-success/10 text-success"
                               : visit.status === "missed"
-                              ? "badge-error"
-                              : "badge-primary"
+                              ? "bg-error/10 text-error"
+                              : "bg-primary/10 text-primary"
                           }`}
                         >
                           {visit.status === "completed"
@@ -263,7 +266,7 @@ export default function ClientDetailPage() {
                             href={visit.certificates.pdf_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-ghost btn-md"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
                           >
                             <FileText size={14} />
                             PDF

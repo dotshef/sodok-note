@@ -5,7 +5,13 @@
       "mcp__plugin_context7_context7__query-docs",
       "Bash(npx eslint:*)",
       "Bash(xargs grep:*)",
-      "WebFetch(domain:daisyui.com)"
+      "WebFetch(domain:daisyui.com)",
+      "Bash(grep -E \"^\\(btn|input|card|select|table|badge|alert|loading|modal|drawer|navbar|menu|dropdown|join|collapse|hero|stat|divider|textarea|checkbox|radio|toggle|form-control|label|avatar|progress|tooltip|toast|swap|steps|chat|diff|kbd|footer|mask|indicator|countdown|rating|range|file-input|radial-progress|skeleton\\)\\($|-\\)\")",
+      "Bash(grep -E \"^\\(btn|input|card|select|table|badge|alert|loading|modal|drawer|navbar|menu|dropdown|join|collapse|hero|stat|divider|textarea|checkbox|radio|toggle|form-control|label|avatar|progress|tooltip|toast|swap|steps|chat|diff|kbd|footer|mask|indicator|countdown|rating|range|skeleton\\)\\($|-\\)\")",
+      "Bash(grep -o '`[^`]*`')",
+      "Read(//c/D/pest-control/**)",
+      "Read(//c/D/pest-control/=== form-control /**)",
+      "Bash(npm uninstall:*)"
     ],
     "additionalDirectories": [
       "c:\\D\\pest-control\\.claude"

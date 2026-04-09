@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CalendarCheck, FileText, ClipboardList } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -73,15 +74,15 @@ export default function LoginPage() {
 
       {/* 우측 — 로그인 폼 */}
       <div className="flex-1 flex items-center justify-center px-6 bg-base-200">
-        <div className="card w-full max-w-md">
-          <div className="card-body">
-            <h2 className="card-title text-2xl font-bold">로그인</h2>
+        <div className="rounded-xl bg-base-100 w-full max-w-md">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold">로그인</h2>
             <p className="text-base-content/60 mb-6">
               방역매니저에 오신 것을 환영합니다
             </p>
 
             {error && (
-              <div className="alert alert-error text-base">
+              <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
                 <span>{error}</span>
               </div>
             )}
@@ -91,7 +92,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   placeholder="name@company.com"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -102,7 +103,7 @@ export default function LoginPage() {
                 <input
                   type="password"
                   placeholder="••••••••"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -113,7 +114,7 @@ export default function LoginPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="checkbox checkbox-sm"
+                    className="w-4 h-4 accent-primary"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
                   />
@@ -129,14 +130,10 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="btn btn-primary w-full"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50"
                 disabled={loading}
               >
-                {loading ? (
-                  <span className="loading loading-spinner loading-sm" />
-                ) : (
-                  "로그인"
-                )}
+                {loading ? <Spinner size="sm" /> : "로그인"}
               </button>
             </form>
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { FormField } from "@/components/ui/form-field";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function EditClientPage() {
   const { id } = useParams<{ id: string }>();
@@ -92,7 +93,7 @@ export default function EditClientPage() {
   if (!loaded) {
     return (
       <div className="flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -102,20 +103,20 @@ export default function EditClientPage() {
       <h2 className="text-2xl font-bold mb-6">고객 정보 수정</h2>
 
       {error && (
-        <div className="alert alert-error text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body space-y-4">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6 space-y-4">
             <h3 className="font-semibold">시설 정보</h3>
 
             <FormField label={<>시설명 <span className="text-error">*</span></>}>
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 required
@@ -124,7 +125,7 @@ export default function EditClientPage() {
 
             <FormField label="시설 유형">
               <select
-                className="select select-bordered w-full"
+                className="w-full"
                 value={form.facilityType}
                 onChange={(e) => updateField("facilityType", e.target.value)}
               >
@@ -140,7 +141,7 @@ export default function EditClientPage() {
             <FormField label="주소">
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.address}
                 onChange={(e) => updateField("address", e.target.value)}
               />
@@ -150,7 +151,7 @@ export default function EditClientPage() {
               <FormField label="면적 (㎡)">
                 <input
                   type="number"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.area}
                   onChange={(e) => updateField("area", e.target.value)}
                 />
@@ -158,7 +159,7 @@ export default function EditClientPage() {
               <FormField label="면적 (평)">
                 <input
                   type="number"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.areaPyeong}
                   onChange={(e) => updateField("areaPyeong", e.target.value)}
                 />
@@ -167,15 +168,15 @@ export default function EditClientPage() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body space-y-4">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6 space-y-4">
             <h3 className="font-semibold">담당자 정보</h3>
 
             <div className="grid grid-cols-2 gap-3">
               <FormField label="담당자명">
                 <input
                   type="text"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.contactName}
                   onChange={(e) => updateField("contactName", e.target.value)}
                 />
@@ -183,7 +184,7 @@ export default function EditClientPage() {
               <FormField label="연락처">
                 <input
                   type="tel"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.contactPhone}
                   onChange={(e) => updateField("contactPhone", e.target.value)}
                 />
@@ -192,7 +193,7 @@ export default function EditClientPage() {
 
             <FormField label="메모">
               <textarea
-                className="textarea textarea-bordered w-full"
+                className="w-full"
                 rows={3}
                 value={form.notes}
                 onChange={(e) => updateField("notes", e.target.value)}
@@ -204,21 +205,17 @@ export default function EditClientPage() {
         <div className="flex gap-3 justify-end">
           <button
             type="button"
-            className="btn btn-ghost"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors"
             onClick={() => router.back()}
           >
             취소
           </button>
           <button
             type="submit"
-            className="btn btn-primary"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50"
             disabled={saving}
           >
-            {saving ? (
-              <span className="loading loading-spinner loading-sm" />
-            ) : (
-              "저장"
-            )}
+            {saving ? <Spinner size="sm" /> : "저장"}
           </button>
         </div>
       </form>

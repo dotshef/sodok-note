@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormField } from "@/components/ui/form-field";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function NewMemberPage() {
   const router = useRouter();
@@ -50,18 +51,18 @@ export default function NewMemberPage() {
       <h2 className="text-2xl font-bold mb-6">기사 등록</h2>
 
       {error && (
-        <div className="alert alert-error text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body space-y-4">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6 space-y-4">
             <FormField label={<>이름 <span className="text-error">*</span></>}>
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 required
@@ -72,7 +73,7 @@ export default function NewMemberPage() {
               <input
                 type="email"
                 placeholder="name@company.com"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
                 required
@@ -83,7 +84,7 @@ export default function NewMemberPage() {
               <input
                 type="password"
                 placeholder="8자 이상"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.password}
                 onChange={(e) => updateField("password", e.target.value)}
                 required
@@ -95,7 +96,7 @@ export default function NewMemberPage() {
               <input
                 type="tel"
                 placeholder="010-0000-0000"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
               />
@@ -106,17 +107,17 @@ export default function NewMemberPage() {
         <div className="flex gap-3 justify-end mt-4">
           <button
             type="button"
-            className="btn btn-ghost"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors"
             onClick={() => router.back()}
           >
             취소
           </button>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? (
-              <span className="loading loading-spinner loading-sm" />
-            ) : (
-              "등록"
-            )}
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50"
+            disabled={loading}
+          >
+            {loading ? <Spinner size="sm" /> : "등록"}
           </button>
         </div>
       </form>

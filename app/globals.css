@@ -1,7 +1,4 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: light --default;
-}
 
 @font-face {
   font-family: "Pretendard";
@@ -16,7 +13,7 @@ html {
   font-family: "Pretendard", system-ui, sans-serif;
 }
 
-/* ── DaisyUI 테마 커스텀 ── */
+/* ── 커스텀 테마 ── */
 @theme {
   --color-primary: oklch(0.37 0.09 260);       /* 딥 네이비 */
   --color-primary-content: oklch(0.98 0.005 260);
@@ -34,4 +31,56 @@ html {
   --color-error: oklch(0.58 0.18 25);
   --color-warning: oklch(0.75 0.15 75);
   --color-info: oklch(0.55 0.12 240);
+}
+
+/* ── Form elements ── */
+input:where([type="text"], [type="email"], [type="password"], [type="tel"], [type="number"], [type="date"]),
+select,
+textarea {
+  border: 1px solid var(--color-base-300);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  background-color: var(--color-base-100);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:where([type="text"], [type="email"], [type="password"], [type="tel"], [type="number"], [type="date"]):focus,
+select:focus,
+textarea:focus {
+  border-color: oklch(0.37 0.09 260 / 0.4);
+  box-shadow: 0 0 0 2px oklch(0.37 0.09 260 / 0.1);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Data table ── */
+.data-table {
+  width: 100%;
+  font-size: 1rem;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: oklch(0.25 0.03 260 / 0.6);
+  border-bottom: 1px solid var(--color-base-300);
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-base-300);
+}
+
+.data-table tbody tr:hover td {
+  background-color: var(--color-base-200);
 }

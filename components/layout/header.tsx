@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { JwtPayload } from "@/lib/auth/jwt";
 
@@ -15,6 +16,7 @@ const pageTitles: Record<string, string> = {
 export function Header({ session }: { session: JwtPayload }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const title =
     Object.entries(pageTitles).find(([path]) =>
@@ -32,24 +34,28 @@ export function Header({ session }: { session: JwtPayload }) {
 
       <div className="flex items-center gap-4">
         {session.role === "admin" && (
-          <span className="badge badge-primary badge-base">관리자</span>
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium bg-primary/10 text-primary">관리자</span>
         )}
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-md gap-2"
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-base font-medium rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
           >
             <span className="text-base">{session.email}</span>
-          </div>
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow"
-          >
-            <li>
-              <button onClick={handleLogout}>로그아웃</button>
-            </li>
-          </ul>
+          </button>
+          {menuOpen && (
+            <>
+              <div className="fixed inset-0 z-0" onClick={() => setMenuOpen(false)} />
+              <div className="absolute right-0 top-full mt-1 z-10 w-40 p-2 bg-base-100 rounded-lg shadow-lg border border-base-300">
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-3 py-2 text-base rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
+                >
+                  로그아웃
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>

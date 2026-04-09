@@ -6,6 +6,7 @@ import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { getCycleMonths } from "@/lib/utils/cycle";
 import { FormField } from "@/components/ui/form-field";
 import type { FacilityTypeId } from "@/lib/constants/facility-types";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function NewClientPage() {
   const router = useRouter();
@@ -67,21 +68,21 @@ export default function NewClientPage() {
       <h2 className="text-2xl font-bold mb-6">고객 등록</h2>
 
       {error && (
-        <div className="alert alert-error text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body space-y-4">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6 space-y-4">
             <h3 className="font-semibold">시설 정보</h3>
 
             <FormField label={<>시설명 <span className="text-error">*</span></>}>
               <input
                 type="text"
                 placeholder=""
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 required
@@ -90,7 +91,7 @@ export default function NewClientPage() {
 
             <FormField label={<>시설 유형 <span className="text-error">*</span></>}>
               <select
-                className="select select-bordered w-full"
+                className="w-full"
                 value={form.facilityType}
                 onChange={(e) => updateField("facilityType", e.target.value)}
                 required
@@ -113,7 +114,7 @@ export default function NewClientPage() {
               <input
                 type="text"
                 placeholder="시설 주소"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.address}
                 onChange={(e) => updateField("address", e.target.value)}
               />
@@ -123,7 +124,7 @@ export default function NewClientPage() {
               <FormField label="면적 (㎡)">
                 <input
                   type="number"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.area}
                   onChange={(e) => updateField("area", e.target.value)}
                 />
@@ -131,7 +132,7 @@ export default function NewClientPage() {
               <FormField label="면적 (평)">
                 <input
                   type="number"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.areaPyeong}
                   onChange={(e) => updateField("areaPyeong", e.target.value)}
                 />
@@ -140,15 +141,15 @@ export default function NewClientPage() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body space-y-4">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6 space-y-4">
             <h3 className="font-semibold">담당자 정보</h3>
 
             <div className="grid grid-cols-2 gap-3">
               <FormField label="담당자명">
                 <input
                   type="text"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.contactName}
                   onChange={(e) => updateField("contactName", e.target.value)}
                 />
@@ -157,7 +158,7 @@ export default function NewClientPage() {
                 <input
                   type="tel"
                   placeholder="010-0000-0000"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.contactPhone}
                   onChange={(e) => updateField("contactPhone", e.target.value)}
                 />
@@ -166,7 +167,7 @@ export default function NewClientPage() {
 
             <FormField label="메모">
               <textarea
-                className="textarea textarea-bordered w-full"
+                className="w-full"
                 rows={3}
                 value={form.notes}
                 onChange={(e) => updateField("notes", e.target.value)}
@@ -175,14 +176,14 @@ export default function NewClientPage() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-300">
-          <div className="card-body">
+        <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="p-6">
             <h3 className="font-semibold">방문 스케줄</h3>
 
             <FormField label={<>첫 방문 예정일 <span className="text-error">*</span></>}>
               <input
                 type="date"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.firstVisitDate}
                 onChange={(e) => updateField("firstVisitDate", e.target.value)}
                 required
@@ -194,21 +195,17 @@ export default function NewClientPage() {
         <div className="flex gap-3 justify-end">
           <button
             type="button"
-            className="btn btn-ghost"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors"
             onClick={() => router.back()}
           >
             취소
           </button>
           <button
             type="submit"
-            className="btn btn-primary"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? (
-              <span className="loading loading-spinner loading-sm" />
-            ) : (
-              "등록"
-            )}
+            {loading ? <Spinner size="sm" /> : "등록"}
           </button>
         </div>
       </form>

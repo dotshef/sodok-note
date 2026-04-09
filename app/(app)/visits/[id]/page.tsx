@@ -7,6 +7,7 @@ import Link from "next/link";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { DISINFECTION_METHODS, COMMON_CHEMICALS } from "@/lib/constants/methods";
 import { FormField } from "@/components/ui/form-field";
+import { Spinner } from "@/components/ui/spinner";
 
 interface VisitDetail {
   id: string;
@@ -167,7 +168,7 @@ export default function VisitDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -175,22 +176,23 @@ export default function VisitDetailPage() {
   if (!visit) return null;
 
   const isCompleted = visit.status === "completed";
+  const badgeBase = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
 
   return (
     <div className="max-w-3xl mx-auto">
       {/* 상단 */}
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="btn btn-ghost btn-md btn-square">
+        <button onClick={() => router.back()} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
           <ArrowLeft size={18} />
         </button>
         <h2 className="text-2xl font-bold flex-1">방문 상세</h2>
         <span
-          className={`badge ${
+          className={`${badgeBase} ${
             visit.status === "completed"
-              ? "badge-success"
+              ? "bg-success/10 text-success"
               : visit.status === "missed"
-              ? "badge-error"
-              : "badge-primary"
+              ? "bg-error/10 text-error"
+              : "bg-primary/10 text-primary"
           }`}
         >
           {visit.status === "completed" ? "완료" : visit.status === "missed" ? "미완료" : "예정"}
@@ -198,15 +200,15 @@ export default function VisitDetailPage() {
       </div>
 
       {error && (
-        <div className="alert alert-error text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
 
       {/* 고객 정보 */}
-      <div className="card bg-base-100 border border-base-300 mb-4">
-        <div className="card-body">
-          <h3 className="card-title text-base">고객 정보</h3>
+      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+        <div className="p-6">
+          <h3 className="text-base font-semibold">고객 정보</h3>
           <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-base mt-2">
             <div>
               <span className="text-base-content/50">시설명</span>
@@ -243,9 +245,9 @@ export default function VisitDetailPage() {
       </div>
 
       {/* 소독 정보 입력 */}
-      <div className="card bg-base-100 border border-base-300 mb-4">
-        <div className="card-body space-y-4">
-          <h3 className="card-title text-base">소독 정보</h3>
+      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+        <div className="p-6 space-y-4">
+          <h3 className="text-base font-semibold">소독 정보</h3>
 
           {/* 소독 방법 */}
           <FormField label="소독 방법">
@@ -254,7 +256,11 @@ export default function VisitDetailPage() {
                 <button
                   key={m}
                   type="button"
-                  className={`btn btn-md ${method === m ? "btn-primary" : "btn-outline"}`}
+                  className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium transition-colors cursor-pointer ${
+                    method === m
+                      ? "bg-primary text-primary-content"
+                      : "border border-base-300 hover:bg-base-200"
+                  }`}
                   onClick={() => setMethod(m)}
                   disabled={isCompleted}
                 >
@@ -266,7 +272,7 @@ export default function VisitDetailPage() {
               <input
                 type="text"
                 placeholder="소독 방법 직접 입력"
-                className="input input-bordered input-md mt-2 w-full"
+                className="mt-2 w-full"
                 value={customMethod}
                 onChange={(e) => setCustomMethod(e.target.value)}
                 disabled={isCompleted}
@@ -281,8 +287,10 @@ export default function VisitDetailPage() {
                 <button
                   key={c}
                   type="button"
-                  className={`btn btn-md ${
-                    selectedChemicals.includes(c) ? "btn-primary" : "btn-outline"
+                  className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium transition-colors cursor-pointer ${
+                    selectedChemicals.includes(c)
+                      ? "bg-primary text-primary-content"
+                      : "border border-base-300 hover:bg-base-200"
                   }`}
                   onClick={() => toggleChemical(c)}
                   disabled={isCompleted}
@@ -296,14 +304,14 @@ export default function VisitDetailPage() {
                 <input
                   type="text"
                   placeholder="약제 직접 입력"
-                  className="input input-bordered input-md flex-1"
+                  className="flex-1"
                   value={customChemical}
                   onChange={(e) => setCustomChemical(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomChemical())}
                 />
                 <button
                   type="button"
-                  className="btn btn-md btn-outline"
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors cursor-pointer"
                   onClick={addCustomChemical}
                 >
                   추가
@@ -313,10 +321,10 @@ export default function VisitDetailPage() {
             {selectedChemicals.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {selectedChemicals.map((c) => (
-                  <span key={c} className="badge badge-md gap-1">
+                  <span key={c} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-base font-medium bg-base-200 text-base-content">
                     {c}
                     {!isCompleted && (
-                      <button onClick={() => toggleChemical(c)} className="text-base">
+                      <button onClick={() => toggleChemical(c)} className="text-base cursor-pointer">
                         ✕
                       </button>
                     )}
@@ -329,7 +337,7 @@ export default function VisitDetailPage() {
           {/* 메모 */}
           <FormField label="메모">
             <textarea
-              className="textarea textarea-bordered w-full"
+              className="w-full"
               rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -341,8 +349,8 @@ export default function VisitDetailPage() {
 
       {/* 완료 시 정보 */}
       {isCompleted && visit.completed_at && (
-        <div className="card bg-success/10 border border-success/30 mb-4">
-          <div className="card-body py-3">
+        <div className="rounded-xl bg-success/10 border border-success/30 mb-4">
+          <div className="py-3 px-6">
             <div className="flex items-center gap-2 text-success">
               <CheckCircle size={18} />
               <span className="font-medium text-base">
@@ -355,8 +363,8 @@ export default function VisitDetailPage() {
 
       {/* 증명서 */}
       {isCompleted && (
-        <div className="card bg-base-100 border border-base-300 mb-4">
-          <div className="card-body py-4">
+        <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+          <div className="py-4 px-6">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-base flex items-center gap-2">
                 <FileText size={16} />
@@ -373,12 +381,12 @@ export default function VisitDetailPage() {
                         href={visit.certificates.pdf_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-ghost btn-md gap-1"
+                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
                       >
                         <Download size={12} /> 다운로드
                       </a>
                       <button
-                        className="btn btn-ghost btn-md gap-1"
+                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
                         onClick={() => {
                           navigator.clipboard.writeText(visit.certificates!.pdf_url!);
                         }}
@@ -388,7 +396,7 @@ export default function VisitDetailPage() {
                     </>
                   )}
                   <button
-                    className="btn btn-outline btn-md"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
                     disabled={generatingCert}
                     onClick={handleGenerateCert}
                   >
@@ -397,12 +405,12 @@ export default function VisitDetailPage() {
                 </div>
               ) : (
                 <button
-                  className="btn btn-primary btn-md gap-1"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
                   disabled={generatingCert}
                   onClick={handleGenerateCert}
                 >
                   {generatingCert ? (
-                    <span className="loading loading-spinner loading-sm" />
+                    <Spinner size="sm" />
                   ) : (
                     <>
                       <FileText size={14} /> 증명서 생성
@@ -419,12 +427,12 @@ export default function VisitDetailPage() {
       <div className="flex gap-3 justify-end">
         {!isCompleted ? (
           <button
-            className="btn btn-primary gap-2"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
             onClick={handleComplete}
             disabled={saving}
           >
             {saving ? (
-              <span className="loading loading-spinner loading-sm" />
+              <Spinner size="sm" />
             ) : (
               <>
                 <CheckCircle size={18} />
@@ -434,7 +442,7 @@ export default function VisitDetailPage() {
           </button>
         ) : (
           <button
-            className="btn btn-outline btn-error btn-md gap-1"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-error text-error hover:bg-error/10 transition-colors cursor-pointer"
             onClick={handleUncomplete}
           >
             <XCircle size={14} />

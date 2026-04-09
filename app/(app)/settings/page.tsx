@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Upload } from "lucide-react";
 import Image from "next/image";
 import { FormField } from "@/components/ui/form-field";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Tenant {
   name: string;
@@ -132,7 +133,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -141,19 +142,19 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto">
 
       {error && (
-        <div className="alert alert-error text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
       {success && (
-        <div className="alert alert-success text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-success/10 text-success border border-success/20 text-base mb-4">
           <span>{success}</span>
         </div>
       )}
 
       {/* 로고 업로드 */}
-      <div className="card bg-base-100 border border-base-300 mb-4">
-        <div className="card-body">
+      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+        <div className="p-6">
           <h3 className="text-base font-semibold mb-3">업체 로고</h3>
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 border border-base-300 rounded-lg flex items-center justify-center overflow-hidden bg-base-200">
@@ -178,12 +179,12 @@ export default function SettingsPage() {
                 className="hidden"
               />
               <button
-                className="btn btn-outline btn-md gap-2"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
               >
                 {uploading ? (
-                  <span className="loading loading-spinner loading-sm" />
+                  <Spinner size="sm" />
                 ) : (
                   <>
                     <Upload size={14} /> 로고 업로드
@@ -200,14 +201,14 @@ export default function SettingsPage() {
 
       {/* 업체 정보 */}
       <form onSubmit={handleSave}>
-        <div className="card bg-base-100 border border-base-300 mb-4">
-          <div className="card-body space-y-4">
+        <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+          <div className="p-6 space-y-4">
             <h3 className="text-base font-semibold">업체 정보</h3>
 
             <FormField label="업체명">
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                 required
@@ -217,7 +218,7 @@ export default function SettingsPage() {
             <FormField label="사업자등록번호">
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.businessNumber}
                 onChange={(e) => setForm((p) => ({ ...p, businessNumber: e.target.value }))}
               />
@@ -227,7 +228,7 @@ export default function SettingsPage() {
               <FormField label="대표자명">
                 <input
                   type="text"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.ownerName}
                   onChange={(e) => setForm((p) => ({ ...p, ownerName: e.target.value }))}
                 />
@@ -235,7 +236,7 @@ export default function SettingsPage() {
               <FormField label="전화번호">
                 <input
                   type="tel"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                 />
@@ -245,7 +246,7 @@ export default function SettingsPage() {
             <FormField label="주소">
               <input
                 type="text"
-                className="input input-bordered w-full"
+                className="w-full"
                 value={form.address}
                 onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
               />
@@ -254,8 +255,12 @@ export default function SettingsPage() {
         </div>
 
         <div className="flex justify-end">
-          <button type="submit" className="btn btn-primary" disabled={saving}>
-            {saving ? <span className="loading loading-spinner loading-sm" /> : "저장"}
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+            disabled={saving}
+          >
+            {saving ? <Spinner size="sm" /> : "저장"}
           </button>
         </div>
       </form>
@@ -302,17 +307,17 @@ function PasswordChangeSection() {
 
   return (
     <form onSubmit={handleChangePassword} className="mt-4">
-      <div className="card bg-base-100 border border-base-300 mb-4">
-        <div className="card-body space-y-4">
+      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+        <div className="p-6 space-y-4">
           <h3 className="text-base font-semibold">비밀번호 변경</h3>
 
           {error && (
-            <div className="alert alert-error text-base">
+            <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base">
               <span>{error}</span>
             </div>
           )}
           {success && (
-            <div className="alert alert-success text-base">
+            <div className="flex items-center gap-3 rounded-lg p-4 bg-success/10 text-success border border-success/20 text-base">
               <span>{success}</span>
             </div>
           )}
@@ -320,7 +325,7 @@ function PasswordChangeSection() {
           <FormField label="현재 비밀번호">
             <input
               type="password"
-              className="input input-bordered w-full"
+              className="w-full"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
@@ -331,7 +336,7 @@ function PasswordChangeSection() {
             <input
               type="password"
               placeholder="8자 이상"
-              className="input input-bordered w-full"
+              className="w-full"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -342,8 +347,12 @@ function PasswordChangeSection() {
       </div>
 
       <div className="flex justify-end">
-        <button type="submit" className="btn btn-outline" disabled={saving}>
-          {saving ? <span className="loading loading-spinner loading-sm" /> : "비밀번호 변경"}
+        <button
+          type="submit"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+          disabled={saving}
+        >
+          {saving ? <Spinner size="sm" /> : "비밀번호 변경"}
         </button>
       </div>
     </form>

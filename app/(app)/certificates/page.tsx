@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Download, FileText } from "lucide-react";
 import Link from "next/link";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Certificate {
   id: string;
@@ -56,7 +57,7 @@ export default function CertificatesPage() {
       </div>
 
       <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
-        <table className="table table-md">
+        <table className="data-table">
           <thead>
             <tr>
               <th>증명서 번호</th>
@@ -71,7 +72,7 @@ export default function CertificatesPage() {
             {loading ? (
               <tr>
                 <td colSpan={6} className="text-center py-8">
-                  <span className="loading loading-spinner loading-md" />
+                  <Spinner size="md" />
                 </td>
               </tr>
             ) : certificates?.length === 0 ? (
@@ -85,7 +86,7 @@ export default function CertificatesPage() {
                 const visit = cert.visits as unknown as Certificate["visits"];
                 const client = visit?.clients as unknown as { id: string; name: string; facility_type: string } | null;
                 return (
-                  <tr key={cert.id} className="hover">
+                  <tr key={cert.id}>
                     <td>
                       <div className="flex items-center gap-2">
                         <FileText size={14} className="text-primary" />
@@ -117,7 +118,7 @@ export default function CertificatesPage() {
                           href={cert.pdf_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn btn-ghost btn-md gap-1"
+                          className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
                         >
                           <Download size={12} /> PDF
                         </a>

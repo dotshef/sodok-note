@@ -13,6 +13,7 @@ import {
   ko,
 } from "@/lib/utils/calendar";
 import Link from "next/link";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Visit {
   id: string;
@@ -109,10 +110,10 @@ export default function CalendarPage() {
             {format(currentDate, "yyyy년 M월", { locale: ko })}
           </h2>
           <div className="flex gap-1">
-            <button onClick={handlePrev} className="btn btn-ghost btn-md btn-square">
+            <button onClick={handlePrev} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
               <ChevronLeft size={16} />
             </button>
-            <button onClick={handleNext} className="btn btn-ghost btn-md btn-square">
+            <button onClick={handleNext} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
               <ChevronRight size={16} />
             </button>
           </div>
@@ -149,7 +150,7 @@ export default function CalendarPage() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDate(day)}
-                  className={`relative min-h-35 p-1.5 border-b border-r border-base-300 text-left transition-colors hover:bg-base-200 flex flex-col items-start ${
+                  className={`relative min-h-35 p-1.5 border-b border-r border-base-300 text-left transition-colors hover:bg-base-200 flex flex-col items-start cursor-pointer ${
                     isSelected ? "bg-base-200" : ""
                   }`}
                 >
@@ -183,8 +184,8 @@ export default function CalendarPage() {
 
         {/* 우측: 선택일 상세 */}
       <div className="hidden lg:block w-72 shrink-0">
-        <div className="card bg-base-100 border border-base-300 sticky top-0">
-          <div className="card-body">
+        <div className="rounded-xl bg-base-100 border border-base-300 sticky top-0">
+          <div className="p-6">
             <h3 className="font-bold text-lg">
               {format(selectedDate, "M월 d일 (EEE)", { locale: ko })}
             </h3>
@@ -194,7 +195,7 @@ export default function CalendarPage() {
 
             {loading ? (
               <div className="flex justify-center py-8">
-                <span className="loading loading-spinner loading-sm" />
+                <Spinner size="sm" />
               </div>
             ) : selectedVisits.length === 0 ? (
               <p className="text-base text-base-content/40 py-4 text-center">
@@ -206,7 +207,7 @@ export default function CalendarPage() {
                   <Link
                     key={visit.id}
                     href={`/visits/${visit.id}`}
-                    className="block p-3 rounded-lg border border-base-300 hover:bg-base-200 transition-colors"
+                    className="block p-3 rounded-lg border border-base-300 hover:bg-base-200 transition-colors cursor-pointer"
                   >
                     <div className="font-semibold text-base">
                       {visit.clients?.name}
@@ -215,7 +216,7 @@ export default function CalendarPage() {
                       {visit.clients?.address || "주소 없음"}
                     </div>
                     <span
-                      className={`badge badge-md mt-1.5 text-white ${getStatusColor(visit.status)}`}
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium mt-1.5 text-white ${getStatusColor(visit.status)}`}
                     >
                       {getStatusLabel(visit.status)}
                     </span>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FormField } from "@/components/ui/form-field";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -65,30 +66,32 @@ export default function SignupPage() {
 
       {/* 우측 — 회원가입 폼 */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-base-200">
-        <div className="card w-full max-w-md bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-2xl font-bold">회원가입</h2>
+        <div className="rounded-xl w-full max-w-md bg-base-100 shadow-xl">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold">회원가입</h2>
             <p className="text-base-content/60 mb-4">
               업체 정보와 관리자 계정을 등록해주세요
             </p>
 
             {error && (
-              <div className="alert alert-error text-base">
+              <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
                 <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* 업체 정보 */}
-              <div className="divider text-base text-base-content/40">
+              <div className="flex items-center gap-3 text-base text-base-content/40 my-2">
+                <span className="flex-1 border-t border-base-300" />
                 업체 정보
+                <span className="flex-1 border-t border-base-300" />
               </div>
 
               <FormField label={<>업체명 <span className="text-error">*</span></>}>
                 <input
                   type="text"
                   placeholder="예: 그린방역"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.companyName}
                   onChange={(e) => updateField("companyName", e.target.value)}
                   required
@@ -99,7 +102,7 @@ export default function SignupPage() {
                 <input
                   type="text"
                   placeholder="000-00-00000"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.businessNumber}
                   onChange={(e) =>
                     updateField("businessNumber", e.target.value)
@@ -111,7 +114,7 @@ export default function SignupPage() {
                 <FormField label="대표자명">
                   <input
                     type="text"
-                    className="input input-bordered w-full"
+                    className="w-full"
                     value={form.ownerName}
                     onChange={(e) => updateField("ownerName", e.target.value)}
                   />
@@ -120,7 +123,7 @@ export default function SignupPage() {
                   <input
                     type="tel"
                     placeholder="02-0000-0000"
-                    className="input input-bordered w-full"
+                    className="w-full"
                     value={form.phone}
                     onChange={(e) => updateField("phone", e.target.value)}
                   />
@@ -128,15 +131,17 @@ export default function SignupPage() {
               </div>
 
               {/* 관리자 계정 */}
-              <div className="divider text-base text-base-content/40">
+              <div className="flex items-center gap-3 text-base text-base-content/40 my-2">
+                <span className="flex-1 border-t border-base-300" />
                 관리자 계정
+                <span className="flex-1 border-t border-base-300" />
               </div>
 
               <FormField label={<>이름 <span className="text-error">*</span></>}>
                 <input
                   type="text"
                   placeholder="관리자 이름"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
                   required
@@ -147,7 +152,7 @@ export default function SignupPage() {
                 <input
                   type="email"
                   placeholder="name@company.com"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.email}
                   onChange={(e) => updateField("email", e.target.value)}
                   required
@@ -158,7 +163,7 @@ export default function SignupPage() {
                 <input
                   type="password"
                   placeholder="8자 이상"
-                  className="input input-bordered w-full"
+                  className="w-full"
                   value={form.password}
                   onChange={(e) => updateField("password", e.target.value)}
                   required
@@ -168,14 +173,10 @@ export default function SignupPage() {
 
               <button
                 type="submit"
-                className="btn btn-primary w-full mt-2"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 mt-2"
                 disabled={loading}
               >
-                {loading ? (
-                  <span className="loading loading-spinner loading-sm" />
-                ) : (
-                  "회원가입"
-                )}
+                {loading ? <Spinner size="sm" /> : "회원가입"}
               </button>
             </form>
 

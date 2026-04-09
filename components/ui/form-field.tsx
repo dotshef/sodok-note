@@ -8,10 +8,8 @@ interface FormFieldProps {
 
 export function FormField({ label, children, className }: FormFieldProps) {
   return (
-    <div className={`form-control ${className ?? ""}`}>
-      <label className="label mb-2">
-        <span className="label-text text-base font-medium">{label}</span>
-      </label>
+    <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
+      <label className="text-base font-medium">{label}</label>
       {children}
     </div>
   );
