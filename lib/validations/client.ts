@@ -12,11 +12,9 @@ export const createClientSchema = z.object({
   contactName: z.string().optional(),
   contactPhone: z.string().optional(),
   notes: z.string().optional(),
-  firstVisitDate: z.string().min(1, "첫 방문 예정일을 입력해주세요"),
 });
 
 export const updateClientSchema = createClientSchema
-  .omit({ firstVisitDate: true })
   .partial()
   .extend({ name: z.string().min(1, "시설명을 입력해주세요") });
 

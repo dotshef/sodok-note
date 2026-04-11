@@ -14,12 +14,11 @@ export async function GET(
   const { id } = await params;
   const supabase = getSupabase();
 
-  // 고객 정보 + 스케줄 + 방문 이력 + 증명서
+  // 고객 정보 + 방문 이력 + 증명서
   const { data: client, error } = await supabase
     .from("clients")
     .select(`
       *,
-      schedules(id, cycle_months, next_visit_date, user_id, is_active),
       visits(
         id, scheduled_date, completed_at, status, method, chemicals_used, user_id,
         certificates(id, certificate_number, pdf_url)

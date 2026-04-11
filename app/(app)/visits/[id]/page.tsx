@@ -18,7 +18,6 @@ interface VisitDetail {
   chemicals_used: string[] | null;
   notes: string | null;
   user_id: string | null;
-  schedule_id: string | null;
   clients: {
     id: string;
     name: string;

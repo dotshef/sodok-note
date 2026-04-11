@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
-import { getCycleMonths } from "@/lib/utils/cycle";
-import { generateVisitCode } from "@/lib/utils/visit-code";
-import type { FacilityTypeId } from "@/lib/constants/facility-types";
-import { addMonths } from "date-fns";
 
 // 방문 상세 조회
 export async function GET(
@@ -52,8 +48,7 @@ export async function PATCH(
   if (body.action === "complete") {
     const { method, chemicalsUsed, notes } = body;
 
-    // 현재 visit 업데이트
-    const { data: visit, error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from("visits")
       .update({
         status: "completed",
@@ -63,45 +58,10 @@ export async function PATCH(
         notes: notes || null,
       })
       .eq("id", id)
-      .eq("tenant_id", session.tenantId)
-      .select("*, clients(id, facility_type)")
-      .single();
+      .eq("tenant_id", session.tenantId);
 
-    if (updateError || !visit) {
+    if (updateError) {
       return NextResponse.json({ error: "업데이트에 실패했습니다" }, { status: 500 });
-    }
-
-    // 다음 방문 자동 생성
-    if (visit.schedule_id && visit.clients) {
-      const facilityType = visit.clients.facility_type as FacilityTypeId;
-      const cycleMonths = getCycleMonths(facilityType);
-
-      if (cycleMonths) {
-        const nextDate = addMonths(new Date(visit.scheduled_date), cycleMonths);
-        const nextDateStr = nextDate.toISOString().split("T")[0];
-
-        // schedule의 next_visit_date 갱신
-        await supabase
-          .from("schedules")
-          .update({ next_visit_date: nextDateStr, updated_at: now })
-          .eq("id", visit.schedule_id)
-          .eq("tenant_id", session.tenantId);
-
-        // 다음 visit 생성
-        const nextVisitCode = await generateVisitCode(session.tenantId, nextDateStr);
-        await supabase
-          .from("visits")
-          .insert({
-            schedule_id: visit.schedule_id,
-            client_id: visit.client_id,
-            tenant_id: session.tenantId,
-            user_id: visit.user_id,
-            scheduled_date: nextDateStr,
-            status: "scheduled",
-            visit_code: nextVisitCode,
-            created_at: now,
-          });
-      }
     }
 
     return NextResponse.json({ success: true });

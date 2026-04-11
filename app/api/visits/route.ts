@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
+import { createVisitSchema } from "@/lib/validations/visit";
+import { generateVisitCode } from "@/lib/utils/visit-code";
 
 // 방문 건 목록 조회 (캘린더 모드 + 목록 모드)
 export async function GET(request: Request) {
@@ -128,4 +130,73 @@ export async function GET(request: Request) {
     page,
     totalPages,
   });
+}
+
+// 방문 일정 등록 (admin만)
+export async function POST(request: Request) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (session.role !== "admin") {
+    return NextResponse.json({ error: "관리자만 등록할 수 있습니다" }, { status: 403 });
+  }
+
+  const body = await request.json();
+  const parsed = createVisitSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+  }
+
+  const { clientId, scheduledDate, userId, notes } = parsed.data;
+  const supabase = getSupabase();
+
+  // clientId가 같은 tenant 소속인지 확인
+  const { data: client, error: clientError } = await supabase
+    .from("clients")
+    .select("id")
+    .eq("id", clientId)
+    .eq("tenant_id", session.tenantId)
+    .single();
+
+  if (clientError || !client) {
+    return NextResponse.json({ error: "존재하지 않는 고객입니다" }, { status: 400 });
+  }
+
+  // userId가 제공되면 같은 tenant 소속 member인지 확인
+  if (userId) {
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("id", userId)
+      .eq("tenant_id", session.tenantId)
+      .eq("is_active", true)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "존재하지 않는 담당자입니다" }, { status: 400 });
+    }
+  }
+
+  const visitCode = await generateVisitCode(session.tenantId, scheduledDate);
+  const now = new Date().toISOString();
+
+  const { data: inserted, error: insertError } = await supabase
+    .from("visits")
+    .insert({
+      client_id: clientId,
+      tenant_id: session.tenantId,
+      user_id: userId || null,
+      scheduled_date: scheduledDate,
+      status: "scheduled",
+      notes: notes || null,
+      visit_code: visitCode,
+      created_at: now,
+    })
+    .select("id")
+    .single();
+
+  if (insertError || !inserted) {
+    return NextResponse.json({ error: "방문 일정 등록에 실패했습니다" }, { status: 500 });
+  }
+
+  return NextResponse.json({ id: inserted.id }, { status: 201 });
 }

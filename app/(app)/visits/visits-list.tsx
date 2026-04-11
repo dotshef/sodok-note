@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { Spinner } from "@/components/ui/spinner";
+import { VisitCreateModal } from "@/components/visits/visit-create-modal";
 
 interface Visit {
   id: string;
@@ -67,6 +68,8 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
   const [userIdFilter, setUserIdFilter] = useState(initialFilters.userId);
   const [facilityTypeFilter, setFacilityTypeFilter] = useState(initialFilters.facilityType);
   const [page, setPage] = useState(1);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const loading = !data;
 
@@ -122,7 +125,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
     return () => {
       ignore = true;
     };
-  }, [debouncedSearch, statusFilter, dateFrom, dateTo, userIdFilter, facilityTypeFilter, page]);
+  }, [debouncedSearch, statusFilter, dateFrom, dateTo, userIdFilter, facilityTypeFilter, page, refreshKey]);
 
   function getFacilityLabel(typeId: string) {
     return FACILITY_TYPES.find((ft) => ft.id === typeId)?.label || typeId;
@@ -232,6 +235,17 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
             ))}
           </select>
         )}
+
+        {role === "admin" && (
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer ml-auto"
+          >
+            <Plus size={16} />
+            방문 일정 등록
+          </button>
+        )}
       </div>
 
       {/* 테이블 */}
@@ -299,6 +313,18 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
           </tbody>
         </table>
       </div>
+
+      {/* 방문 일정 등록 모달 */}
+      {role === "admin" && (
+        <VisitCreateModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          onCreated={() => {
+            setData(null);
+            setRefreshKey((k) => k + 1);
+          }}
+        />
+      )}
 
       {/* 페이지네이션 */}
       {data && data.totalPages > 1 && (

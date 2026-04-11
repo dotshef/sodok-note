@@ -43,23 +43,9 @@ create table clients (
   updated_at timestamptz not null
 );
 
--- 4. schedules (정기 방문 규칙)
-create table schedules (
-  id uuid primary key default gen_random_uuid(),
-  client_id uuid not null references clients(id) on delete cascade,
-  tenant_id uuid not null references tenants(id) on delete cascade,
-  user_id uuid references users(id) on delete set null,
-  cycle_months int not null check (cycle_months in (1, 2, 3, 6)),
-  next_visit_date date not null,
-  is_active boolean not null default true,
-  created_at timestamptz not null,
-  updated_at timestamptz not null
-);
-
--- 5. visits (실제 방문 기록)
+-- 4. visits (실제 방문 기록)
 create table visits (
   id uuid primary key default gen_random_uuid(),
-  schedule_id uuid references schedules(id) on delete set null,
   client_id uuid not null references clients(id) on delete cascade,
   user_id uuid references users(id) on delete set null,
   tenant_id uuid not null references tenants(id) on delete cascade,
@@ -74,7 +60,7 @@ create table visits (
   unique (tenant_id, visit_code)
 );
 
--- 6. certificates (소독증명서)
+-- 5. certificates (소독증명서)
 create table certificates (
   id uuid primary key default gen_random_uuid(),
   visit_id uuid not null unique references visits(id) on delete cascade,

@@ -13,7 +13,6 @@ interface Client {
   address: string | null;
   contact_name: string | null;
   contact_phone: string | null;
-  schedules: { next_visit_date: string }[];
 }
 
 interface ClientsResponse {
@@ -56,11 +55,6 @@ export default function ClientsPage() {
 
   function getFacilityLabel(id: string) {
     return FACILITY_TYPES.find((ft) => ft.id === id)?.label || id;
-  }
-
-  function getNextVisitDate(client: Client) {
-    const schedule = client.schedules?.[0];
-    return schedule?.next_visit_date || "-";
   }
 
   return (
@@ -114,19 +108,18 @@ export default function ClientsPage() {
               <th>주소</th>
               <th>담당자</th>
               <th>연락처</th>
-              <th>다음 방문일</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="text-center py-8">
+                <td colSpan={5} className="text-center py-8">
                   <Spinner size="md" />
                 </td>
               </tr>
             ) : data?.clients.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-8 text-base-content/50">
+                <td colSpan={5} className="text-center py-8 text-base-content/50">
                   등록된 고객이 없습니다
                 </td>
               </tr>
@@ -145,7 +138,6 @@ export default function ClientsPage() {
                   <td className="text-base">{client.address || "-"}</td>
                   <td className="text-base">{client.contact_name || "-"}</td>
                   <td className="text-base">{client.contact_phone || "-"}</td>
-                  <td className="text-base">{getNextVisitDate(client)}</td>
                 </tr>
               ))
             )}

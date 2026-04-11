@@ -23,7 +23,6 @@ export default function NewClientPage() {
     contactName: "",
     contactPhone: "",
     notes: "",
-    firstVisitDate: "",
   });
 
   function updateField(field: string, value: string) {
@@ -176,22 +175,6 @@ export default function NewClientPage() {
                 rows={3}
                 value={form.notes}
                 onChange={(e) => updateField("notes", e.target.value)}
-              />
-            </FormField>
-          </div>
-        </div>
-
-        <div className="rounded-xl bg-base-100 border border-base-300">
-          <div className="p-6">
-            <h3 className="font-semibold">방문 스케줄</h3>
-
-            <FormField label={<>첫 방문 예정일 <span className="text-error">*</span></>}>
-              <input
-                type="date"
-                className="w-full"
-                value={form.firstVisitDate}
-                onChange={(e) => updateField("firstVisitDate", e.target.value)}
-                required
               />
             </FormField>
           </div>

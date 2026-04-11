@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
 import { createClientSchema } from "@/lib/validations/client";
-import { getCycleMonths } from "@/lib/utils/cycle";
-import { generateVisitCode } from "@/lib/utils/visit-code";
-import type { FacilityTypeId } from "@/lib/constants/facility-types";
 
 // 고객 목록 조회
 export async function GET(request: Request) {
@@ -21,7 +18,7 @@ export async function GET(request: Request) {
   const supabase = getSupabase();
   let query = supabase
     .from("clients")
-    .select("*, schedules(next_visit_date)", { count: "exact" })
+    .select("*", { count: "exact" })
     .eq("tenant_id", session.tenantId)
     .eq("is_active", true)
     .order("created_at", { ascending: false })
@@ -62,11 +59,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { name, facilityType, area, areaPyeong, address, contactName, contactPhone, notes, firstVisitDate } = parsed.data;
+  const { name, facilityType, area, areaPyeong, address, contactName, contactPhone, notes } = parsed.data;
   const now = new Date().toISOString();
   const supabase = getSupabase();
 
-  // 1. 고객 생성
   const { data: client, error: clientError } = await supabase
     .from("clients")
     .insert({
@@ -87,42 +83,6 @@ export async function POST(request: Request) {
 
   if (clientError || !client) {
     return NextResponse.json({ error: "고객 등록에 실패했습니다" }, { status: 500 });
-  }
-
-  // 2. 스케줄 자동 생성
-  const cycleMonths = getCycleMonths(facilityType as FacilityTypeId);
-  if (cycleMonths) {
-    const { error: scheduleError } = await supabase
-      .from("schedules")
-      .insert({
-        client_id: client.id,
-        tenant_id: session.tenantId,
-        cycle_months: cycleMonths,
-        next_visit_date: firstVisitDate,
-        created_at: now,
-        updated_at: now,
-      });
-
-    if (scheduleError) {
-      console.error("Schedule creation failed:", scheduleError);
-    }
-
-    // 3. 첫 visit 생성
-    const visitCode = await generateVisitCode(session.tenantId, firstVisitDate);
-    const { error: visitError } = await supabase
-      .from("visits")
-      .insert({
-        client_id: client.id,
-        tenant_id: session.tenantId,
-        scheduled_date: firstVisitDate,
-        status: "scheduled",
-        visit_code: visitCode,
-        created_at: now,
-      });
-
-    if (visitError) {
-      console.error("Visit creation failed:", visitError);
-    }
   }
 
   return NextResponse.json({ id: client.id }, { status: 201 });

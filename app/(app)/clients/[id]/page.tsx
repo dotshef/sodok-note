@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Pencil, Trash2, FileText } from "lucide-react";
 import Link from "next/link";
-import { FACILITY_TYPES } from "@/lib/constants/facility-types";
+import { FACILITY_TYPES, type FacilityTypeId } from "@/lib/constants/facility-types";
+import { getCycleMonths } from "@/lib/utils/cycle";
 import { Spinner } from "@/components/ui/spinner";
 
 interface Visit {
@@ -18,13 +19,6 @@ interface Visit {
   certificates: { id: string; certificate_number: string; pdf_url: string | null } | null;
 }
 
-interface Schedule {
-  id: string;
-  cycle_months: number;
-  next_visit_date: string;
-  is_active: boolean;
-}
-
 interface ClientDetail {
   id: string;
   name: string;
@@ -35,7 +29,6 @@ interface ClientDetail {
   contact_name: string | null;
   contact_phone: string | null;
   notes: string | null;
-  schedules: Schedule[];
   visits: Visit[];
   stats: {
     totalVisits: number;
@@ -83,12 +76,6 @@ export default function ClientDetailPage() {
     return FACILITY_TYPES.find((ft) => ft.id === typeId)?.label || typeId;
   }
 
-  function formatDate(dateStr: string) {
-    const d = new Date(dateStr);
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
-    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
-  }
-
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -99,7 +86,7 @@ export default function ClientDetailPage() {
 
   if (!client) return null;
 
-  const activeSchedule = client.schedules?.find((s) => s.is_active);
+  const cycleMonths = getCycleMonths(client.facility_type as FacilityTypeId);
   const sortedVisits = [...(client.visits || [])].sort(
     (a, b) => new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime()
   );
@@ -147,7 +134,7 @@ export default function ClientDetailPage() {
               <div>
                 <span className="text-base-content/50">소독 주기</span>
                 <p className="font-medium">
-                  {activeSchedule ? `${activeSchedule.cycle_months}개월` : "-"}
+                  {cycleMonths ? `${cycleMonths}개월` : "-"}
                 </p>
               </div>
               <div>
@@ -168,39 +155,24 @@ export default function ClientDetailPage() {
           </div>
         </div>
 
-        {/* 우측 */}
-        <div className="flex flex-col gap-4">
-          {/* 다음 방문 예정 */}
-          <div className="rounded-xl bg-base-100 border border-base-300 flex-1">
-            <div className="h-full py-4 px-6 flex flex-col justify-center">
-              <h3 className="font-semibold text-base">다음 방문 예정</h3>
-              <p className="text-lg font-bold mt-1">
-                {activeSchedule
-                  ? formatDate(activeSchedule.next_visit_date)
-                  : "예정 없음"}
-              </p>
+        {/* 우측: 요약 통계 */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-xl bg-base-100 border border-base-300">
+            <div className="h-full py-6 px-4 flex flex-col items-center justify-center text-center">
+              <p className="text-2xl font-bold">{client.stats.totalVisits}</p>
+              <p className="text-base text-base-content/50">총 방문</p>
             </div>
           </div>
-
-          {/* 요약 통계 */}
-          <div className="grid grid-cols-3 gap-2 flex-1">
-            <div className="rounded-xl bg-base-100 border border-base-300 h-full">
-              <div className="h-full py-3 px-4 flex flex-col items-center justify-center text-center">
-                <p className="text-2xl font-bold">{client.stats.totalVisits}</p>
-                <p className="text-base text-base-content/50">총 방문</p>
-              </div>
+          <div className="rounded-xl bg-base-100 border border-base-300">
+            <div className="h-full py-6 px-4 flex flex-col items-center justify-center text-center">
+              <p className="text-2xl font-bold">{client.stats.completionRate}%</p>
+              <p className="text-base text-base-content/50">완료율</p>
             </div>
-            <div className="rounded-xl bg-base-100 border border-base-300 h-full">
-              <div className="h-full py-3 px-4 flex flex-col items-center justify-center text-center">
-                <p className="text-2xl font-bold">{client.stats.completionRate}%</p>
-                <p className="text-base text-base-content/50">완료율</p>
-              </div>
-            </div>
-            <div className="rounded-xl bg-base-100 border border-base-300 h-full">
-              <div className="h-full py-3 px-4 flex flex-col items-center justify-center text-center">
-                <p className="text-2xl font-bold">{client.stats.certificateCount}</p>
-                <p className="text-base text-base-content/50">증명서</p>
-              </div>
+          </div>
+          <div className="rounded-xl bg-base-100 border border-base-300">
+            <div className="h-full py-6 px-4 flex flex-col items-center justify-center text-center">
+              <p className="text-2xl font-bold">{client.stats.certificateCount}</p>
+              <p className="text-base text-base-content/50">증명서</p>
             </div>
           </div>
         </div>
