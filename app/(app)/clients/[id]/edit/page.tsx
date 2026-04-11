@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
+import { convertArea } from "@/lib/utils/area";
 
 export default function EditClientPage() {
   const { id } = useParams<{ id: string }>();
@@ -57,7 +58,11 @@ export default function EditClientPage() {
   }, [id, router]);
 
   function updateField(field: string, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    if (field === "area" || field === "areaPyeong") {
+      setForm((prev) => ({ ...prev, ...convertArea(field, value) }));
+    } else {
+      setForm((prev) => ({ ...prev, [field]: value }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

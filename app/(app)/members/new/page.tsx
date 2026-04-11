@@ -48,7 +48,7 @@ export default function NewMemberPage() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-2xl font-bold mb-6">기사 등록</h2>
+      <h2 className="text-2xl font-bold mb-6">직원 등록</h2>
 
       {error && (
         <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">

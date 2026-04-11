@@ -7,6 +7,7 @@ import { getCycleMonths } from "@/lib/utils/cycle";
 import { FormField } from "@/components/ui/form-field";
 import type { FacilityTypeId } from "@/lib/constants/facility-types";
 import { Spinner } from "@/components/ui/spinner";
+import { convertArea } from "@/lib/utils/area";
 
 export default function NewClientPage() {
   const router = useRouter();
@@ -26,7 +27,11 @@ export default function NewClientPage() {
   });
 
   function updateField(field: string, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    if (field === "area" || field === "areaPyeong") {
+      setForm((prev) => ({ ...prev, ...convertArea(field, value) }));
+    } else {
+      setForm((prev) => ({ ...prev, [field]: value }));
+    }
   }
 
   const selectedCycle = form.facilityType

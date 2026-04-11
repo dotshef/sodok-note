@@ -69,7 +69,7 @@ export default function MembersPage() {
         <h2 className="text-2xl font-bold"></h2>
         <Link href="/members/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer">
           <Plus size={16} />
-          기사 등록
+          직원 등록
         </Link>
       </div>
 
@@ -111,7 +111,7 @@ export default function MembersPage() {
                         member.role === "admin" ? "bg-primary/10 text-primary" : "bg-base-200 text-base-content"
                       }`}
                     >
-                      {member.role === "admin" ? "관리자" : "기사"}
+                      {member.role === "admin" ? "관리자" : "직원"}
                     </span>
                   </td>
                   <td>

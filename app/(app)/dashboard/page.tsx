@@ -172,7 +172,7 @@ export default function DashboardPage() {
                     <tr>
                       <th>고객명</th>
                       <th>시설 유형</th>
-                      <th>담당 기사</th>
+                      <th>담당 직원</th>
                       <th>상태</th>
                     </tr>
                   </thead>

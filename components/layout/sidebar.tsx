@@ -23,7 +23,7 @@ const navItems: NavItem[] = [
   { href: "/calendar", label: "캘린더", icon: <Calendar size={22} /> },
   { href: "/clients", label: "고객 관리", icon: <Building2 size={22} /> },
   { href: "/certificates", label: "증명서", icon: <FileText size={22} /> },
-  { href: "/members", label: "기사 관리", icon: <Users size={22} />, adminOnly: true },
+  { href: "/members", label: "직원 관리", icon: <Users size={22} />, adminOnly: true },
   { href: "/settings", label: "설정", icon: <Settings size={22} /> },
 ];
 
