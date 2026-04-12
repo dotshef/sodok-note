@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "shadcn/tailwind.css";
 
 @font-face {
   font-family: "Pretendard";
@@ -62,102 +61,54 @@ textarea:disabled {
   border-bottom: 1px solid var(--color-border);
 }
 
-@theme inline {
-  --font-sans: var(--font-sans);
-  --font-heading: var(--font-sans);
+/* ── 컬러 토큰 ── */
+@theme {
+  /* 기본 표면 */
+  --color-background: #edf3f4;
+  --color-foreground: #04232c;
+  --color-card: #fafcfd;
+  --color-card-foreground: #04232c;
+  --color-popover: #fafcfd;
+  --color-popover-foreground: #04232c;
 
-  /* shadcn 표준 컬러 토큰 */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  /* Primary — 민트 블루 */
+  --color-primary: #009098;
+  --color-primary-foreground: #f8fdfd;
 
-  /* 프로젝트 확장 시맨틱 */
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
+  /* 중립 보조 */
+  --color-secondary: #edf3f4;
+  --color-secondary-foreground: #04232c;
+  --color-muted: #edf3f4;
+  --color-muted-foreground: #57666b;
+  --color-accent: #edf3f4;
+  --color-accent-foreground: #04232c;
 
-  /* Radius 스케일 */
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
+  /* 파괴적 액션 */
+  --color-destructive: #cf4040;
+  --color-destructive-foreground: #fffafa;
 
-:root {
-  /* 페이지 바탕 — 기존 base-200 유지 (살짝 어두운 회색) */
-  --background: oklch(0.96 0.006 210);
-  --foreground: oklch(0.24 0.04 220);          /* 기존 base-content */
+  /* 테두리 / 입력 / 포커스 링 */
+  --color-border: #d7e0e2;
+  --color-input: #d7e0e2;
+  --color-ring: #009098;
 
-  /* 카드/패널 — 기존 base-100 (거의 흰색) */
-  --card: oklch(0.99 0.003 210);
-  --card-foreground: oklch(0.24 0.04 220);
-  --popover: oklch(0.99 0.003 210);
-  --popover-foreground: oklch(0.24 0.04 220);
+  /* 시맨틱 확장 */
+  --color-success: #00a16f;
+  --color-success-foreground: #f9fdfb;
+  --color-warning: #e49e22;
+  --color-warning-foreground: #23190a;
+  --color-info: #008dc3;
+  --color-info-foreground: #f9fcfe;
 
-  /* Primary — 민트 블루 (아쿠아) */
-  --primary: oklch(0.58 0.13 200);
-  --primary-foreground: oklch(0.99 0.005 200);
-
-  /* Secondary/Muted/Accent — shadcn 관례(중립 톤)에 맞춤. 원래 프로젝트는 미사용 */
-  --secondary: oklch(0.96 0.006 210);
-  --secondary-foreground: oklch(0.24 0.04 220);
-  --muted: oklch(0.96 0.006 210);
-  --muted-foreground: oklch(0.5 0.02 220);
-  --accent: oklch(0.96 0.006 210);
-  --accent-foreground: oklch(0.24 0.04 220);
-
-  /* Destructive — 기존 error 빨강 */
-  --destructive: oklch(0.58 0.18 25);
-  --destructive-foreground: oklch(0.99 0.005 25);
-
-  /* Border/Input/Ring */
-  --border: oklch(0.90 0.01 210);              /* 기존 base-300 */
-  --input: oklch(0.90 0.01 210);
-  --ring: oklch(0.58 0.13 200 / 0.5);          /* primary 반투명 */
-
-  /* 프로젝트 확장 시맨틱 — shadcn 기본에 없음 */
-  --success: oklch(0.62 0.15 165);
-  --success-foreground: oklch(0.99 0.005 165);
-  --warning: oklch(0.75 0.15 75);
-  --warning-foreground: oklch(0.22 0.03 75);
-  --info: oklch(0.60 0.14 230);
-  --info-foreground: oklch(0.99 0.005 230);
-
-  /* 기타 */
-  --radius: 0.625rem;
+  /* 폰트 */
   --font-sans: "Pretendard", system-ui, sans-serif;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
   }
 }

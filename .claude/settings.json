@@ -20,7 +20,8 @@
       "Bash(rmdir app/api/settings/logo)",
       "Bash(echo \"exit=$?\")",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(npx shadcn@latest init --help)"
+      "Bash(npx shadcn@latest init --help)",
+      "Bash(node -e ':*)"
     ],
     "additionalDirectories": [
       "c:\\D\\pest-control\\.claude"
