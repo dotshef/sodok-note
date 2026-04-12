@@ -10,7 +10,7 @@ export default async function AppLayout({
   const session = await requireAuth();
 
   return (
-    <div className="flex h-screen bg-base-200">
+    <div className="flex h-screen bg-background">
       <Sidebar role={session.role} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header session={session} />

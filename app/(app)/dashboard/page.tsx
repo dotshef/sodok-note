@@ -74,7 +74,7 @@ export default function DashboardPage() {
       case "completed":
         return <span className={`${base} bg-success/10 text-success`}>완료</span>;
       case "missed":
-        return <span className={`${base} bg-error/10 text-error`}>미완료</span>;
+        return <span className={`${base} bg-destructive/10 text-destructive`}>미완료</span>;
       default:
         return <span className={`${base} bg-primary/10 text-primary`}>예정</span>;
     }
@@ -99,7 +99,7 @@ export default function DashboardPage() {
     <div>
       {/* 상단 요약 카드 4개 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="rounded-xl bg-card border border-border">
           <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -107,13 +107,13 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{data.todayCount}건</p>
-                <p className="text-base text-base-content/50">오늘 방문 예정</p>
+                <p className="text-base text-muted-foreground">오늘 방문 예정</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="rounded-xl bg-card border border-border">
           <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
@@ -121,27 +121,27 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{data.weekCount}건</p>
-                <p className="text-base text-base-content/50">이번 주 예정</p>
+                <p className="text-base text-muted-foreground">이번 주 예정</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="rounded-xl bg-card border border-border">
           <div className="py-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center">
-                <AlertTriangle size={20} className="text-error" />
+              <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
+                <AlertTriangle size={20} className="text-destructive" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-error">{data.missedCount}건</p>
-                <p className="text-base text-base-content/50">미완료 건</p>
+                <p className="text-2xl font-bold text-destructive">{data.missedCount}건</p>
+                <p className="text-base text-muted-foreground">미완료 건</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="rounded-xl bg-card border border-border">
           <div className="py-4 px-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
@@ -149,7 +149,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{data.monthCompleted}건</p>
-                <p className="text-base text-base-content/50">이번 달 완료</p>
+                <p className="text-base text-muted-foreground">이번 달 완료</p>
               </div>
             </div>
           </div>
@@ -159,7 +159,7 @@ export default function DashboardPage() {
       {/* 하단 2컬럼 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* 좌측: 오늘 방문 예정 */}
-        <div className="lg:col-span-2 rounded-xl bg-base-100 border border-base-300">
+        <div className="lg:col-span-2 rounded-xl bg-card border border-border">
           <div className="p-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-semibold">오늘 방문 예정</h3>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
               </Link>
             </div>
             {data.todayVisits.length === 0 ? (
-              <p className="text-base text-base-content/40 py-4 text-center">
+              <p className="text-base text-muted-foreground py-4 text-center">
                 오늘 예정된 방문이 없습니다
               </p>
             ) : (
@@ -217,7 +217,7 @@ export default function DashboardPage() {
         {/* 우측 */}
         <div className="space-y-4">
           {/* 미완료 건 */}
-          <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="rounded-xl bg-card border border-border">
             <div className="p-6">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-base font-semibold">미완료 건</h3>
@@ -229,7 +229,7 @@ export default function DashboardPage() {
                 </Link>
               </div>
               {data.missedVisits.length === 0 ? (
-                <p className="text-base text-base-content/40 py-2 text-center">
+                <p className="text-base text-muted-foreground py-2 text-center">
                   미완료 건이 없습니다
                 </p>
               ) : (
@@ -241,15 +241,15 @@ export default function DashboardPage() {
                       <Link
                         key={visit.id}
                         href={`/visits/${visit.id}`}
-                        className="flex items-center justify-between p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
                       >
                         <div>
                           <p className="text-base font-medium">{client?.name || "-"}</p>
-                          <p className="text-base text-base-content/50">
+                          <p className="text-base text-muted-foreground">
                             {visit.scheduled_date}
                           </p>
                         </div>
-                        <span className="text-base text-error font-medium">
+                        <span className="text-base text-destructive font-medium">
                           {daysAgo}일 경과
                         </span>
                       </Link>
@@ -261,7 +261,7 @@ export default function DashboardPage() {
           </div>
 
           {/* 이번 주 요약 차트 */}
-          <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="rounded-xl bg-card border border-border">
             <div className="p-6">
               <h3 className="text-base font-semibold mb-3">이번 주 요약</h3>
               <div className="flex items-end gap-2 h-32">
@@ -286,13 +286,13 @@ export default function DashboardPage() {
                         )}
                         {day.missed > 0 && (
                           <div
-                            className="bg-error"
+                            className="bg-destructive"
                             style={{ height: `${(day.missed / total) * 100}%` }}
                           />
                         )}
-                        {total === 0 && <div className="bg-base-300 h-full" />}
+                        {total === 0 && <div className="bg-border h-full" />}
                       </div>
-                      <span className="text-base text-base-content/50">{day.label}</span>
+                      <span className="text-base text-muted-foreground">{day.label}</span>
                     </div>
                   );
                 })}
@@ -305,7 +305,7 @@ export default function DashboardPage() {
                   <span className="w-2 h-2 rounded-sm bg-success" /> 완료
                 </div>
                 <div className="flex items-center gap-1 text-base">
-                  <span className="w-2 h-2 rounded-sm bg-error" /> 미완료
+                  <span className="w-2 h-2 rounded-sm bg-destructive" /> 미완료
                 </div>
               </div>
             </div>

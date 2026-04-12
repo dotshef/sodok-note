@@ -1,8 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 @import "shadcn/tailwind.css";
-
-@custom-variant dark (&:is(.dark *));
 
 @font-face {
   font-family: "Pretendard";
@@ -17,36 +14,16 @@ html {
   font-family: "Pretendard", system-ui, sans-serif;
 }
 
-/* ── 커스텀 테마 ── */
-@theme {
-  --color-primary: oklch(0.58 0.13 200);       /* 민트 블루 (아쿠아) */
-  --color-primary-content: oklch(0.99 0.005 200);
-  --color-secondary: oklch(0.60 0.14 230);     /* 소프트 블루 */
-  --color-secondary-content: oklch(0.99 0.005 230);
-  --color-accent: oklch(0.72 0.17 85);         /* 레몬 옐로우 포인트 */
-  --color-accent-content: oklch(0.22 0.03 85);
-  --color-neutral: oklch(0.28 0.03 210);
-  --color-neutral-content: oklch(0.96 0.005 210);
-  --color-base-100: oklch(0.99 0.003 210);     /* 거의 흰색, 미세한 블루 톤 */
-  --color-base-200: oklch(0.96 0.006 210);
-  --color-base-300: oklch(0.90 0.01 210);
-  --color-base-content: oklch(0.24 0.04 220);
-  --color-success: oklch(0.62 0.15 165);
-  --color-error: oklch(0.58 0.18 25);
-  --color-warning: oklch(0.75 0.15 75);
-  --color-info: oklch(0.60 0.14 230);
-}
-
 /* ── Form elements ── */
 input:where([type="text"], [type="email"], [type="password"], [type="tel"], [type="number"], [type="date"]),
 select,
 textarea {
-  border: 1px solid var(--color-base-300);
+  border: 1px solid var(--color-input);
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5rem;
-  background-color: var(--color-base-100);
+  background-color: var(--color-card);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -54,8 +31,8 @@ textarea {
 input:where([type="text"], [type="email"], [type="password"], [type="tel"], [type="number"], [type="date"]):focus,
 select:focus,
 textarea:focus {
-  border-color: oklch(0.58 0.13 200 / 0.5);
-  box-shadow: 0 0 0 2px oklch(0.58 0.13 200 / 0.15);
+  border-color: var(--color-ring);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-ring) 30%, transparent);
 }
 
 input:disabled,
@@ -76,49 +53,49 @@ textarea:disabled {
   text-align: left;
   padding: 0.75rem 1rem;
   font-weight: 500;
-  color: oklch(0.24 0.04 220 / 0.6);
-  border-bottom: 1px solid var(--color-base-300);
+  color: var(--color-muted-foreground);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .data-table td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-base-300);
+  border-bottom: 1px solid var(--color-border);
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
+  --font-heading: var(--font-sans);
+
+  /* shadcn 표준 컬러 토큰 */
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* 프로젝트 확장 시맨틱 */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Radius 스케일 */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -129,72 +106,48 @@ textarea:disabled {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* 페이지 바탕 — 기존 base-200 유지 (살짝 어두운 회색) */
+  --background: oklch(0.96 0.006 210);
+  --foreground: oklch(0.24 0.04 220);          /* 기존 base-content */
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* 카드/패널 — 기존 base-100 (거의 흰색) */
+  --card: oklch(0.99 0.003 210);
+  --card-foreground: oklch(0.24 0.04 220);
+  --popover: oklch(0.99 0.003 210);
+  --popover-foreground: oklch(0.24 0.04 220);
+
+  /* Primary — 민트 블루 (아쿠아) */
+  --primary: oklch(0.58 0.13 200);
+  --primary-foreground: oklch(0.99 0.005 200);
+
+  /* Secondary/Muted/Accent — shadcn 관례(중립 톤)에 맞춤. 원래 프로젝트는 미사용 */
+  --secondary: oklch(0.96 0.006 210);
+  --secondary-foreground: oklch(0.24 0.04 220);
+  --muted: oklch(0.96 0.006 210);
+  --muted-foreground: oklch(0.5 0.02 220);
+  --accent: oklch(0.96 0.006 210);
+  --accent-foreground: oklch(0.24 0.04 220);
+
+  /* Destructive — 기존 error 빨강 */
+  --destructive: oklch(0.58 0.18 25);
+  --destructive-foreground: oklch(0.99 0.005 25);
+
+  /* Border/Input/Ring */
+  --border: oklch(0.90 0.01 210);              /* 기존 base-300 */
+  --input: oklch(0.90 0.01 210);
+  --ring: oklch(0.58 0.13 200 / 0.5);          /* primary 반투명 */
+
+  /* 프로젝트 확장 시맨틱 — shadcn 기본에 없음 */
+  --success: oklch(0.62 0.15 165);
+  --success-foreground: oklch(0.99 0.005 165);
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.22 0.03 75);
+  --info: oklch(0.60 0.14 230);
+  --info-foreground: oklch(0.99 0.005 230);
+
+  /* 기타 */
+  --radius: 0.625rem;
+  --font-sans: "Pretendard", system-ui, sans-serif;
 }
 
 @layer base {

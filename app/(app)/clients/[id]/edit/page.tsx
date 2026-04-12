@@ -6,6 +6,7 @@ import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
 import { convertArea } from "@/lib/utils/area";
+import { FilterSelect } from "@/components/ui/filter-select";
 
 export default function EditClientPage() {
   const { id } = useParams<{ id: string }>();
@@ -108,17 +109,17 @@ export default function EditClientPage() {
       <h2 className="text-2xl font-bold mb-6">고객 정보 수정</h2>
 
       {error && (
-        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="rounded-xl bg-card border border-border">
           <div className="p-6 space-y-4">
             <h3 className="font-semibold">시설 정보</h3>
 
-            <FormField label={<>시설명 <span className="text-error">*</span></>}>
+            <FormField label={<>시설명 <span className="text-destructive">*</span></>}>
               <input
                 type="text"
                 className="w-full"
@@ -129,18 +130,14 @@ export default function EditClientPage() {
             </FormField>
 
             <FormField label="시설 유형">
-              <select
-                className="w-full"
+              <FilterSelect
                 value={form.facilityType}
-                onChange={(e) => updateField("facilityType", e.target.value)}
-              >
-                <option value="">시설 유형 선택</option>
-                {FACILITY_TYPES.map((ft) => (
-                  <option key={ft.id} value={ft.id}>
-                    {ft.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(v) => updateField("facilityType", v)}
+                options={[
+                  { value: "", label: "시설 유형 선택" },
+                  ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
+                ]}
+              />
             </FormField>
 
             <FormField label="주소">
@@ -173,7 +170,7 @@ export default function EditClientPage() {
           </div>
         </div>
 
-        <div className="rounded-xl bg-base-100 border border-base-300">
+        <div className="rounded-xl bg-card border border-border">
           <div className="p-6 space-y-4">
             <h3 className="font-semibold">담당자 정보</h3>
 
@@ -210,14 +207,14 @@ export default function EditClientPage() {
         <div className="flex gap-3 justify-end">
           <button
             type="button"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
             onClick={() => router.back()}
           >
             취소
           </button>
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
             disabled={saving}
           >
             {saving ? <Spinner size="sm" /> : "저장"}

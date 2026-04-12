@@ -63,9 +63,9 @@ export default function CalendarPage() {
   }
 
   function getDayTextClass(day: Date, isTodayDate: boolean, isCurrentMonth: boolean) {
-    if (isTodayDate) return "bg-primary text-primary-content font-bold";
-    if (!isCurrentMonth) return "text-base-content/30";
-    if (day.getDay() === 0) return "text-error";
+    if (isTodayDate) return "bg-primary text-primary-foreground font-bold";
+    if (!isCurrentMonth) return "text-muted-foreground/60";
+    if (day.getDay() === 0) return "text-destructive";
     if (day.getDay() === 6) return "text-primary";
     return "";
   }
@@ -73,7 +73,7 @@ export default function CalendarPage() {
   function getStatusColor(status: string) {
     switch (status) {
       case "completed": return "bg-success";
-      case "missed": return "bg-error";
+      case "missed": return "bg-destructive";
       default: return "bg-primary";
     }
   }
@@ -110,10 +110,10 @@ export default function CalendarPage() {
             {format(currentDate, "yyyy년 M월", { locale: ko })}
           </h2>
           <div className="flex gap-1">
-            <button onClick={handlePrev} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
+            <button onClick={handlePrev} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
               <ChevronLeft size={16} />
             </button>
-            <button onClick={handleNext} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
+            <button onClick={handleNext} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
               <ChevronRight size={16} />
             </button>
           </div>
@@ -123,14 +123,14 @@ export default function CalendarPage() {
       {/* 캘린더 + 방문 일정 가로 병렬 */}
       <div className="flex gap-6">
         {/* 캘린더 그리드 */}
-        <div className="flex-1 bg-base-100 rounded-lg border border-base-300">
+        <div className="flex-1 bg-card rounded-lg border border-border">
           {/* 요일 헤더 */}
-          <div className="grid grid-cols-7 border-b border-base-300">
+          <div className="grid grid-cols-7 border-b border-border">
             {dayNames.map((day, i) => (
               <div
                 key={day}
                 className={`py-2 text-center text-base font-medium ${
-                  i === 0 ? "text-error" : i === 6 ? "text-primary" : "text-base-content/60"
+                  i === 0 ? "text-destructive" : i === 6 ? "text-primary" : "text-muted-foreground"
                 }`}
               >
                 {day}
@@ -150,8 +150,8 @@ export default function CalendarPage() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDate(day)}
-                  className={`relative min-h-35 p-1.5 border-b border-r border-base-300 text-left transition-colors hover:bg-base-200 flex flex-col items-start cursor-pointer ${
-                    isSelected ? "bg-base-200" : ""
+                  className={`relative min-h-35 p-1.5 border-b border-r border-border text-left transition-colors hover:bg-muted flex flex-col items-start cursor-pointer ${
+                    isSelected ? "bg-muted" : ""
                   }`}
                 >
                   <span
@@ -171,7 +171,7 @@ export default function CalendarPage() {
                       </div>
                     ))}
                     {dayVisits.length > 3 && (
-                      <div className="text-base text-base-content/50 px-1">
+                      <div className="text-base text-muted-foreground px-1">
                         +{dayVisits.length - 3}건
                       </div>
                     )}
@@ -184,7 +184,7 @@ export default function CalendarPage() {
 
         {/* 우측: 선택일 상세 */}
       <div className="hidden lg:block w-72 shrink-0">
-        <div className="rounded-xl bg-base-100 border border-base-300 sticky top-0">
+        <div className="rounded-xl bg-card border border-border sticky top-0">
           <div className="p-6">
             <h3 className="font-bold text-lg">
               {format(selectedDate, "M월 d일 (EEE)", { locale: ko })}
@@ -198,7 +198,7 @@ export default function CalendarPage() {
                 <Spinner size="sm" />
               </div>
             ) : selectedVisits.length === 0 ? (
-              <p className="text-base text-base-content/40 py-4 text-center">
+              <p className="text-base text-muted-foreground py-4 text-center">
                 예정된 방문이 없습니다
               </p>
             ) : (
@@ -207,12 +207,12 @@ export default function CalendarPage() {
                   <Link
                     key={visit.id}
                     href={`/visits/${visit.id}`}
-                    className="block p-3 rounded-lg border border-base-300 hover:bg-base-200 transition-colors cursor-pointer"
+                    className="block p-3 rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer"
                   >
                     <div className="font-semibold text-base">
                       {visit.clients?.name}
                     </div>
-                    <div className="text-base text-base-content/50 mt-0.5">
+                    <div className="text-base text-muted-foreground mt-0.5">
                       {visit.clients?.address || "주소 없음"}
                     </div>
                     <span
@@ -226,7 +226,7 @@ export default function CalendarPage() {
             )}
 
             {/* 상태 범례 */}
-            <div className="mt-6 pt-4 border-t border-base-300">
+            <div className="mt-6 pt-4 border-t border-border">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 text-base">
                   <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
@@ -237,7 +237,7 @@ export default function CalendarPage() {
                   완료
                 </div>
                 <div className="flex items-center gap-2 text-base">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-error" />
+                  <span className="w-2.5 h-2.5 rounded-sm bg-destructive" />
                   미완료
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { Spinner } from "@/components/ui/spinner";
 import { VisitCreateModal } from "@/components/visits/visit-create-modal";
+import { FilterSelect } from "@/components/ui/filter-select";
 
 interface Visit {
   id: string;
@@ -138,7 +139,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
       case "completed":
         return <span className={`${badgeBase} bg-success/10 text-success`}>완료</span>;
       case "missed":
-        return <span className={`${badgeBase} bg-error/10 text-error`}>미완료</span>;
+        return <span className={`${badgeBase} bg-destructive/10 text-destructive`}>미완료</span>;
       default:
         return <span className={`${badgeBase} bg-primary/10 text-primary`}>예정</span>;
     }
@@ -151,8 +152,8 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
       {/* 필터 바 */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="flex">
-          <div className="flex items-center px-3 bg-base-200 border border-r-0 border-base-300 rounded-l-lg">
-            <Search size={16} className="text-base-content/40" />
+          <div className="flex items-center px-3 bg-muted border border-r-0 border-border rounded-l-lg">
+            <Search size={16} className="text-muted-foreground" />
           </div>
           <input
             type="text"
@@ -166,19 +167,17 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
           />
         </div>
 
-        <select
+        <FilterSelect
           value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value);
-            setPage(1);
-            setData(null);
-          }}
-        >
-          <option value="">전체 상태</option>
-          <option value="scheduled">예정</option>
-          <option value="completed">완료</option>
-          <option value="missed">미완료</option>
-        </select>
+          onChange={(v) => { setStatusFilter(v); setPage(1); setData(null); }}
+          options={[
+            { value: "", label: "전체 상태" },
+            { value: "scheduled", label: "예정" },
+            { value: "completed", label: "완료" },
+            { value: "missed", label: "미완료" },
+          ]}
+          className="w-36"
+        />
 
         <div className="flex items-center gap-2">
           <input
@@ -190,7 +189,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
               setData(null);
             }}
           />
-          <span className="text-base-content/40">~</span>
+          <span className="text-muted-foreground">~</span>
           <input
             type="date"
             value={dateTo}
@@ -202,45 +201,33 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
           />
         </div>
 
-        <select
+        <FilterSelect
           value={facilityTypeFilter}
-          onChange={(e) => {
-            setFacilityTypeFilter(e.target.value);
-            setPage(1);
-            setData(null);
-          }}
-        >
-          <option value="">전체 시설 유형</option>
-          {FACILITY_TYPES.map((ft) => (
-            <option key={ft.id} value={ft.id}>
-              {ft.label}
-            </option>
-          ))}
-        </select>
+          onChange={(v) => { setFacilityTypeFilter(v); setPage(1); setData(null); }}
+          options={[
+            { value: "", label: "전체 시설 유형" },
+            ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
+          ]}
+          className="w-56"
+        />
 
         {role === "admin" && (
-          <select
+          <FilterSelect
             value={userIdFilter}
-            onChange={(e) => {
-              setUserIdFilter(e.target.value);
-              setPage(1);
-              setData(null);
-            }}
-          >
-            <option value="">전체 담당자</option>
-            {activeMembers.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => { setUserIdFilter(v); setPage(1); setData(null); }}
+            options={[
+              { value: "", label: "전체 담당자" },
+              ...activeMembers.map((m) => ({ value: m.id, label: m.name })),
+            ]}
+            className="w-40"
+          />
         )}
 
         {role === "admin" && (
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer ml-auto"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors cursor-pointer ml-auto"
           >
             <Plus size={16} />
             방문 일정 등록
@@ -249,7 +236,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
       </div>
 
       {/* 테이블 */}
-      <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
+      <div className="bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>
@@ -270,7 +257,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
               </tr>
             ) : data?.visits.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-8 text-base-content/50">
+                <td colSpan={6} className="text-center py-8 text-muted-foreground">
                   방문 이력이 없습니다
                 </td>
               </tr>
@@ -286,7 +273,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
                         {visit.visit_code}
                       </Link>
                     ) : (
-                      <span className="text-base text-base-content/40">-</span>
+                      <span className="text-base text-muted-foreground">-</span>
                     )}
                   </td>
                   <td>
@@ -331,7 +318,7 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
         <div className="flex justify-center mt-4">
           <div className="flex">
             <button
-              className="inline-flex items-center justify-center p-2 border border-base-300 bg-base-100 rounded-l-lg hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center justify-center p-2 border border-border bg-card rounded-l-lg hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
               disabled={page <= 1}
               onClick={() => {
                 setPage(page - 1);
@@ -341,13 +328,13 @@ export function VisitsList({ role, initialFilters }: VisitsListProps) {
               <ChevronLeft size={16} />
             </button>
             <button
-              className="px-4 py-2 border-y border-base-300 bg-base-100 text-base"
+              className="px-4 py-2 border-y border-border bg-card text-base"
               disabled
             >
               {page} / {data.totalPages}
             </button>
             <button
-              className="inline-flex items-center justify-center p-2 border border-base-300 bg-base-100 rounded-r-lg hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center justify-center p-2 border border-border bg-card rounded-r-lg hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
               disabled={page >= data.totalPages}
               onClick={() => {
                 setPage(page + 1);

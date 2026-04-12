@@ -37,7 +37,7 @@ export function Sidebar({ role }: { role: "admin" | "member" }) {
   );
 
   return (
-    <aside className="hidden lg:flex flex-col w-72 bg-base-100 border-r border-base-300">
+    <aside className="hidden lg:flex flex-col w-72 bg-card border-r border-border">
       {/* 로고 */}
       <div className="px-6 py-5">
         <Link href="/dashboard" className="text-xl font-bold text-primary">
@@ -55,8 +55,8 @@ export function Sidebar({ role }: { role: "admin" | "member" }) {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                 isActive
-                  ? "bg-primary text-primary-content"
-                  : "text-base-content/70 hover:bg-base-200"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted"
               }`}
             >
               {item.icon}

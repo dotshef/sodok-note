@@ -107,7 +107,7 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto">
 
       {error && (
-        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
@@ -119,7 +119,7 @@ export default function SettingsPage() {
 
       {/* 업체 정보 */}
       <form onSubmit={handleSave}>
-        <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+        <div className="rounded-xl bg-card border border-border mb-4">
           <div className="p-6 space-y-4">
             <h3 className="text-base font-semibold">업체 정보</h3>
 
@@ -175,7 +175,7 @@ export default function SettingsPage() {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
             disabled={saving}
           >
             {saving ? <Spinner size="sm" /> : "저장"}
@@ -225,12 +225,12 @@ function PasswordChangeSection() {
 
   return (
     <form onSubmit={handleChangePassword} className="mt-4">
-      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+      <div className="rounded-xl bg-card border border-border mb-4">
         <div className="p-6 space-y-4">
           <h3 className="text-base font-semibold">비밀번호 변경</h3>
 
           {error && (
-            <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base">
+            <div className="flex items-center gap-3 rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20 text-base">
               <span>{error}</span>
             </div>
           )}
@@ -267,7 +267,7 @@ function PasswordChangeSection() {
       <div className="flex justify-end">
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
           disabled={saving}
         >
           {saving ? <Spinner size="sm" /> : "비밀번호 변경"}

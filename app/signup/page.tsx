@@ -55,7 +55,7 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-screen">
       {/* 좌측 — 브랜드 소개 */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center px-16 text-primary-content">
+      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center px-16 text-primary-foreground">
         <h1 className="text-4xl font-bold mb-4">방역매니저</h1>
         <p className="text-lg opacity-90 mb-2">소독 방역업체를 위한</p>
         <p className="text-lg opacity-90 mb-8">올인원 관리 플랫폼</p>
@@ -65,29 +65,29 @@ export default function SignupPage() {
       </div>
 
       {/* 우측 — 회원가입 폼 */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-base-200">
-        <div className="rounded-xl w-full max-w-md bg-base-100 shadow-xl">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
+        <div className="rounded-xl w-full max-w-md bg-card shadow-xl">
           <div className="p-6">
             <h2 className="text-2xl font-bold">회원가입</h2>
-            <p className="text-base-content/60 mb-4">
+            <p className="text-muted-foreground mb-4">
               업체 정보와 관리자 계정을 등록해주세요
             </p>
 
             {error && (
-              <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
+              <div className="flex items-center gap-3 rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
                 <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* 업체 정보 */}
-              <div className="flex items-center gap-3 text-base text-base-content/40 my-2">
-                <span className="flex-1 border-t border-base-300" />
+              <div className="flex items-center gap-3 text-base text-muted-foreground my-2">
+                <span className="flex-1 border-t border-border" />
                 업체 정보
-                <span className="flex-1 border-t border-base-300" />
+                <span className="flex-1 border-t border-border" />
               </div>
 
-              <FormField label={<>업체명 <span className="text-error">*</span></>}>
+              <FormField label={<>업체명 <span className="text-destructive">*</span></>}>
                 <input
                   type="text"
                   placeholder="예: 그린방역"
@@ -131,13 +131,13 @@ export default function SignupPage() {
               </div>
 
               {/* 관리자 계정 */}
-              <div className="flex items-center gap-3 text-base text-base-content/40 my-2">
-                <span className="flex-1 border-t border-base-300" />
+              <div className="flex items-center gap-3 text-base text-muted-foreground my-2">
+                <span className="flex-1 border-t border-border" />
                 관리자 계정
-                <span className="flex-1 border-t border-base-300" />
+                <span className="flex-1 border-t border-border" />
               </div>
 
-              <FormField label={<>이름 <span className="text-error">*</span></>}>
+              <FormField label={<>이름 <span className="text-destructive">*</span></>}>
                 <input
                   type="text"
                   placeholder="관리자 이름"
@@ -148,7 +148,7 @@ export default function SignupPage() {
                 />
               </FormField>
 
-              <FormField label={<>이메일 <span className="text-error">*</span></>}>
+              <FormField label={<>이메일 <span className="text-destructive">*</span></>}>
                 <input
                   type="email"
                   placeholder="name@company.com"
@@ -159,7 +159,7 @@ export default function SignupPage() {
                 />
               </FormField>
 
-              <FormField label={<>비밀번호 <span className="text-error">*</span></>}>
+              <FormField label={<>비밀번호 <span className="text-destructive">*</span></>}>
                 <input
                   type="password"
                   placeholder="8자 이상"
@@ -173,7 +173,7 @@ export default function SignupPage() {
 
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 mt-2 cursor-pointer"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 mt-2 cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Spinner size="sm" /> : "회원가입"}
@@ -181,7 +181,7 @@ export default function SignupPage() {
             </form>
 
             <div className="text-center mt-4">
-              <span className="text-base text-base-content/60">
+              <span className="text-base text-muted-foreground">
                 이미 계정이 있으신가요?{" "}
               </span>
               <Link

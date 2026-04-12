@@ -67,13 +67,13 @@ export default function MembersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold"></h2>
-        <Link href="/members/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer">
+        <Link href="/members/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors cursor-pointer">
           <Plus size={16} />
           직원 등록
         </Link>
       </div>
 
-      <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
+      <div className="bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>
@@ -95,7 +95,7 @@ export default function MembersPage() {
               </tr>
             ) : members?.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-8 text-base-content/50">
+                <td colSpan={7} className="text-center py-8 text-muted-foreground">
                   등록된 멤버가 없습니다
                 </td>
               </tr>
@@ -106,14 +106,14 @@ export default function MembersPage() {
                   <td className="text-base">{member.email}</td>
                   <td className="text-base">{member.phone || "-"}</td>
                   <td>
-                    <span className={`${badgeBase} bg-base-200 text-base-content`}>
+                    <span className={`${badgeBase} bg-muted text-foreground`}>
                       {member.role === "admin" ? "관리자" : "직원"}
                     </span>
                   </td>
                   <td>
                     <span
                       className={`${badgeBase} ${
-                        member.is_active ? "bg-success/10 text-success" : "bg-error/10 text-error"
+                        member.is_active ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
                       }`}
                     >
                       {member.is_active ? "활성" : "비활성"}
@@ -134,7 +134,7 @@ export default function MembersPage() {
                         <button
                           onClick={() => handleToggleActive(member)}
                           className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium transition-colors cursor-pointer ${
-                            member.is_active ? "text-error hover:bg-error/10" : "text-success hover:bg-success/10"
+                            member.is_active ? "text-destructive hover:bg-destructive/10" : "text-success hover:bg-success/10"
                           }`}
                         >
                           {member.is_active ? "비활성화" : "활성화"}

@@ -44,25 +44,25 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* 좌측 — 브랜드 소개 */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center px-16 text-primary-content">
+      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center px-16 text-primary-foreground">
         <div className="w-full max-w-sm">
         <h1 className="text-4xl font-bold mb-4">방역매니저</h1>
         <p className="text-lg opacity-90 mb-10">소독/방역업체를 위한 올인원 관리 플랫폼</p>
         <div className="space-y-5">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary-content/15 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <CalendarCheck size={20} />
             </div>
             <span className="text-base opacity-80">스케줄 자동 관리</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary-content/15 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <FileText size={20} />
             </div>
             <span className="text-base opacity-80">증명서 원클릭 발급</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary-content/15 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <ClipboardList size={20} />
             </div>
             <span className="text-base opacity-80">고객 이력 한눈에</span>
@@ -72,16 +72,16 @@ export default function LoginPage() {
       </div>
 
       {/* 우측 — 로그인 폼 */}
-      <div className="flex-1 flex items-center justify-center px-6 bg-base-200">
-        <div className="rounded-xl bg-base-100 w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center px-6 bg-background">
+        <div className="rounded-xl bg-card w-full max-w-md">
           <div className="p-6">
             <h2 className="text-2xl font-bold">로그인</h2>
-            <p className="text-base-content/60 mb-6">
+            <p className="text-muted-foreground mb-6">
               방역매니저에 오신 것을 환영합니다
             </p>
 
             {error && (
-              <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
+              <div className="flex items-center gap-3 rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
                 <span>{error}</span>
               </div>
             )}
@@ -120,7 +120,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Spinner size="sm" /> : "로그인"}
@@ -128,7 +128,7 @@ export default function LoginPage() {
             </form>
 
             <div className="text-center mt-4">
-              <span className="text-base text-base-content/60">
+              <span className="text-base text-muted-foreground">
                 계정이 없으신가요?{" "}
               </span>
               <Link

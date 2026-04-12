@@ -181,7 +181,7 @@ export default function VisitDetailPage() {
     <div className="max-w-3xl mx-auto">
       {/* 상단 */}
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
+        <button onClick={() => router.back()} className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
           <ArrowLeft size={18} />
         </button>
         <h2 className="text-2xl font-bold flex-1">방문 상세</h2>
@@ -190,7 +190,7 @@ export default function VisitDetailPage() {
             visit.status === "completed"
               ? "bg-success/10 text-success"
               : visit.status === "missed"
-              ? "bg-error/10 text-error"
+              ? "bg-destructive/10 text-destructive"
               : "bg-primary/10 text-primary"
           }`}
         >
@@ -199,18 +199,18 @@ export default function VisitDetailPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-3 rounded-lg p-4 bg-error/10 text-error border border-error/20 text-base mb-4">
+        <div className="flex items-center gap-3 rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
           <span>{error}</span>
         </div>
       )}
 
       {/* 고객 정보 */}
-      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+      <div className="rounded-xl bg-card border border-border mb-4">
         <div className="p-6">
           <h3 className="text-base font-semibold">고객 정보</h3>
           <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-base mt-2">
             <div>
-              <span className="text-base-content/50">시설명</span>
+              <span className="text-muted-foreground">시설명</span>
               <p className="font-medium">
                 <Link href={`/clients/${visit.clients?.id}`} className="text-primary hover:underline !text-lg">
                   {visit.clients?.name}
@@ -218,25 +218,25 @@ export default function VisitDetailPage() {
               </p>
             </div>
             <div>
-              <span className="text-base-content/50">시설 유형</span>
+              <span className="text-muted-foreground">시설 유형</span>
               <p className="font-medium">
                 {visit.clients ? getFacilityLabel(visit.clients.facility_type) : "-"}
               </p>
             </div>
             <div>
-              <span className="text-base-content/50">주소</span>
+              <span className="text-muted-foreground">주소</span>
               <p className="font-medium">{visit.clients?.address || "-"}</p>
             </div>
             <div>
-              <span className="text-base-content/50">예정일</span>
+              <span className="text-muted-foreground">예정일</span>
               <p className="font-medium">{visit.scheduled_date}</p>
             </div>
             <div>
-              <span className="text-base-content/50">담당자</span>
+              <span className="text-muted-foreground">담당자</span>
               <p className="font-medium">{visit.clients?.contact_name || "-"}</p>
             </div>
             <div>
-              <span className="text-base-content/50">연락처</span>
+              <span className="text-muted-foreground">연락처</span>
               <p className="font-medium">{visit.clients?.contact_phone || "-"}</p>
             </div>
           </div>
@@ -244,7 +244,7 @@ export default function VisitDetailPage() {
       </div>
 
       {/* 소독 정보 입력 */}
-      <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+      <div className="rounded-xl bg-card border border-border mb-4">
         <div className="p-6 space-y-4">
           <h3 className="text-base font-semibold">소독 정보</h3>
 
@@ -257,8 +257,8 @@ export default function VisitDetailPage() {
                   type="button"
                   className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium transition-colors cursor-pointer ${
                     method === m
-                      ? "bg-primary text-primary-content"
-                      : "border border-base-300 hover:bg-base-200"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border hover:bg-muted"
                   }`}
                   onClick={() => setMethod(m)}
                   disabled={isCompleted}
@@ -288,8 +288,8 @@ export default function VisitDetailPage() {
                   type="button"
                   className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium transition-colors cursor-pointer ${
                     selectedChemicals.includes(c)
-                      ? "bg-primary text-primary-content"
-                      : "border border-base-300 hover:bg-base-200"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border hover:bg-muted"
                   }`}
                   onClick={() => toggleChemical(c)}
                   disabled={isCompleted}
@@ -310,7 +310,7 @@ export default function VisitDetailPage() {
                 />
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
                   onClick={addCustomChemical}
                 >
                   추가
@@ -320,7 +320,7 @@ export default function VisitDetailPage() {
             {selectedChemicals.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {selectedChemicals.map((c) => (
-                  <span key={c} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-base font-medium bg-base-200 text-base-content">
+                  <span key={c} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-base font-medium bg-muted text-foreground">
                     {c}
                     {!isCompleted && (
                       <button onClick={() => toggleChemical(c)} className="text-base cursor-pointer">
@@ -362,7 +362,7 @@ export default function VisitDetailPage() {
 
       {/* 증명서 */}
       {isCompleted && (
-        <div className="rounded-xl bg-base-100 border border-base-300 mb-4">
+        <div className="rounded-xl bg-card border border-border mb-4">
           <div className="py-4 px-6">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-base flex items-center gap-2">
@@ -371,7 +371,7 @@ export default function VisitDetailPage() {
               </h3>
               {visit.certificates ? (
                 <div className="flex gap-2">
-                  <span className="text-base text-base-content/60">
+                  <span className="text-base text-muted-foreground">
                     {visit.certificates.certificate_number}
                   </span>
                   {visit.certificates.pdf_url && (
@@ -380,12 +380,12 @@ export default function VisitDetailPage() {
                         href={visit.certificates.pdf_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
+                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
                       >
                         <Download size={12} /> 다운로드
                       </a>
                       <button
-                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
+                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
                         onClick={() => {
                           navigator.clipboard.writeText(visit.certificates!.pdf_url!);
                         }}
@@ -395,7 +395,7 @@ export default function VisitDetailPage() {
                     </>
                   )}
                   <button
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-base-300 hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
                     disabled={generatingCert}
                     onClick={handleGenerateCert}
                   >
@@ -404,7 +404,7 @@ export default function VisitDetailPage() {
                 </div>
               ) : (
                 <button
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
                   disabled={generatingCert}
                   onClick={handleGenerateCert}
                 >
@@ -426,7 +426,7 @@ export default function VisitDetailPage() {
       <div className="flex gap-3 justify-end">
         {!isCompleted ? (
           <button
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
             onClick={handleComplete}
             disabled={saving}
           >
@@ -441,7 +441,7 @@ export default function VisitDetailPage() {
           </button>
         ) : (
           <button
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-error text-error hover:bg-error/10 transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-destructive text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
             onClick={handleUncomplete}
           >
             <XCircle size={14} />

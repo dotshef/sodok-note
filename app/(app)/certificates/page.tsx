@@ -53,7 +53,7 @@ export default function CertificatesPage() {
   return (
     <div>
 
-      <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
+      <div className="bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>
@@ -74,7 +74,7 @@ export default function CertificatesPage() {
               </tr>
             ) : certificates?.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-8 text-base-content/50">
+                <td colSpan={6} className="text-center py-8 text-muted-foreground">
                   발급된 증명서가 없습니다
                 </td>
               </tr>
@@ -115,7 +115,7 @@ export default function CertificatesPage() {
                           href={cert.pdf_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
+                          className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
                         >
                           <Download size={12} /> PDF
                         </a>

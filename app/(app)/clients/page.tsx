@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { Spinner } from "@/components/ui/spinner";
+import { FilterSelect } from "@/components/ui/filter-select";
 
 interface Client {
   id: string;
@@ -62,8 +63,8 @@ export default function ClientsPage() {
       {/* 검색 + 필터 + 고객 등록 */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="flex">
-          <div className="flex items-center px-3 bg-base-200 border border-r-0 border-base-300 rounded-l-lg">
-            <Search size={16} className="text-base-content/40" />
+          <div className="flex items-center px-3 bg-muted border border-r-0 border-border rounded-l-lg">
+            <Search size={16} className="text-muted-foreground" />
           </div>
           <input
             type="text"
@@ -77,29 +78,23 @@ export default function ClientsPage() {
             }}
           />
         </div>
-        <select
+        <FilterSelect
           value={facilityType}
-          onChange={(e) => {
-            setFacilityType(e.target.value);
-            setPage(1);
-            setData(null);
-          }}
-        >
-          <option value="">전체 시설 유형</option>
-          {FACILITY_TYPES.map((ft) => (
-            <option key={ft.id} value={ft.id}>
-              {ft.label}
-            </option>
-          ))}
-        </select>
-        <Link href="/clients/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors cursor-pointer ml-auto">
+          onChange={(v) => { setFacilityType(v); setPage(1); setData(null); }}
+          options={[
+            { value: "", label: "전체 시설 유형" },
+            ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
+          ]}
+          className="w-80"
+        />
+        <Link href="/clients/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors cursor-pointer ml-auto">
           <Plus size={16} />
           고객 등록
         </Link>
       </div>
 
       {/* 테이블 */}
-      <div className="bg-base-100 rounded-lg border border-base-300 overflow-x-auto">
+      <div className="bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>
@@ -119,7 +114,7 @@ export default function ClientsPage() {
               </tr>
             ) : data?.clients.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-8 text-base-content/50">
+                <td colSpan={5} className="text-center py-8 text-muted-foreground">
                   등록된 고객이 없습니다
                 </td>
               </tr>
@@ -150,17 +145,17 @@ export default function ClientsPage() {
         <div className="flex justify-center mt-4">
           <div className="flex">
             <button
-              className="inline-flex items-center justify-center p-2 border border-base-300 bg-base-100 rounded-l-lg hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center justify-center p-2 border border-border bg-card rounded-l-lg hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
               disabled={page <= 1}
               onClick={() => { setPage(page - 1); setData(null); }}
             >
               <ChevronLeft size={16} />
             </button>
-            <button className="px-4 py-2 border-y border-base-300 bg-base-100 text-base" disabled>
+            <button className="px-4 py-2 border-y border-border bg-card text-base" disabled>
               {page} / {data.totalPages}
             </button>
             <button
-              className="inline-flex items-center justify-center p-2 border border-base-300 bg-base-100 rounded-r-lg hover:bg-base-200 transition-colors disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center justify-center p-2 border border-border bg-card rounded-r-lg hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
               disabled={page >= data.totalPages}
               onClick={() => { setPage(page + 1); setData(null); }}
             >

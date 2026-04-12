@@ -13,7 +13,7 @@
 
 1. `@theme` 블록을 **shadcn/ui 표준 토큰**으로 전환
 2. 기존 19개 파일 212개 사용처를 shadcn 네이밍으로 치환
-3. shadcn CLI를 도입하고 첫 실사용 사례로 [app/(app)/visits/visits-list.tsx](../app/(app)/visits/visits-list.tsx)의 필터 드롭다운을 Radix Select로 교체
+3. shadcn CLI를 도입하고 첫 실사용 사례로 [app/(app)/visits/visits-list.tsx](../app/(app)/visits/visits-list.tsx)의 필터 드롭다운을 Base UI Select로 교체
 
 ## 범위
 
@@ -25,7 +25,7 @@
 - **PWA theme color 통일** — [public/manifest.json](../public/manifest.json) + [app/layout.tsx](../app/layout.tsx) 의 브랜드 컬러 정합
 - `npx shadcn@latest init` 실행
 - `npx shadcn@latest add select` 로 Select 컴포넌트 도입
-- [app/(app)/visits/visits-list.tsx](../app/(app)/visits/visits-list.tsx)의 `<select>` 4개를 Radix Select로 교체
+- [app/(app)/visits/visits-list.tsx](../app/(app)/visits/visits-list.tsx)의 `<select>` 4개를 Base UI Select로 교체
 
 ### Out of Scope (이번 작업 아님)
 - 기능/로직 변경 — 순수 네이밍 마이그레이션
@@ -131,7 +131,7 @@
 - 설치 직후 생성된 [components/ui/select.tsx](../components/ui/select.tsx) 확인 — shadcn 토큰이 바로 통해야 함 (2단계에서 토큰을 심어놨으므로)
 
 ### 8. `visits-list.tsx` 드롭다운 교체
-- [app/(app)/visits/visits-list.tsx:170-238](../app/(app)/visits/visits-list.tsx#L170-L238)의 4개 `<select>` 엘리먼트를 Radix Select 기반으로 교체
+- [app/(app)/visits/visits-list.tsx:170-238](../app/(app)/visits/visits-list.tsx#L170-L238)의 4개 `<select>` 엘리먼트를 Base UI Select 기반으로 교체
   - 상태 필터 (전체/예정/완료/미완료)
   - 시설 유형 필터
   - 담당자 필터 (admin만)
@@ -148,7 +148,7 @@
 - [ ] **`globals.css` 내부 검증** — 구 토큰 변수·하드코딩 OKLCH 0건 ([§9.2](./shadcn-migration-map.md#92-css-파일-내부-검증-globalscss-단독))
 - [ ] **PWA 색상 일치** — [manifest.json](../public/manifest.json)과 [app/layout.tsx](../app/layout.tsx)의 theme color가 동일한 hex 문자열 ([§9.3](./shadcn-migration-map.md#93-pwa-색상-일치-검증))
 - [ ] **`text-base` (폰트 크기) 잔존 확인** — 치환 후에도 기존 `text-base` 사용처가 그대로 남아있어야 정상 (오치환 없음 검증)
-- [ ] [visits-list.tsx](../app/(app)/visits/visits-list.tsx) 드롭다운이 Radix Select로 동작, 키보드 네비게이션·포지셔닝 개선 확인
+- [ ] [visits-list.tsx](../app/(app)/visits/visits-list.tsx) 드롭다운이 Base UI Select로 동작, 키보드 네비게이션·포지셔닝 개선 확인
 - [ ] [CLAUDE.md](../CLAUDE.md)의 스타일링 규칙 섹션 업데이트 (DaisyUI 네이밍 설명 → shadcn 네이밍 설명으로)
 
 ## 리스크와 대응
@@ -177,5 +177,5 @@
 
 - [치환맵](./shadcn-migration-map.md) — 작업 중 수시로 참조/업데이트
 - [shadcn/ui 공식 문서](https://ui.shadcn.com/docs)
-- [Radix Select 문서](https://www.radix-ui.com/primitives/docs/components/select)
+- [Base UI Select 문서](https://www.radix-ui.com/primitives/docs/components/select)
 - 작업 완료 후 이 문서와 치환맵은 `reference/archive/` 또는 `done-` 접두사로 보존

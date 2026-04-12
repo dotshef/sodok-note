@@ -30,7 +30,7 @@ export function Header({ session }: { session: JwtPayload }) {
   }
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 bg-base-100 border-b border-base-300">
+    <header className="flex items-center justify-between px-6 py-4 bg-card border-b border-border">
       <h1 className="text-xl font-bold">{title}</h1>
 
       <div className="flex items-center gap-4">
@@ -40,17 +40,17 @@ export function Header({ session }: { session: JwtPayload }) {
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-base font-medium rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-base font-medium rounded-lg hover:bg-muted transition-colors cursor-pointer"
           >
             <span className="text-base">{session.email}</span>
           </button>
           {menuOpen && (
             <>
               <div className="fixed inset-0 z-0" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 top-full mt-1 z-10 w-40 p-2 bg-base-100 rounded-lg shadow-lg border border-base-300">
+              <div className="absolute right-0 top-full mt-1 z-10 w-40 p-2 bg-popover rounded-lg shadow-lg border border-border">
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 text-base rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
+                  className="w-full text-left px-3 py-2 text-base rounded-lg hover:bg-muted transition-colors cursor-pointer"
                 >
                   로그아웃
                 </button>

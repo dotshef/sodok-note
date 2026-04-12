@@ -97,14 +97,14 @@ export default function ClientDetailPage() {
     <div>
       {/* 상단 */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/clients" className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-base-200 transition-colors cursor-pointer">
+        <Link href="/clients" className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
           <ArrowLeft size={18} />
         </Link>
         <h2 className="text-2xl font-bold flex-1">{client.name}</h2>
-        <Link href={`/clients/${id}/edit`} className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer">
+        <Link href={`/clients/${id}/edit`} className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer">
           <Pencil size={14} /> 수정
         </Link>
-        <button onClick={handleDelete} className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors text-error cursor-pointer">
+        <button onClick={handleDelete} className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors text-destructive cursor-pointer">
           <Trash2 size={14} /> 비활성화
         </button>
       </div>
@@ -112,42 +112,42 @@ export default function ClientDetailPage() {
       {/* 상단 카드 영역 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* 좌측: 시설 정보 */}
-        <div className="lg:col-span-2 rounded-xl bg-base-100 border border-base-300">
+        <div className="lg:col-span-2 rounded-xl bg-card border border-border">
           <div className="p-6">
             <h3 className="text-base font-semibold">시설 정보</h3>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base mt-2">
               <div>
-                <span className="text-base-content/50">시설 유형</span>
+                <span className="text-muted-foreground">시설 유형</span>
                 <p className="font-medium">{getFacilityLabel(client.facility_type)}</p>
               </div>
               <div>
-                <span className="text-base-content/50">주소</span>
+                <span className="text-muted-foreground">주소</span>
                 <p className="font-medium">{client.address || "-"}</p>
               </div>
               <div>
-                <span className="text-base-content/50">면적</span>
+                <span className="text-muted-foreground">면적</span>
                 <p className="font-medium">
                   {client.area ? `${client.area}㎡` : "-"}
                   {client.area_pyeong ? ` (${client.area_pyeong}평)` : ""}
                 </p>
               </div>
               <div>
-                <span className="text-base-content/50">소독 주기</span>
+                <span className="text-muted-foreground">소독 주기</span>
                 <p className="font-medium">
                   {cycleMonths ? `${cycleMonths}개월` : "-"}
                 </p>
               </div>
               <div>
-                <span className="text-base-content/50">담당자</span>
+                <span className="text-muted-foreground">담당자</span>
                 <p className="font-medium">{client.contact_name || "-"}</p>
               </div>
               <div>
-                <span className="text-base-content/50">연락처</span>
+                <span className="text-muted-foreground">연락처</span>
                 <p className="font-medium">{client.contact_phone || "-"}</p>
               </div>
               {client.notes && (
                 <div className="col-span-2">
-                  <span className="text-base-content/50">메모</span>
+                  <span className="text-muted-foreground">메모</span>
                   <p className="font-medium">{client.notes}</p>
                 </div>
               )}
@@ -157,29 +157,29 @@ export default function ClientDetailPage() {
 
         {/* 우측: 요약 통계 */}
         <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="rounded-xl bg-card border border-border">
             <div className="h-full py-6 px-4 flex flex-col items-center justify-center text-center">
               <p className="text-2xl font-bold">{client.stats.totalVisits}</p>
-              <p className="text-base text-base-content/50">총 방문</p>
+              <p className="text-base text-muted-foreground">총 방문</p>
             </div>
           </div>
-          <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="rounded-xl bg-card border border-border">
             <div className="h-full py-6 px-4 flex flex-col items-center justify-center text-center">
               <p className="text-2xl font-bold">{client.stats.completionRate}%</p>
-              <p className="text-base text-base-content/50">완료율</p>
+              <p className="text-base text-muted-foreground">완료율</p>
             </div>
           </div>
-          <div className="rounded-xl bg-base-100 border border-base-300">
+          <div className="rounded-xl bg-card border border-border">
             <div className="h-full py-6 px-4 flex flex-col items-center justify-center text-center">
               <p className="text-2xl font-bold">{client.stats.certificateCount}</p>
-              <p className="text-base text-base-content/50">증명서</p>
+              <p className="text-base text-muted-foreground">증명서</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* 방문 이력 테이블 */}
-      <div className="rounded-xl bg-base-100 border border-base-300">
+      <div className="rounded-xl bg-card border border-border">
         <div className="p-6">
           <h3 className="text-base font-semibold mb-3">방문 이력</h3>
           <div className="overflow-x-auto">
@@ -197,7 +197,7 @@ export default function ClientDetailPage() {
               <tbody>
                 {sortedVisits.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-6 text-base-content/50">
+                    <td colSpan={6} className="text-center py-6 text-muted-foreground">
                       방문 이력이 없습니다
                     </td>
                   </tr>
@@ -215,7 +215,7 @@ export default function ClientDetailPage() {
                             visit.status === "completed"
                               ? "bg-success/10 text-success"
                               : visit.status === "missed"
-                              ? "bg-error/10 text-error"
+                              ? "bg-destructive/10 text-destructive"
                               : "bg-primary/10 text-primary"
                           }`}
                         >
@@ -235,7 +235,7 @@ export default function ClientDetailPage() {
                             href={visit.certificates.pdf_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
                           >
                             <FileText size={14} />
                             PDF

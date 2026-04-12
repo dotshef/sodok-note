@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
+import { FilterSelect } from "@/components/ui/filter-select";
 
 interface ClientOption {
   id: string;
@@ -145,15 +146,15 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
       />
 
       {/* 콘텐츠 */}
-      <div className="relative w-full max-w-lg rounded-xl bg-base-100 border border-base-300 shadow-xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-base-300">
+      <div className="relative w-full max-w-lg rounded-xl bg-popover border border-border shadow-xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h3 id="visit-create-modal-title" className="text-lg font-bold">
             방문 일정 등록
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center justify-center p-1 rounded-lg hover:bg-base-200 transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center p-1 rounded-lg hover:bg-muted transition-colors cursor-pointer"
             aria-label="닫기"
           >
             <X size={18} />
@@ -162,32 +163,24 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
 
         <div className="px-6 py-5">
           {error && (
-            <div className="flex items-center gap-3 rounded-lg p-3 bg-error/10 text-error border border-error/20 text-base mb-4">
+            <div className="flex items-center gap-3 rounded-lg p-3 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <FormField label={<>고객 시설 <span className="text-error">*</span></>}>
-              <select
-                className="w-full"
+            <FormField label={<>고객 시설 <span className="text-destructive">*</span></>}>
+              <FilterSelect
                 value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
-                required
-                disabled={clients === null}
-              >
-                <option value="">
-                  {clients === null ? "불러오는 중..." : "시설 선택"}
-                </option>
-                {(clients || []).map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                onChange={setClientId}
+                options={[
+                  { value: "", label: clients === null ? "불러오는 중..." : "시설 선택" },
+                  ...(clients || []).map((c) => ({ value: c.id, label: c.name })),
+                ]}
+              />
             </FormField>
 
-            <FormField label={<>방문 예정일 <span className="text-error">*</span></>}>
+            <FormField label={<>방문 예정일 <span className="text-destructive">*</span></>}>
               <input
                 type="date"
                 className="w-full"
@@ -198,19 +191,14 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
             </FormField>
 
             <FormField label="담당 기사">
-              <select
-                className="w-full"
+              <FilterSelect
                 value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                disabled={members === null}
-              >
-                <option value="">미배정</option>
-                {activeMembers.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
+                onChange={setUserId}
+                options={[
+                  { value: "", label: "미배정" },
+                  ...activeMembers.map((m) => ({ value: m.id, label: m.name })),
+                ]}
+              />
             </FormField>
 
             <FormField label="메모">
@@ -227,7 +215,7 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
             <div className="flex gap-3 justify-end pt-2">
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-base-200 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
                 onClick={onClose}
                 disabled={submitting}
               >
@@ -235,7 +223,7 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-content transition-colors disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
                 disabled={submitting}
               >
                 {submitting ? <Spinner size="sm" /> : "등록"}
