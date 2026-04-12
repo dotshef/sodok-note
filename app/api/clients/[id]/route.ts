@@ -24,7 +24,7 @@ export async function GET(
       *,
       visits(
         id, scheduled_date, completed_at, status, method, chemicals_used, user_id,
-        certificates(id, certificate_number, pdf_url)
+        certificates(id, certificate_number, file_url)
       )
     `)
     .eq("id", id)
@@ -76,9 +76,11 @@ export async function PATCH(
   if (parsed.data.facilityType !== undefined) updateData.facility_type = parsed.data.facilityType;
   if (parsed.data.area !== undefined) updateData.area = parsed.data.area;
   if (parsed.data.areaPyeong !== undefined) updateData.area_pyeong = parsed.data.areaPyeong;
+  if (parsed.data.volume !== undefined) updateData.volume = parsed.data.volume;
   if (parsed.data.address !== undefined) updateData.address = parsed.data.address;
   if (parsed.data.contactName !== undefined) updateData.contact_name = parsed.data.contactName;
   if (parsed.data.contactPhone !== undefined) updateData.contact_phone = parsed.data.contactPhone;
+  if (parsed.data.contactPosition !== undefined) updateData.contact_position = parsed.data.contactPosition;
   if (parsed.data.isActive !== undefined) updateData.is_active = parsed.data.isActive;
 
   const { error } = await supabase

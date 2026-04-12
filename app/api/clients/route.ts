@@ -62,21 +62,39 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { name, facilityType, area, areaPyeong, address, contactName, contactPhone } = parsed.data;
+  const { name, facilityType, area, areaPyeong, volume, address, contactName, contactPhone, contactPosition } = parsed.data;
   const now = new Date().toISOString();
   const supabase = getSupabase();
+
+  // 고객 코드 채번
+  const { data: lastClient } = await supabase
+    .from("clients")
+    .select("code")
+    .eq("tenant_id", session.tenantId)
+    .order("code", { ascending: false })
+    .limit(1)
+    .single();
+
+  let nextCode = "C00001";
+  if (lastClient?.code) {
+    const currentNum = parseInt(lastClient.code.replace("C", ""), 10);
+    nextCode = `C${String(currentNum + 1).padStart(5, "0")}`;
+  }
 
   const { data: client, error: clientError } = await supabase
     .from("clients")
     .insert({
       tenant_id: session.tenantId,
+      code: nextCode,
       name,
       facility_type: facilityType,
       area: area || null,
       area_pyeong: areaPyeong || null,
+      volume: volume || null,
       address: address || null,
       contact_name: contactName || null,
       contact_phone: contactPhone || null,
+      contact_position: contactPosition || null,
       created_at: now,
       updated_at: now,
     })

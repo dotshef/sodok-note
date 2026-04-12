@@ -30,7 +30,7 @@ interface VisitDetail {
   certificates: {
     id: string;
     certificate_number: string;
-    pdf_url: string | null;
+    file_url: string | null;
   } | null;
 }
 
@@ -48,6 +48,7 @@ export default function VisitDetailPage() {
   const [customChemical, setCustomChemical] = useState("");
   const [notes, setNotes] = useState("");
   const [generatingCert, setGeneratingCert] = useState(false);
+  const [issueNumber, setIssueNumber] = useState("");
 
   const loading = !visit;
 
@@ -140,7 +141,7 @@ export default function VisitDetailPage() {
       const res = await fetch("/api/certificates/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visitId: id }),
+        body: JSON.stringify({ visitId: id, issueNumber: issueNumber || undefined }),
       });
       if (res.ok) fetchVisit();
     } catch {
@@ -242,7 +243,7 @@ export default function VisitDetailPage() {
               <p className="font-medium">{visit.clients?.address || "-"}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">예정일</span>
+              <span className="text-muted-foreground">방문일</span>
               <p className="font-medium">{visit.scheduled_date}</p>
             </div>
             <div>
@@ -377,61 +378,63 @@ export default function VisitDetailPage() {
       {/* 증명서 */}
       {isCompleted && (
         <div className="rounded-xl bg-card border border-border mb-4">
-          <div className="py-4 px-6">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-base flex items-center gap-2">
-                <FileText size={16} />
-                소독증명서
-              </h3>
-              {visit.certificates ? (
-                <div className="flex gap-2">
-                  <span className="text-base text-muted-foreground">
-                    {visit.certificates.certificate_number}
-                  </span>
-                  {visit.certificates.pdf_url && (
-                    <>
-                      <a
-                        href={visit.certificates.pdf_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
-                      >
-                        <Download size={12} /> 다운로드
-                      </a>
-                      <button
-                        className="inline-flex items-center justify-center gap-1 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
-                        onClick={() => {
-                          navigator.clipboard.writeText(visit.certificates!.pdf_url!);
-                        }}
-                      >
-                        <LinkIcon size={12} /> 링크 복사
-                      </button>
-                    </>
-                  )}
-                  <button
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
-                    disabled={generatingCert}
-                    onClick={handleGenerateCert}
-                  >
-                    재발급
-                  </button>
-                </div>
-              ) : (
+          <div className="py-4 px-6 space-y-4">
+            <h3 className="font-semibold text-lg">소독증명서</h3>
+
+            {/* 입력 */}
+            <div className="space-y-2">
+              <span className="text-muted-foreground text-base block mb-2">발급번호</span>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <span className="flex items-center gap-1 text-base">
+                  제
+                  <input
+                    type="number"
+                    placeholder="0"
+                    className="w-20 min-h-[44px] px-3 py-2 rounded-lg border border-border text-base text-center focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    value={issueNumber}
+                    onChange={(e) => setIssueNumber(e.target.value)}
+                  />
+                  호
+                </span>
                 <button
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                  className={`inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-base font-medium transition-colors disabled:opacity-50 cursor-pointer ${
+                    visit.certificates
+                      ? "border border-border hover:bg-muted"
+                      : "bg-primary text-primary-foreground"
+                  }`}
                   disabled={generatingCert}
                   onClick={handleGenerateCert}
                 >
                   {generatingCert ? (
                     <Spinner size="sm" />
+                  ) : visit.certificates ? (
+                    "증명서 재생성"
                   ) : (
-                    <>
-                      <FileText size={14} /> 증명서 생성
-                    </>
+                    "증명서 생성"
                   )}
                 </button>
-              )}
+              </div>
             </div>
+
+            {/* 파일 */}
+            {visit.certificates?.file_url && (
+              <>
+                <hr className="border-border" />
+                <div className="space-y-2">
+                  <span className="text-muted-foreground text-base block mb-2">파일</span>
+                  <a
+                    href={`/api/certificates/${visit.certificates.id}/download`}
+                    className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2 text-base">
+                      <FileText size={14} />
+                      {visit.certificates.certificate_number}.hwpx
+                    </span>
+                    <Download size={14} className="text-muted-foreground" />
+                  </a>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -20,9 +20,11 @@ export default function NewClientPage() {
     facilityType: "",
     area: "",
     areaPyeong: "",
+    volume: "",
     address: "",
     contactName: "",
     contactPhone: "",
+    contactPosition: "",
   });
 
   function updateField(field: string, value: string) {
@@ -50,6 +52,7 @@ export default function NewClientPage() {
           ...form,
           area: form.area ? Number(form.area) : null,
           areaPyeong: form.areaPyeong ? Number(form.areaPyeong) : null,
+          volume: form.volume ? Number(form.volume) : null,
         }),
       });
 
@@ -119,7 +122,7 @@ export default function NewClientPage() {
               />
             </FormField>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <FormField label="면적 (㎡)">
                 <input
                   type="number"
@@ -136,6 +139,14 @@ export default function NewClientPage() {
                   onChange={(e) => updateField("areaPyeong", e.target.value)}
                 />
               </FormField>
+              <FormField label="용적 (㎥)">
+                <input
+                  type="number"
+                  className="w-full"
+                  value={form.volume}
+                  onChange={(e) => updateField("volume", e.target.value)}
+                />
+              </FormField>
             </div>
           </div>
         </div>
@@ -144,13 +155,22 @@ export default function NewClientPage() {
           <div className="p-6 space-y-4">
             <h3 className="font-semibold">시설 담당자 정보</h3>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <FormField label="담당자명">
                 <input
                   type="text"
                   className="w-full"
                   value={form.contactName}
                   onChange={(e) => updateField("contactName", e.target.value)}
+                />
+              </FormField>
+              <FormField label="직위">
+                <input
+                  type="text"
+                  placeholder="예: 점장, 대표"
+                  className="w-full"
+                  value={form.contactPosition}
+                  onChange={(e) => updateField("contactPosition", e.target.value)}
                 />
               </FormField>
               <FormField label="연락처">

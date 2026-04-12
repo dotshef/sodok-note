@@ -30,17 +30,21 @@ create table users (
 create table clients (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references tenants(id) on delete cascade,
+  code text,
   name text not null,
   facility_type text not null,
   area numeric,
   area_pyeong numeric,
+  volume numeric,
   address text,
   contact_name text,
   contact_phone text,
+  contact_position text,
   notes text,
   is_active boolean not null default true,
   created_at timestamptz not null,
-  updated_at timestamptz not null
+  updated_at timestamptz not null,
+  unique (tenant_id, code)
 );
 
 -- 4. visits (실제 방문 기록)
@@ -66,7 +70,8 @@ create table certificates (
   visit_id uuid not null unique references visits(id) on delete cascade,
   tenant_id uuid not null references tenants(id) on delete cascade,
   certificate_number text not null unique,
-  pdf_url text,
+  issue_number text,
+  file_url text,
   sent_at timestamptz,
   sent_to text,
   created_at timestamptz not null

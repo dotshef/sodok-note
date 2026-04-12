@@ -48,7 +48,7 @@ export async function GET(request: Request) {
       .select(`
         id, visit_code, scheduled_date, completed_at, status, method, chemicals_used, notes, user_id,
         clients(id, name, facility_type, address),
-        certificates(id, certificate_number, pdf_url)
+        certificates(id, certificate_number, file_url)
       `)
       .eq("tenant_id", session.tenantId)
       .order("scheduled_date", { ascending: true });

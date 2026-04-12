@@ -239,7 +239,7 @@ export default function VisitsPage() {
               <th style={{ width: "22%" }}>시설 유형</th>
               <th style={{ width: "12%" }}>담당자</th>
               <th style={{ width: "10%" }}>상태</th>
-              <th style={{ width: "14%" }}>날짜</th>
+              <th style={{ width: "11%" }}>날짜</th>
               <th style={{ width: "15%" }}>증명서</th>
             </tr>
           </thead>
@@ -289,8 +289,18 @@ export default function VisitsPage() {
                   <td className="text-base">{visit.users?.name || "-"}</td>
                   <td>{getStatusBadge(visit.status)}</td>
                   <td className="text-base">{visit.scheduled_date}</td>
-                  <td className="text-base">
-                    {visit.certificates ? visit.certificates.certificate_number : "-"}
+                  <td>
+                    {visit.certificates ? (
+                      <a
+                        href={`/api/certificates/${visit.certificates.id}/download`}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-1 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
+                        download
+                      >
+                        HWPX
+                      </a>
+                    ) : (
+                      <span className="block text-center text-base text-muted-foreground">-</span>
+                    )}
                   </td>
                 </tr>
               ))

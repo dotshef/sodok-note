@@ -20,10 +20,13 @@ export default function EditClientPage() {
     facilityType: "",
     area: "",
     areaPyeong: "",
+    volume: "",
     address: "",
     contactName: "",
     contactPhone: "",
+    contactPosition: "",
   });
+  const [clientCode, setClientCode] = useState("");
 
   useEffect(() => {
     let ignore = false;
@@ -41,10 +44,13 @@ export default function EditClientPage() {
           facilityType: data.facility_type || "",
           area: data.area?.toString() || "",
           areaPyeong: data.area_pyeong?.toString() || "",
+          volume: data.volume?.toString() || "",
           address: data.address || "",
           contactName: data.contact_name || "",
           contactPhone: data.contact_phone || "",
+          contactPosition: data.contact_position || "",
         });
+        setClientCode(data.code || "");
         setLoaded(true);
       }
     }
@@ -77,6 +83,7 @@ export default function EditClientPage() {
           ...form,
           area: form.area ? Number(form.area) : null,
           areaPyeong: form.areaPyeong ? Number(form.areaPyeong) : null,
+          volume: form.volume ? Number(form.volume) : null,
         }),
       });
 
@@ -117,6 +124,15 @@ export default function EditClientPage() {
           <div className="p-6 space-y-4">
             <h3 className="font-semibold">시설 정보</h3>
 
+            <FormField label="고객 코드">
+              <input
+                type="text"
+                className="w-full bg-muted"
+                value={clientCode}
+                readOnly
+              />
+            </FormField>
+
             <FormField label={<>시설명 <span className="text-destructive">*</span></>}>
               <input
                 type="text"
@@ -147,7 +163,7 @@ export default function EditClientPage() {
               />
             </FormField>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <FormField label="면적 (㎡)">
                 <input
                   type="number"
@@ -164,6 +180,14 @@ export default function EditClientPage() {
                   onChange={(e) => updateField("areaPyeong", e.target.value)}
                 />
               </FormField>
+              <FormField label="용적 (㎥)">
+                <input
+                  type="number"
+                  className="w-full"
+                  value={form.volume}
+                  onChange={(e) => updateField("volume", e.target.value)}
+                />
+              </FormField>
             </div>
           </div>
         </div>
@@ -172,13 +196,22 @@ export default function EditClientPage() {
           <div className="p-6 space-y-4">
             <h3 className="font-semibold">시설 담당자 정보</h3>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <FormField label="담당자명">
                 <input
                   type="text"
                   className="w-full"
                   value={form.contactName}
                   onChange={(e) => updateField("contactName", e.target.value)}
+                />
+              </FormField>
+              <FormField label="직위">
+                <input
+                  type="text"
+                  placeholder="예: 점장, 대표"
+                  className="w-full"
+                  value={form.contactPosition}
+                  onChange={(e) => updateField("contactPosition", e.target.value)}
                 />
               </FormField>
               <FormField label="연락처">

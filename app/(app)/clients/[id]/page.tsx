@@ -16,7 +16,7 @@ interface Visit {
   method: string | null;
   chemicals_used: string[] | null;
   user_id: string | null;
-  certificates: { id: string; certificate_number: string; pdf_url: string | null } | null;
+  certificates: { id: string; certificate_number: string; file_url: string | null } | null;
 }
 
 interface ClientDetail {
@@ -251,15 +251,13 @@ export default function ClientDetailPage() {
                         {visit.certificates?.certificate_number || "-"}
                       </td>
                       <td>
-                        {visit.certificates?.pdf_url && (
+                        {visit.certificates?.file_url && (
                           <a
-                            href={visit.certificates.pdf_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href={`/api/certificates/${visit.certificates.id}/download`}
                             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
                           >
                             <FileText size={14} />
-                            PDF
+                            다운로드
                           </a>
                         )}
                       </td>

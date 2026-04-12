@@ -9,9 +9,11 @@ export const createClientSchema = z.object({
   }),
   area: z.number().nullable().optional(),
   areaPyeong: z.number().nullable().optional(),
+  volume: z.number().nullable().optional(),
   address: z.string().optional(),
   contactName: z.string().optional(),
   contactPhone: phoneSchema,
+  contactPosition: z.string().optional(),
 });
 
 export const updateClientSchema = createClientSchema
