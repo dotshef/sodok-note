@@ -72,6 +72,7 @@ create table certificates (
   certificate_number text not null unique,
   issue_number text,
   file_url text,
+  file_name text,
   sent_at timestamptz,
   sent_to text,
   created_at timestamptz not null

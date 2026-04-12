@@ -18,7 +18,7 @@ export async function GET(
     .select(`
       *,
       clients(id, name, facility_type, address, contact_name, contact_phone),
-      certificates(id, certificate_number, file_url)
+      certificates(id, certificate_number, file_url, file_name)
     `)
     .eq("id", id)
     .eq("tenant_id", session.tenantId)

@@ -103,6 +103,10 @@ export async function POST(request: Request) {
     operatorCeo: tenant.owner_name || "",
   });
 
+  // 파일명 생성
+  const completedDateCompact = format(new Date(visit.completed_at!), "yyyyMMdd");
+  const fileName = `소독증명서_${client!.name}_${tenant.name}_${completedDateCompact}.hwpx`;
+
   // Supabase Storage에 업로드 (스토리지는 영문 키)
   const filePath = `${session.tenantId}/${certificateNumber}.hwpx`;
   const { error: uploadError } = await supabase.storage
@@ -130,6 +134,7 @@ export async function POST(request: Request) {
         certificate_number: certificateNumber,
         issue_number: issueNumber || null,
         file_url: filePath,
+        file_name: fileName,
         created_at: certNow,
       })
       .eq("id", existingCert.id);
@@ -142,6 +147,7 @@ export async function POST(request: Request) {
         certificate_number: certificateNumber,
         issue_number: issueNumber || null,
         file_url: filePath,
+        file_name: fileName,
         created_at: certNow,
       });
   }

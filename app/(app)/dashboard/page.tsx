@@ -162,15 +162,7 @@ export default function DashboardPage() {
         {/* 좌측: 오늘 방문 예정 */}
         <div className="lg:col-span-2 rounded-xl bg-card border border-border">
           <div className="p-6">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold">오늘 방문 예정</h3>
-              <Link
-                href={`/visits?date_from=${todayStr}&date_to=${todayStr}`}
-                className="text-base text-primary hover:underline"
-              >
-                전체 보기 →
-              </Link>
-            </div>
+            <h3 className="text-lg font-semibold mb-3">오늘 방문 예정</h3>
             {data.todayVisits.length === 0 ? (
               <p className="text-base text-muted-foreground py-4 text-center">
                 오늘 예정된 방문이 없습니다
@@ -180,9 +172,10 @@ export default function DashboardPage() {
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th style={{ width: "35%" }}>시설명</th>
-                      <th style={{ width: "20%" }}>시설 유형</th>
-                      <th style={{ width: "25%" }}>담당 직원</th>
+                      <th style={{ width: "18%" }}>방문 코드</th>
+                      <th style={{ width: "20%" }}>시설명</th>
+                      <th style={{ width: "27%" }}>시설 유형</th>
+                      <th style={{ width: "15%" }}>담당 직원</th>
                       <th style={{ width: "20%" }}>상태</th>
                     </tr>
                   </thead>
@@ -197,11 +190,18 @@ export default function DashboardPage() {
                               href={`/visits/${visit.id}`}
                               className="text-primary hover:underline font-medium !text-base"
                             >
-                              {visit.visit_code && (
-                                <span className="text-muted-foreground font-normal mr-1.5">{visit.visit_code}</span>
-                              )}
-                              {client?.name || "-"}
+                              {visit.visit_code || "-"}
                             </Link>
+                          </td>
+                          <td>
+                            {client ? (
+                              <Link
+                                href={`/clients/${client.id}`}
+                                className="text-primary hover:underline font-medium !text-base"
+                              >
+                                {client.name}
+                              </Link>
+                            ) : "-"}
                           </td>
                           <td className="text-base">
                             {client ? getFacilityLabel(client.facility_type) : "-"}
@@ -223,15 +223,7 @@ export default function DashboardPage() {
           {/* 미완료 건 */}
           <div className="rounded-xl bg-card border border-border">
             <div className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">미완료 건</h3>
-                <Link
-                  href="/visits?status=missed"
-                  className="text-base text-primary hover:underline"
-                >
-                  전체 보기 →
-                </Link>
-              </div>
+              <h3 className="text-lg font-semibold mb-3">미완료 건</h3>
               {data.missedVisits.length === 0 ? (
                 <p className="text-base text-muted-foreground py-2 text-center">
                   미완료 건이 없습니다

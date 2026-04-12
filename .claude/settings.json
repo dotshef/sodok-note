@@ -18,7 +18,9 @@
       "Bash(echo \"exit=$?\")",
       "Bash(echo \"EXIT: $?\")",
       "Bash(npx shadcn@latest init --help)",
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "mcp__claude_ai_Context7__resolve-library-id",
+      "mcp__claude_ai_Context7__query-docs"
     ],
     "additionalDirectories": [
       "c:\\D\\pest-control\\.claude"

@@ -14,10 +14,7 @@ export async function GET(
 
   const { data: cert } = await supabase
     .from("certificates")
-    .select(`
-      certificate_number, file_url,
-      visits(completed_at, clients(name))
-    `)
+    .select("certificate_number, file_url, file_name")
     .eq("id", id)
     .eq("tenant_id", session.tenantId)
     .single();
@@ -36,21 +33,7 @@ export async function GET(
 
   const buffer = Buffer.from(await fileData.arrayBuffer());
 
-  // 다운로드 파일명: 소독증명서_시설명_업체명_소독일.hwpx
-  const visit = cert.visits as unknown as { completed_at: string; clients: { name: string } | null } | null;
-  const clientName = visit?.clients?.name || "미지정";
-  const completedDate = visit?.completed_at
-    ? new Date(visit.completed_at).toISOString().slice(0, 10).replace(/-/g, "")
-    : "00000000";
-
-  const { data: tenant } = await supabase
-    .from("tenants")
-    .select("name")
-    .eq("id", session.tenantId)
-    .single();
-  const tenantName = tenant?.name || "미지정";
-
-  const fileName = `소독증명서_${clientName}_${tenantName}_${completedDate}.hwpx`;
+  const fileName = cert.file_name || `${cert.certificate_number}.hwpx`;
   const encodedFileName = encodeURIComponent(fileName);
 
   return new NextResponse(buffer, {

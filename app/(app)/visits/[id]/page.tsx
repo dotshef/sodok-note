@@ -31,6 +31,7 @@ interface VisitDetail {
     id: string;
     certificate_number: string;
     file_url: string | null;
+    file_name: string | null;
   } | null;
 }
 
@@ -428,7 +429,7 @@ export default function VisitDetailPage() {
                   >
                     <span className="flex items-center gap-2 text-base">
                       <FileText size={14} />
-                      소독증명서_{visit.clients?.name || "미지정"}_{visit.completed_at?.slice(0, 10).replace(/-/g, "") || ""}.hwpx
+                      {visit.certificates.file_name || `${visit.certificates.certificate_number}.hwpx`}
                     </span>
                     <Download size={14} className="text-muted-foreground" />
                   </a>
