@@ -125,6 +125,7 @@ export async function generateCertificateHwpx(input: CertificateInput): Promise<
   // --- cell[4]: 면적/용적 ---
   const paras4 = getCellParagraphs(cells[4]);
   const runs4 = getRuns(paras4[1]);
+  runs4[0].setAttribute("charPrIDRef", "6");
   setRunText(runs4[0], `            ${input.areaM2}  `);
   if (input.areaM3) {
     setRunText(runs4[2], `(    ${input.areaM3}  ㎥)`);
@@ -134,11 +135,11 @@ export async function generateCertificateHwpx(input: CertificateInput): Promise<
   const paras5 = getCellParagraphs(cells[5]);
   const runs5 = getRuns(paras5[1]);
   setRunText(runs5[0], "                         ");
-  appendRunToPara(paras5[1], input.address, "25");
+  appendRunToPara(paras5[1], input.address, "6");
 
   // --- cell[7]: 직위 ---
   const paras7 = getCellParagraphs(cells[7]);
-  appendRunToPara(paras7[1], input.position, "25");
+  appendRunToPara(paras7[1], input.position, "6");
 
   // --- cell[8]: 성명 ---
   const paras8 = getCellParagraphs(cells[8]);
