@@ -31,7 +31,8 @@
       "Bash(mkdir -p \"c:/D/pest-control/pest-control-project/app/api/certificates/[id]/hwpx\")",
       "Bash(mkdir -p \"c:/D/pest-control/pest-control-project/app/api/certificates/[id]/pdf\")",
       "Bash(rm \"c:/D/pest-control/pest-control-project/app/api/certificates/[id]/download/route.ts\")",
-      "Bash(rmdir \"c:/D/pest-control/pest-control-project/app/api/certificates/[id]/download\")"
+      "Bash(rmdir \"c:/D/pest-control/pest-control-project/app/api/certificates/[id]/download\")",
+      "WebFetch(domain:www.npmjs.com)"
     ],
     "additionalDirectories": [
       "c:\\D\\pest-control\\.claude"
