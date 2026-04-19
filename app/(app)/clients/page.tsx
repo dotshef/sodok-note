@@ -93,8 +93,56 @@ export default function ClientsPage() {
         </Link>
       </div>
 
-      {/* 테이블 */}
-      <div className="bg-card rounded-lg border border-border overflow-x-auto">
+      {/* 모바일 카드 */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-xl bg-card border border-border p-4">
+                <div className="h-4 bg-muted rounded animate-pulse mb-2" />
+                <div className="h-4 bg-muted rounded animate-pulse w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : data?.clients.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            등록된 고객이 없습니다
+          </div>
+        ) : (
+          data?.clients.map((client) => (
+            <Link
+              key={client.id}
+              href={`/clients/${client.id}`}
+              className="block rounded-xl bg-card border border-border p-4 hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-medium text-base">{client.name}</span>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium ${
+                  client.is_active
+                    ? "bg-success/10 text-success"
+                    : "bg-muted text-muted-foreground"
+                }`}>
+                  {client.is_active ? "활성" : "비활성"}
+                </span>
+              </div>
+              <div className="text-base text-muted-foreground mb-1">
+                {getFacilityLabel(client.facility_type)}
+              </div>
+              {client.address && (
+                <div className="text-base text-muted-foreground mb-1">{client.address}</div>
+              )}
+              {(client.contact_name || client.contact_phone) && (
+                <div className="text-base text-muted-foreground">
+                  {[client.contact_name, client.contact_phone].filter(Boolean).join(" · ")}
+                </div>
+              )}
+            </Link>
+          ))
+        )}
+      </div>
+
+      {/* 데스크탑 테이블 */}
+      <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>

@@ -138,7 +138,7 @@ export default function CalendarPage() {
             ))}
           </div>
 
-          {/* 날짜 셀 */}
+          {/* 날짜 셀 — 데스크탑: 텍스트 표시, 모바일: dot 표시 */}
           <div className="grid grid-cols-7">
             {days.map((day) => {
               const dayVisits = getVisitsForDate(day);
@@ -150,7 +150,7 @@ export default function CalendarPage() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDate(day)}
-                  className={`relative min-h-35 p-1.5 border-b border-r border-border text-left transition-colors hover:bg-muted flex flex-col items-start cursor-pointer ${
+                  className={`relative md:min-h-35 min-h-20 p-1.5 border-b border-r border-border text-left transition-colors hover:bg-muted flex flex-col items-start cursor-pointer ${
                     isSelected ? "bg-muted" : ""
                   }`}
                 >
@@ -160,8 +160,23 @@ export default function CalendarPage() {
                     {day.getDate()}
                   </span>
 
-                  {/* 방문 건 표시 */}
-                  <div className="mt-0.5 space-y-0.5">
+                  {/* 모바일: dot 표시 */}
+                  {dayVisits.length > 0 && (
+                    <div className="flex gap-0.5 mt-0.5 md:hidden">
+                      {dayVisits.slice(0, 3).map((v) => (
+                        <span
+                          key={v.id}
+                          className={`w-2 h-2 rounded-full ${getStatusColor(v.status)}`}
+                        />
+                      ))}
+                      {dayVisits.length > 3 && (
+                        <span className="text-base text-muted-foreground leading-none">+</span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 데스크탑: 텍스트 표시 */}
+                  <div className="mt-0.5 space-y-0.5 hidden md:block">
                     {dayVisits.slice(0, 3).map((v) => (
                       <div
                         key={v.id}
@@ -182,69 +197,108 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        {/* 우측: 선택일 상세 */}
-      <div className="hidden lg:block w-72 shrink-0">
-        <div className="rounded-xl bg-card border border-border sticky top-0">
-          <div className="p-6">
-            <h3 className="font-bold text-lg">
-              {format(selectedDate, "M월 d일 (EEE)", { locale: ko })}
-            </h3>
-            <p className="text-base mb-3">
-              방문 일정 {selectedVisits.length}건
-            </p>
-
-            {loading ? (
-              <div className="flex justify-center py-8">
-                <Spinner size="sm" />
-              </div>
-            ) : selectedVisits.length === 0 ? (
-              <p className="text-base text-muted-foreground py-4 text-center">
-                예정된 방문이 없습니다
+        {/* 우측: 선택일 상세 (데스크탑) */}
+        <div className="hidden lg:block w-72 shrink-0">
+          <div className="rounded-xl bg-card border border-border sticky top-0">
+            <div className="p-6">
+              <h3 className="font-bold text-lg">
+                {format(selectedDate, "M월 d일 (EEE)", { locale: ko })}
+              </h3>
+              <p className="text-base mb-3">
+                방문 일정 {selectedVisits.length}건
               </p>
-            ) : (
-              <div className="space-y-3">
-                {selectedVisits.map((visit) => (
-                  <Link
-                    key={visit.id}
-                    href={`/visits/${visit.id}`}
-                    className="block p-3 rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer"
-                  >
-                    <div className="font-semibold text-base">
-                      {visit.clients?.name}
-                    </div>
-                    <div className="text-base text-muted-foreground mt-0.5">
-                      {visit.clients?.address || "주소 없음"}
-                    </div>
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium mt-1.5 text-white ${getStatusColor(visit.status)}`}
-                    >
-                      {getStatusLabel(visit.status)}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
 
-            {/* 상태 범례 */}
-            <div className="mt-6 pt-4 border-t border-border">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-base">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
-                  예정
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <Spinner size="sm" />
                 </div>
-                <div className="flex items-center gap-2 text-base">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-success" />
-                  완료
+              ) : selectedVisits.length === 0 ? (
+                <p className="text-base text-muted-foreground py-4 text-center">
+                  예정된 방문이 없습니다
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {selectedVisits.map((visit) => (
+                    <Link
+                      key={visit.id}
+                      href={`/visits/${visit.id}`}
+                      className="block p-3 rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer"
+                    >
+                      <div className="font-semibold text-base">
+                        {visit.clients?.name}
+                      </div>
+                      <div className="text-base text-muted-foreground mt-0.5">
+                        {visit.clients?.address || "주소 없음"}
+                      </div>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium mt-1.5 text-white ${getStatusColor(visit.status)}`}
+                      >
+                        {getStatusLabel(visit.status)}
+                      </span>
+                    </Link>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2 text-base">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-destructive" />
-                  미완료
+              )}
+
+              {/* 상태 범례 */}
+              <div className="mt-6 pt-4 border-t border-border">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-base">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
+                    예정
+                  </div>
+                  <div className="flex items-center gap-2 text-base">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-success" />
+                    완료
+                  </div>
+                  <div className="flex items-center gap-2 text-base">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-destructive" />
+                    미완료
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* 모바일: 선택일 일정 목록 */}
+      <div className="lg:hidden mt-4">
+        <div className="rounded-xl bg-card border border-border p-4">
+          <h3 className="font-bold text-base mb-3">
+            {format(selectedDate, "M월 d일 (EEE)", { locale: ko })} · {selectedVisits.length}건
+          </h3>
+
+          {loading ? (
+            <div className="flex justify-center py-4">
+              <Spinner size="sm" />
+            </div>
+          ) : selectedVisits.length === 0 ? (
+            <p className="text-base text-muted-foreground py-4 text-center">
+              예정된 방문이 없습니다
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {selectedVisits.map((visit) => (
+                <Link
+                  key={visit.id}
+                  href={`/visits/${visit.id}`}
+                  className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-muted transition-colors"
+                >
+                  <div>
+                    <div className="font-medium text-base">{visit.clients?.name}</div>
+                    <div className="text-base text-muted-foreground">{visit.clients?.address || "주소 없음"}</div>
+                  </div>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium text-white shrink-0 ${getStatusColor(visit.status)}`}
+                  >
+                    {getStatusLabel(visit.status)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

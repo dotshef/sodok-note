@@ -74,7 +74,70 @@ export default function MembersPage() {
         </Link>
       </div>
 
-      <div className="bg-card rounded-lg border border-border overflow-x-auto">
+      {/* 모바일 카드 */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-xl bg-card border border-border p-4">
+                <div className="h-4 bg-muted rounded animate-pulse mb-2" />
+                <div className="h-4 bg-muted rounded animate-pulse w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : members?.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            등록된 멤버가 없습니다
+          </div>
+        ) : (
+          members?.map((member) => (
+            <div key={member.id} className="rounded-xl bg-card border border-border overflow-hidden">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-medium text-base">{member.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`${badgeBase} bg-muted text-foreground`}>
+                      {member.role === "admin" ? "관리자" : "직원"}
+                    </span>
+                    <span className={`${badgeBase} ${
+                      member.is_active ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+                    }`}>
+                      {member.is_active ? "활성" : "비활성"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-base text-muted-foreground">{member.email}</div>
+                {member.phone && (
+                  <div className="text-base text-muted-foreground">{member.phone}</div>
+                )}
+              </div>
+              <div className="flex border-t border-border">
+                <Link
+                  href={`/members/${member.id}/edit`}
+                  className="flex-1 flex items-center justify-center py-3 text-base font-medium text-primary hover:bg-muted transition-colors border-r border-border"
+                >
+                  수정
+                </Link>
+                {member.id !== userId ? (
+                  <button
+                    onClick={() => handleToggleActive(member)}
+                    className={`flex-1 flex items-center justify-center py-3 text-base font-medium transition-colors cursor-pointer ${
+                      member.is_active ? "text-destructive hover:bg-destructive/10" : "text-success hover:bg-success/10"
+                    }`}
+                  >
+                    {member.is_active ? "비활성화" : "활성화"}
+                  </button>
+                ) : (
+                  <span className="flex-1 flex items-center justify-center py-3 text-base text-muted-foreground">-</span>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 데스크탑 테이블 */}
+      <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>

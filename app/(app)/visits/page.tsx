@@ -230,15 +230,85 @@ export default function VisitsPage() {
         )}
       </div>
 
-      {/* 테이블 */}
-      <div className="bg-card rounded-lg border border-border overflow-x-auto">
+      {/* 모바일 카드 */}
+      <div className="md:hidden space-y-3">
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-xl bg-card border border-border p-4">
+                <div className="h-4 bg-muted rounded animate-pulse mb-2" />
+                <div className="h-4 bg-muted rounded animate-pulse w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : data?.visits.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            조건에 해당하는 방문 일정이 없습니다
+          </div>
+        ) : (
+          data?.visits.map((visit) => (
+            <div key={visit.id} className="rounded-xl bg-card border border-border overflow-hidden">
+              {/* 상단: 방문 상세 링크 */}
+              <Link
+                href={`/visits/${visit.id}`}
+                className="block p-4 hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-base font-mono text-muted-foreground">{visit.visit_code || "-"}</span>
+                  {getStatusBadge(visit.status)}
+                </div>
+                <div className="font-medium text-base mb-1">{visit.clients?.name || "-"}</div>
+                <div className="flex items-center gap-2 text-base text-muted-foreground">
+                  <span>{visit.clients ? getFacilityLabel(visit.clients.facility_type) : "-"}</span>
+                  <span>·</span>
+                  <span>{visit.scheduled_date}</span>
+                  {visit.users?.name && (
+                    <>
+                      <span>·</span>
+                      <span>{visit.users.name}</span>
+                    </>
+                  )}
+                </div>
+              </Link>
+              {/* 하단: 다운로드 버튼 */}
+              {visit.certificates && (
+                <div className="flex border-t border-border">
+                  <a
+                    href={`/api/certificates/${visit.certificates.id}/hwpx`}
+                    download
+                    className="flex-1 flex items-center justify-center gap-2 py-3 text-base font-medium hover:bg-muted transition-colors border-r border-border"
+                  >
+                    HWPX
+                  </a>
+                  {visit.certificates.pdf_file_url ? (
+                    <a
+                      href={`/api/certificates/${visit.certificates.id}/pdf`}
+                      download
+                      className="flex-1 flex items-center justify-center gap-2 py-3 text-base font-medium hover:bg-muted transition-colors"
+                    >
+                      PDF
+                    </a>
+                  ) : (
+                    <span className="flex-1 flex items-center justify-center py-3 text-base text-muted-foreground">
+                      PDF
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* 데스크탑 테이블 */}
+      <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
         <table className="data-table">
           <thead>
             <tr>
               <th style={{ width: "15%" }}>코드</th>
-              <th style={{ width: "15%" }}>시설명</th>
+              <th style={{ width: "13%" }}>시설명</th>
               <th style={{ width: "19%" }}>시설 유형</th>
-              <th style={{ width: "8%" }}>담당자</th>
+              <th style={{ width: "10%" }}>담당자</th>
               <th style={{ width: "10%" }}>상태</th>
               <th style={{ width: "11%" }}>날짜</th>
               <th style={{ width: "19%" }}>증명서</th>
@@ -292,22 +362,22 @@ export default function VisitsPage() {
                   <td className="text-base">{visit.scheduled_date}</td>
                   <td>
                     {visit.certificates ? (
-                      <div className="flex items-center gap-2">
-                        <a
-                          href={`/api/certificates/${visit.certificates.id}/hwpx`}
-                          className="inline-flex items-center justify-center gap-2 px-4 py-1 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
-                          download
+                      <div className="flex flex-wrap gap-1">
+                        <button
+                          type="button"
+                          className="inline-flex items-center justify-center px-3 py-1 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
+                          onClick={() => window.open(`/api/certificates/${visit.certificates!.id}/hwpx`)}
                         >
                           HWPX
-                        </a>
+                        </button>
                         {visit.certificates.pdf_file_url && (
-                          <a
-                            href={`/api/certificates/${visit.certificates.id}/pdf`}
-                            className="inline-flex items-center justify-center gap-2 px-4 py-1 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
-                            download
+                          <button
+                            type="button"
+                            className="inline-flex items-center justify-center px-3 py-1 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
+                            onClick={() => window.open(`/api/certificates/${visit.certificates!.id}/pdf`)}
                           >
                             PDF
-                          </a>
+                          </button>
                         )}
                       </div>
                     ) : (
