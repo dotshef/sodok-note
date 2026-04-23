@@ -10,7 +10,7 @@ const pageTitles: Record<string, string> = {
   "/clients": "고객 관리",
   "/members": "직원 관리",
   "/settings": "업체 설정",
-  "/my-info": "내 정보 수정",
+  "/my-info": "내 정보",
 };
 
 export function Header({ session }: { session: JwtPayload }) {

@@ -33,7 +33,7 @@ const moreItems: NavItem[] = [
   { href: "/clients", label: "고객 관리", icon: <Building2 size={22} />, adminOnly: true },
   { href: "/members", label: "직원 관리", icon: <Users size={22} />, adminOnly: true },
   { href: "/settings", label: "업체 설정", icon: <Settings size={22} /> },
-  { href: "/my-info", label: "내 정보 수정", icon: <UserPen size={22} /> },
+  { href: "/my-info", label: "내 정보", icon: <UserPen size={22} /> },
 ];
 
 export function BottomNav({ role }: { role: "admin" | "member" }) {

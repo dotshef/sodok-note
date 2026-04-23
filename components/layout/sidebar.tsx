@@ -91,7 +91,7 @@ export function Sidebar({ role }: { role: "admin" | "member" }) {
           }`}
         >
           <UserPen size={22} />
-          내 정보 수정
+          내 정보
         </Link>
         <button
           onClick={handleLogout}

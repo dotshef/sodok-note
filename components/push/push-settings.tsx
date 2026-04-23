@@ -150,7 +150,7 @@ export function PushSettings() {
     <div className="rounded-xl bg-card border border-border mb-4">
       <div className="p-6 space-y-4">
         <div className="flex items-center justify-between gap-3">
-          <div>
+          <div className="min-w-0 flex-1">
             <h3 className="text-base font-semibold">푸시 알림</h3>
             <p className="text-base text-muted-foreground">
               {permission === "denied"
@@ -165,7 +165,7 @@ export function PushSettings() {
               type="button"
               onClick={isSubscribed ? handleDisable : handleEnable}
               disabled={working}
-              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium disabled:opacity-50 cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-base font-medium disabled:opacity-50 cursor-pointer shrink-0 whitespace-nowrap ${
                 isSubscribed
                   ? "border border-border hover:bg-muted"
                   : "bg-primary text-primary-foreground"
