@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
+import { sendPush } from "@/lib/push/send";
+import { visitAssignedPayload } from "@/lib/push/templates";
 
 // 방문 상세 조회
 export async function GET(
@@ -114,14 +116,44 @@ export async function PATCH(
       return NextResponse.json({ error: "관리자만 배정할 수 있습니다" }, { status: 403 });
     }
 
+    const newUserId: string | null = body.userId || null;
+
+    const { data: existing } = await supabase
+      .from("visits")
+      .select("user_id")
+      .eq("id", id)
+      .eq("tenant_id", session.tenantId)
+      .single();
+
     const { error: updateError } = await supabase
       .from("visits")
-      .update({ user_id: body.userId || null })
+      .update({ user_id: newUserId })
       .eq("id", id)
       .eq("tenant_id", session.tenantId);
 
     if (updateError) {
       return NextResponse.json({ error: "배정에 실패했습니다" }, { status: 500 });
+    }
+
+    if (newUserId && newUserId !== existing?.user_id) {
+      const { data: visitInfo } = await supabase
+        .from("visits")
+        .select("scheduled_date, clients(name)")
+        .eq("id", id)
+        .eq("tenant_id", session.tenantId)
+        .single();
+
+      const client = visitInfo?.clients as unknown as { name: string } | null;
+      if (visitInfo && client) {
+        await sendPush(
+          newUserId,
+          visitAssignedPayload({
+            visitId: id,
+            clientName: client.name,
+            scheduledDate: visitInfo.scheduled_date,
+          })
+        ).catch((e) => console.error("배정 알림 발송 실패", e));
+      }
     }
 
     return NextResponse.json({ success: true });

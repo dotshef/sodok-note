@@ -145,8 +145,6 @@ CREATE TABLE push_subscriptions (
 | 방문 배정 | `PATCH /api/visits/[id]` (user_id 배정 시) | 배정된 직원 |
 | 방문 전날 알림 | Cron (일 1회, 19시경) | 다음날 방문 예정 직원 |
 | 방문 전 1시간 | Cron (15분 간격) | 곧 방문할 직원 |
-| 미완료 경고 | Cron (일 1회, 22시) | 해당 직원 + admin |
-| 계약 만료 임박 | Cron (일 1회) | admin (만료 30/14/7일 전) |
 
 ---
 
@@ -211,8 +209,6 @@ type PushPayload = {
 | `visit_assigned` | 새 방문 배정 | "{시설명} — {날짜}" | `/visits/{id}` |
 | `visit_tomorrow` | 내일 방문 {n}건 | "{시설명} 외 {n-1}곳" | `/calendar` |
 | `visit_upcoming` | 1시간 후 방문 | "{시설명} — {주소}" | `/visits/{id}` |
-| `visit_missed` | 미완료 건 {n}건 | "처리 필요" | `/visits?status=missed` |
-| `contract_expiring` | 계약 만료 {n}일 전 | "{고객명}" | `/contracts/{id}` |
 
 ### 7-3. 페이로드 제약
 
@@ -300,8 +296,7 @@ web-push 발송 시 응답 코드로 판단:
 {
   "crons": [
     { "path": "/api/cron/visit-reminders", "schedule": "0 19 * * *" },
-    { "path": "/api/cron/upcoming-visits", "schedule": "*/15 * * * *" },
-    { "path": "/api/cron/contract-expiring", "schedule": "0 9 * * *" }
+    { "path": "/api/cron/upcoming-visits", "schedule": "*/15 * * * *" }
   ]
 }
 ```
@@ -310,7 +305,87 @@ web-push 발송 시 응답 코드로 판단:
 
 ---
 
-## 12. 구현 단계별 로드맵
+## 12. 신규 파일 디렉토리 구조
+
+기존 프로젝트 컨벤션을 따라 아래 파일들이 추가됩니다.
+
+```
+pest-control-project/
+├── app/
+│   ├── api/
+│   │   ├── push/
+│   │   │   └── subscribe/
+│   │   │       └── route.ts              # POST/DELETE - 구독 등록/해제
+│   │   └── cron/
+│   │       ├── visit-reminders/
+│   │       │   └── route.ts              # 방문 전날 알림 (19시)
+│   │       └── upcoming-visits/
+│   │           └── route.ts              # 1시간 전 알림 (15분 간격)
+│   └── (app)/
+│       └── my-info/
+│           └── page.tsx                  # (기존) 알림 토글 UI 추가
+│
+├── lib/
+│   ├── push/                             # 신규 디렉토리
+│   │   ├── client.ts                     # web-push 싱글톤 초기화
+│   │   ├── send.ts                       # sendPush / sendPushToTenant 유틸
+│   │   ├── browser.ts                    # 클라이언트 유틸 (subscribe/unsubscribe)
+│   │   ├── templates.ts                  # 알림 타입별 페이로드 템플릿
+│   │   └── types.ts                      # PushPayload, NotificationType 등
+│   └── validations/
+│       └── push.ts                       # Zod 스키마 (구독 등록 요청 검증)
+│
+├── components/
+│   └── push/                             # 신규 디렉토리
+│       ├── push-permission-banner.tsx    # 권한 요청 배너 (최초 로그인 후)
+│       └── push-settings.tsx             # 설정 페이지 내 알림 토글
+│
+├── public/
+│   └── sw-custom.js                      # Service Worker push 이벤트 핸들러
+│                                          # (next-pwa가 기본 SW에 병합)
+│
+├── scripts/
+│   └── generate-vapid.ts                 # VAPID 키 생성 헬퍼 (1회용)
+│
+├── reference/
+│   └── schema.sql                        # (기존) push_subscriptions 테이블 추가
+│
+├── .env                                  # (기존) VAPID 키 3개 환경변수 추가
+├── next.config.ts                        # (기존) next-pwa customWorkerSrc 설정
+└── vercel.json                           # (신규 또는 기존) Cron 스케줄 정의
+```
+
+### 파일별 역할 요약
+
+| 파일 | 역할 |
+|------|------|
+| `app/api/push/subscribe/route.ts` | 구독 CRUD (세션 기반, `requireAuth`) |
+| `app/api/cron/*/route.ts` | 스케줄 트리거 진입점, `CRON_SECRET` 검증 |
+| `lib/push/client.ts` | `webpush.setVapidDetails()` 초기화, 서버 전용 |
+| `lib/push/send.ts` | user_id/tenant_id 기반 발송 래퍼, 410 Gone 시 자동 삭제 |
+| `lib/push/browser.ts` | 클라이언트 전용, `isPushSupported()`, `subscribeToPush()` 등 |
+| `lib/push/templates.ts` | 알림 타입별 제목/본문/이동경로 생성 |
+| `lib/push/types.ts` | 공유 타입 정의 (서버/클라이언트 둘 다 import) |
+| `lib/validations/push.ts` | Zod 스키마 (endpoint, keys, userAgent 검증) |
+| `components/push/push-permission-banner.tsx` | 대시보드 상단 배너, 권한 `default`일 때만 표시 |
+| `components/push/push-settings.tsx` | 설정 페이지 내 토글 + 등록 기기 목록 |
+| `public/sw-custom.js` | `push` / `notificationclick` 이벤트 리스너 |
+| `scripts/generate-vapid.ts` | `npx tsx scripts/generate-vapid.ts` 로 VAPID 키 1회 생성 |
+
+### 기존 파일 수정 범위
+
+| 파일 | 수정 내용 |
+|------|-----------|
+| [reference/schema.sql](schema.sql) | `push_subscriptions` 테이블 DDL 추가 |
+| [next.config.ts](../next.config.ts) | next-pwa에 커스텀 SW 병합 옵션 추가 |
+| [app/api/visits/[id]/route.ts](../app/api/visits/[id]/route.ts) | 배정 변경 시 `sendPush()` 호출 |
+| [app/(app)/my-info/page.tsx](../app/(app)/my-info/page.tsx) | `<PushSettings />` 컴포넌트 배치 |
+| [app/(app)/dashboard/page.tsx](../app/(app)/dashboard/page.tsx) | `<PushPermissionBanner />` 배치 |
+| `.env.local` / `.env.example` | VAPID 관련 3개 환경 변수 추가 |
+
+---
+
+## 13. 구현 단계별 로드맵
 
 ### Phase 1: 기반 (하루)
 - [ ] VAPID 키 생성 및 환경 변수 세팅
@@ -331,20 +406,16 @@ web-push 발송 시 응답 코드로 판단:
 ### Phase 4: Cron 기반 발송 (하루)
 - [ ] Vercel Cron 설정
 - [ ] 방문 전날 알림 (`/api/cron/visit-reminders`)
-- [ ] 미완료 경고 (`/api/cron/missed-visits`)
+- [ ] 방문 1시간 전 알림 (`/api/cron/upcoming-visits`)
 
-### Phase 5: 확장 (계약 기능 구현 후)
-- [ ] 계약 만료 알림
-- [ ] 방문 1시간 전 알림
-
-### Phase 6: iOS 대응
+### Phase 5: iOS 대응
 - [ ] PWA manifest 검증 (`display: standalone`)
 - [ ] "홈 화면에 추가" 안내 UI
 - [ ] iOS 실기기 테스트
 
 ---
 
-## 13. 체크해야 할 기존 코드
+## 14. 체크해야 할 기존 코드
 
 - [package.json](../package.json) — `@ducanh2912/next-pwa` 버전 확인
 - [next.config.js](../next.config.js) 또는 `next.config.ts` — PWA 설정, 커스텀 SW 옵션
@@ -354,7 +425,7 @@ web-push 발송 시 응답 코드로 판단:
 
 ---
 
-## 14. 보안 고려사항
+## 15. 보안 고려사항
 
 - **VAPID Private Key**: `.env.local`에만 존재, `NEXT_PUBLIC_` 접두사 금지
 - **구독 정보**: 유저 ID와 tenant_id로 격리, 다른 테넌트 알림 발송 불가
@@ -364,7 +435,7 @@ web-push 발송 시 응답 코드로 판단:
 
 ---
 
-## 15. 비용
+## 16. 비용
 
 - VAPID / web-push: **0원**
 - Vercel Cron: Pro 플랜 $20/월 (다른 Pro 기능과 공유)

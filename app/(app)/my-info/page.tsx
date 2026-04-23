@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
+import { PushSettings } from "@/components/push/push-settings";
 
 interface MyInfo {
   name: string;
@@ -127,6 +128,9 @@ export default function MyInfoPage() {
           </button>
         </div>
       </form>
+
+      {/* 푸시 알림 설정 */}
+      <PushSettings />
 
       {/* 비밀번호 변경 */}
       <PasswordChangeSection />

@@ -3,6 +3,8 @@ import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
 import { createVisitSchema } from "@/lib/validations/visit";
 import { generateVisitCode } from "@/lib/utils/visit-code";
+import { sendPush } from "@/lib/push/send";
+import { visitAssignedPayload } from "@/lib/push/templates";
 
 // 방문 건 목록 조회 (캘린더 모드 + 목록 모드)
 export async function GET(request: Request) {
@@ -202,6 +204,26 @@ export async function POST(request: Request) {
 
   if (insertError || !inserted) {
     return NextResponse.json({ error: "방문 일정 등록에 실패했습니다" }, { status: 500 });
+  }
+
+  if (userId) {
+    const { data: clientInfo } = await supabase
+      .from("clients")
+      .select("name")
+      .eq("id", clientId)
+      .eq("tenant_id", session.tenantId)
+      .single();
+
+    if (clientInfo) {
+      sendPush(
+        userId,
+        visitAssignedPayload({
+          visitId: inserted.id,
+          clientName: clientInfo.name,
+          scheduledDate,
+        })
+      ).catch((e) => console.error("배정 알림 발송 실패", e));
+    }
   }
 
   return NextResponse.json({ id: inserted.id }, { status: 201 });

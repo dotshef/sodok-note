@@ -5,6 +5,7 @@ import { Calendar, CalendarCheck, AlertTriangle, CheckCircle } from "lucide-reac
 import Link from "next/link";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { Spinner } from "@/components/ui/spinner";
+import { PushPermissionBanner } from "@/components/push/push-permission-banner";
 
 interface DashboardData {
   todayCount: number;
@@ -98,6 +99,7 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <PushPermissionBanner />
       {/* 상단 요약 카드 4개 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="rounded-xl bg-card border border-border">
