@@ -44,35 +44,41 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-dvh">
       {/* 좌측 — 브랜드 소개 */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center px-16 text-primary-foreground">
-        <div className="w-full max-w-sm">
-        <h1 className="text-4xl font-bold mb-4">소독노트</h1>
-        <p className="text-lg opacity-90 mb-10">소독/방역업체를 위한 올인원 관리 플랫폼</p>
-        <div className="space-y-5">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
-              <CalendarCheck size={20} />
+      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center px-6 text-primary-foreground">
+        <div className="rounded-xl border border-primary-foreground/30 w-full max-w-md">
+          <div className="p-6">
+            <h1 className="text-4xl font-bold mb-4">소독노트</h1>
+            <p className="text-lg opacity-90 mb-10">소독/방역업체를 위한 올인원 관리 플랫폼</p>
+            <div className="space-y-5">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
+                  <CalendarCheck size={20} />
+                </div>
+                <span className="text-base opacity-80">스케줄 자동 관리</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
+                  <FileText size={20} />
+                </div>
+                <span className="text-base opacity-80">증명서 원클릭 발급</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
+                  <ClipboardList size={20} />
+                </div>
+                <span className="text-base opacity-80">고객 이력 한눈에</span>
+              </div>
             </div>
-            <span className="text-base opacity-80">스케줄 자동 관리</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
-              <FileText size={20} />
-            </div>
-            <span className="text-base opacity-80">증명서 원클릭 발급</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
-              <ClipboardList size={20} />
-            </div>
-            <span className="text-base opacity-80">고객 이력 한눈에</span>
-          </div>
-        </div>
         </div>
       </div>
 
       {/* 우측 — 로그인 폼 */}
-      <div className="flex-1 flex items-center justify-center px-6 bg-background">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 bg-background">
+        <div className="w-full max-w-md lg:hidden mb-6 text-center">
+          <h1 className="text-4xl font-bold mb-2 text-primary">소독노트</h1>
+          <p className="text-lg text-primary/80">소독/방역업체를 위한 올인원 관리 플랫폼</p>
+        </div>
         <div className="rounded-xl bg-card w-full max-w-md">
           <div className="p-6">
 
@@ -105,15 +111,6 @@ export default function LoginPage() {
                 />
               </FormField>
 
-              <div className="flex justify-end">
-                <Link
-                  href="/forgot-password"
-                  className="text-base text-primary hover:underline"
-                >
-                  비밀번호 찾기
-                </Link>
-              </div>
-
               <button
                 type="submit"
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
@@ -132,6 +129,18 @@ export default function LoginPage() {
                 className="text-base text-primary font-medium hover:underline"
               >
                 회원가입
+              </Link>
+            </div>
+
+            <div className="text-center mt-2">
+              <span className="text-base text-muted-foreground">
+                비밀번호를 잊으셨나요?{" "}
+              </span>
+              <Link
+                href="/forgot-password"
+                className="text-base text-primary font-medium hover:underline"
+              >
+                비밀번호 찾기
               </Link>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
 import { FilterSelect } from "@/components/ui/filter-select";
+import { DatePicker } from "@/components/ui/date-picker";
 
 interface ClientOption {
   id: string;
@@ -181,12 +182,10 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
             </FormField>
 
             <FormField label={<>방문 예정일 <span className="text-destructive">*</span></>}>
-              <input
-                type="date"
-                className="w-full"
+              <DatePicker
                 value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                required
+                onChange={setScheduledDate}
+                placeholder="날짜 선택"
               />
             </FormField>
 

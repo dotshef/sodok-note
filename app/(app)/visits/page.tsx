@@ -7,6 +7,7 @@ import { Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { VisitCreateModal } from "@/components/visits/visit-create-modal";
 import { FilterSelect } from "@/components/ui/filter-select";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useSession } from "@/components/providers/session-provider";
 
 interface Visit {
@@ -185,26 +186,29 @@ export default function VisitsPage() {
         />
 
         <div className="contents md:flex md:items-center md:gap-2">
-          <input
-            type="date"
-            className="w-full md:w-auto"
+          <DatePicker
             value={dateFrom}
-            onChange={(e) => {
-              setDateFrom(e.target.value);
+            onChange={(v) => {
+              setDateFrom(v);
               setPage(1);
               setData(null);
             }}
+            placeholder="시작일"
+            clearable
+            className="md:w-40"
           />
           <span className="hidden md:inline text-muted-foreground">~</span>
-          <input
-            type="date"
-            className="w-full md:w-auto"
+          <DatePicker
             value={dateTo}
-            onChange={(e) => {
-              setDateTo(e.target.value);
+            onChange={(v) => {
+              setDateTo(v);
               setPage(1);
               setData(null);
             }}
+            placeholder="종료일"
+            clearable
+            min={dateFrom || undefined}
+            className="md:w-40"
           />
         </div>
 
