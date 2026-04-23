@@ -13,7 +13,7 @@ export default async function AppLayout({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex h-screen bg-background">
+      <div className="flex h-dvh bg-background">
         <Sidebar role={session.role} />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header session={session} />

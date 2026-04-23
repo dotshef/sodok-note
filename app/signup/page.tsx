@@ -53,7 +53,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-dvh">
       {/* 좌측 — 브랜드 소개 */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center px-16 text-primary-foreground">
         <h1 className="text-4xl font-bold mb-4">소독노트</h1>

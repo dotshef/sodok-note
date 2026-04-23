@@ -3,7 +3,7 @@ import { Share, Plus, AlertTriangle } from "lucide-react";
 
 export default function InstallPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <div className="max-w-xl mx-auto px-6 py-10">
         <h1 className="text-2xl font-bold mb-2">소독노트 앱 설치</h1>
         <p className="text-base text-muted-foreground mb-8">
@@ -32,9 +32,6 @@ export default function InstallPage() {
               <p className="text-base text-muted-foreground mb-3">
                 Safari 하단(또는 상단)에 있는 <Share size={16} className="inline align-text-bottom" /> 공유 버튼을 눌러주세요.
               </p>
-              <div className="rounded-lg bg-muted p-3 text-base text-muted-foreground">
-                💡 정사각형에서 화살표가 위로 올라가는 모양의 아이콘입니다.
-              </div>
             </div>
           </li>
 

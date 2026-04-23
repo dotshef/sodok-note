@@ -42,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-dvh">
       {/* 좌측 — 브랜드 소개 */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center px-16 text-primary-foreground">
         <div className="w-full max-w-sm">
