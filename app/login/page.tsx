@@ -45,7 +45,7 @@ export default function LoginPage() {
     <div className="flex min-h-dvh">
       {/* 좌측 — 브랜드 소개 */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center px-6 text-primary-foreground">
-        <div className="rounded-xl border border-primary-foreground/30 w-full max-w-md">
+        <div className="rounded-xl w-full max-w-md">
           <div className="p-6">
             <h1 className="text-4xl font-bold mb-4">소독노트</h1>
             <p className="text-lg opacity-90 mb-10">소독/방역업체를 위한 올인원 관리 플랫폼</p>
@@ -120,7 +120,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="text-center mt-4">
+            <div className="text-center mt-8">
               <span className="text-base text-muted-foreground">
                 계정이 없으신가요?{" "}
               </span>

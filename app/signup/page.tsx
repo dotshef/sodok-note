@@ -54,17 +54,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-dvh">
-      {/* 좌측 — 브랜드 소개 */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center px-16 text-primary-foreground">
-        <h1 className="text-4xl font-bold mb-4">소독노트</h1>
-        <p className="text-lg opacity-90 mb-2">소독 방역업체를 위한</p>
-        <p className="text-lg opacity-90 mb-8">올인원 관리 플랫폼</p>
-        <p className="text-base opacity-70">
-          스케줄 관리 · 증명서 발급 · 고객 이력
-        </p>
-      </div>
-
-      {/* 우측 — 회원가입 폼 */}
+      {/* 회원가입 폼 */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
         <div className="rounded-xl w-full max-w-md bg-card shadow-xl">
           <div className="p-6">
