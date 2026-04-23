@@ -157,7 +157,7 @@ export function PushSettings() {
                 ? "브라우저에서 알림이 차단되었습니다. 설정에서 허용해주세요."
                 : isSubscribed
                   ? "이 기기에서 알림을 받고 있습니다"
-                  : "이 기기에서 알림을 받지 않습니다"}
+                  : "이 기기에서 알림을 받지 않고 있습니다"}
             </p>
           </div>
           {permission !== "denied" && (

@@ -145,15 +145,15 @@ export default function VisitsPage() {
   return (
     <div>
       {/* 필터 바 */}
-      <div className="flex flex-wrap items-center gap-3 mb-4">
-        <div className="flex">
+      <div className="grid grid-cols-2 gap-2 mb-4 md:flex md:flex-wrap md:items-center md:gap-3">
+        <div className="flex col-span-2 md:col-span-1">
           <div className="flex items-center px-3 bg-muted border border-r-0 border-border rounded-l-lg">
             <Search size={16} className="text-muted-foreground" />
           </div>
           <input
             type="text"
             placeholder="시설명 검색"
-            className="w-56 !rounded-l-none"
+            className="flex-1 min-w-0 md:flex-none md:w-56 !rounded-l-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -171,12 +171,23 @@ export default function VisitsPage() {
             { value: "completed", label: "완료" },
             { value: "missed", label: "미완료" },
           ]}
-          className="w-36"
+          className="w-full md:w-36"
         />
 
-        <div className="flex items-center gap-2">
+        <FilterSelect
+          value={facilityTypeFilter}
+          onChange={(v) => { setFacilityTypeFilter(v); setPage(1); setData(null); }}
+          options={[
+            { value: "", label: "전체 시설 유형" },
+            ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
+          ]}
+          className="w-full md:w-56"
+        />
+
+        <div className="contents md:flex md:items-center md:gap-2">
           <input
             type="date"
+            className="w-full md:w-auto"
             value={dateFrom}
             onChange={(e) => {
               setDateFrom(e.target.value);
@@ -184,9 +195,10 @@ export default function VisitsPage() {
               setData(null);
             }}
           />
-          <span className="text-muted-foreground">~</span>
+          <span className="hidden md:inline text-muted-foreground">~</span>
           <input
             type="date"
+            className="w-full md:w-auto"
             value={dateTo}
             onChange={(e) => {
               setDateTo(e.target.value);
@@ -196,16 +208,6 @@ export default function VisitsPage() {
           />
         </div>
 
-        <FilterSelect
-          value={facilityTypeFilter}
-          onChange={(v) => { setFacilityTypeFilter(v); setPage(1); setData(null); }}
-          options={[
-            { value: "", label: "전체 시설 유형" },
-            ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
-          ]}
-          className="w-56"
-        />
-
         {role === "admin" && (
           <FilterSelect
             value={userIdFilter}
@@ -214,7 +216,7 @@ export default function VisitsPage() {
               { value: "", label: "전체 담당자" },
               ...activeMembers.map((m) => ({ value: m.id, label: m.name })),
             ]}
-            className="w-40"
+            className="col-span-2 w-full md:col-span-1 md:w-40"
           />
         )}
 
@@ -222,10 +224,11 @@ export default function VisitsPage() {
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors cursor-pointer ml-auto"
+            aria-label="방문 일정 등록"
+            className="fixed z-40 right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] size-14 rounded-full shadow-lg flex items-center justify-center bg-primary text-primary-foreground transition-colors cursor-pointer md:static md:ml-auto md:h-auto md:w-auto md:rounded-lg md:shadow-none md:px-4 md:py-2 md:gap-2"
           >
-            <Plus size={16} />
-            방문 일정 등록
+            <Plus className="w-6 h-6 md:w-4 md:h-4" />
+            <span className="hidden md:inline text-base font-medium">방문 일정 등록</span>
           </button>
         )}
       </div>

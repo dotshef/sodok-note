@@ -115,17 +115,17 @@ export default function MyInfoPage() {
                 onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
               />
             </FormField>
-          </div>
-        </div>
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
-            disabled={saving}
-          >
-            {saving ? <Spinner size="sm" /> : "저장"}
-          </button>
+            <div className="flex justify-end pt-2">
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                disabled={saving}
+              >
+                {saving ? <Spinner size="sm" /> : "저장"}
+              </button>
+            </div>
+          </div>
         </div>
       </form>
 
@@ -212,17 +212,17 @@ function PasswordChangeSection() {
               minLength={8}
             />
           </FormField>
-        </div>
-      </div>
 
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
-          disabled={saving}
-        >
-          {saving ? <Spinner size="sm" /> : "비밀번호 변경"}
-        </button>
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
+              disabled={saving}
+            >
+              {saving ? <Spinner size="sm" /> : "비밀번호 변경"}
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   );
