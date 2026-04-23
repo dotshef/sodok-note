@@ -275,132 +275,157 @@ export default function VisitDetailPage() {
         </div>
       </div>
 
-      {/* 소독 정보 입력 */}
+      {/* 소독 정보 */}
       <div className="rounded-xl bg-card border border-border mb-4">
         <div className="p-6 space-y-4">
           <h3 className="text-lg font-semibold">소독 정보</h3>
 
-          {/* 소독 방법 */}
-          <FormField label="소독 방법">
-            <input
-              type="text"
-              placeholder="소독 방법 입력"
-              className="w-full"
-              value={method}
-              onChange={(e) => setMethod(e.target.value)}
-              disabled={isCompleted}
-            />
-            {!isCompleted && recentMethods.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                <span className="text-muted-foreground text-sm mr-1">최근:</span>
-                {recentMethods.map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    className="px-2.5 py-0.5 rounded-full text-sm bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
-                    onClick={() => setMethod(m.name)}
-                  >
-                    {m.name}
-                  </button>
-                ))}
+          {isCompleted ? (
+            <div className="space-y-4 text-base">
+              <div>
+                <span className="text-muted-foreground block mb-1">소독 방법</span>
+                <p className="font-medium">{method || "-"}</p>
               </div>
-            )}
-          </FormField>
 
-          {/* 사용 약품 */}
-          <FormField label="사용 약품">
-            {disinfectants.length > 0 && (
-              <div className="space-y-2 mb-2">
-                {disinfectants.map((d, i) => (
-                  <div key={i} className="flex gap-2 items-center">
-                    <input
-                      type="text"
-                      className="flex-1 min-w-0"
-                      value={d.name}
-                      onChange={(e) => updateDisinfectant(i, "name", e.target.value)}
-                      disabled={isCompleted}
-                      placeholder="약품명"
-                    />
-                    <input
-                      type="text"
-                      className="w-20"
-                      value={d.quantity}
-                      onChange={(e) => updateDisinfectant(i, "quantity", e.target.value)}
-                      disabled={isCompleted}
-                      placeholder="사용량"
-                    />
-                    <select
-                      className="w-20 min-h-[44px] px-2 py-2 rounded-lg border border-border text-base"
-                      value={d.unit}
-                      onChange={(e) => updateDisinfectant(i, "unit", e.target.value)}
-                      disabled={isCompleted}
-                    >
-                      <option value="EA">EA</option>
-                      <option value="cc">cc</option>
-                      <option value="ml">ml</option>
-                      <option value="L">L</option>
-                      <option value="g">g</option>
-                      <option value="kg">kg</option>
-                    </select>
-                    {!isCompleted && (
-                      <button
-                        type="button"
-                        className="text-destructive hover:text-destructive/80 cursor-pointer p-1"
-                        onClick={() => removeDisinfectant(i)}
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                ))}
+              <div>
+                <span className="text-muted-foreground block mb-1">사용 약품</span>
+                {disinfectants.length > 0 ? (
+                  <ul className="space-y-1">
+                    {disinfectants.map((d, i) => (
+                      <li key={i} className="font-medium">
+                        {d.name}
+                        {d.quantity && ` - ${d.quantity}${d.unit}`}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="font-medium">-</p>
+                )}
               </div>
-            )}
-            {!isCompleted && (
-              <div className="flex gap-2">
+
+              <div>
+                <span className="text-muted-foreground block mb-1">
+                  방문 특이사항 <span className="font-normal text-sm">(소독증명서에 기재되지 않습니다)</span>
+                </span>
+                <p className="font-medium whitespace-pre-wrap">{notes || "-"}</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* 소독 방법 */}
+              <FormField label="소독 방법">
                 <input
                   type="text"
-                  placeholder="약품명 입력 후 추가"
-                  className="flex-1"
-                  value={newDisinfectant}
-                  onChange={(e) => setNewDisinfectant(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addDisinfectant(newDisinfectant))}
+                  placeholder="소독 방법 입력"
+                  className="w-full"
+                  value={method}
+                  onChange={(e) => setMethod(e.target.value)}
                 />
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
-                  onClick={() => addDisinfectant(newDisinfectant)}
-                >
-                  추가
-                </button>
-              </div>
-            )}
-            {!isCompleted && recentDisinfectants.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                <span className="text-muted-foreground text-sm mr-1">최근:</span>
-                {recentDisinfectants.map((d) => (
-                  <button
-                    key={d.id}
-                    type="button"
-                    className="px-2.5 py-0.5 rounded-full text-sm bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
-                    onClick={() => addDisinfectant(d.name)}
-                  >
-                    {d.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </FormField>
+                {recentMethods.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    <span className="text-muted-foreground text-sm mr-1">최근:</span>
+                    {recentMethods.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        className="px-2.5 py-0.5 rounded-full text-sm bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
+                        onClick={() => setMethod(m.name)}
+                      >
+                        {m.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </FormField>
 
-          {/* 메모 */}
-          <FormField label={<>방문 특이사항 <span className="text-muted-foreground font-normal text-sm">(소독증명서에 기재되지 않습니다)</span></>}>
-            <textarea
-              className="w-full resize-none"
-              rows={3}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              disabled={isCompleted}
-            />
-          </FormField>
+              {/* 사용 약품 */}
+              <FormField label="사용 약품">
+                {disinfectants.length > 0 && (
+                  <div className="space-y-2 mb-2">
+                    {disinfectants.map((d, i) => (
+                      <div key={i} className="flex gap-2 items-center">
+                        <input
+                          type="text"
+                          className="flex-1 min-w-0"
+                          value={d.name}
+                          onChange={(e) => updateDisinfectant(i, "name", e.target.value)}
+                          placeholder="약품명"
+                        />
+                        <input
+                          type="text"
+                          className="w-20"
+                          value={d.quantity}
+                          onChange={(e) => updateDisinfectant(i, "quantity", e.target.value)}
+                          placeholder="사용량"
+                        />
+                        <select
+                          className="w-20 min-h-[44px] px-2 py-2 rounded-lg border border-border text-base"
+                          value={d.unit}
+                          onChange={(e) => updateDisinfectant(i, "unit", e.target.value)}
+                        >
+                          <option value="EA">EA</option>
+                          <option value="cc">cc</option>
+                          <option value="ml">ml</option>
+                          <option value="L">L</option>
+                          <option value="g">g</option>
+                          <option value="kg">kg</option>
+                        </select>
+                        <button
+                          type="button"
+                          className="text-destructive hover:text-destructive/80 cursor-pointer p-1"
+                          onClick={() => removeDisinfectant(i)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="약품명 입력 후 추가"
+                    className="flex-1"
+                    value={newDisinfectant}
+                    onChange={(e) => setNewDisinfectant(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addDisinfectant(newDisinfectant))}
+                  />
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"
+                    onClick={() => addDisinfectant(newDisinfectant)}
+                  >
+                    추가
+                  </button>
+                </div>
+                {recentDisinfectants.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    <span className="text-muted-foreground text-sm mr-1">최근:</span>
+                    {recentDisinfectants.map((d) => (
+                      <button
+                        key={d.id}
+                        type="button"
+                        className="px-2.5 py-0.5 rounded-full text-sm bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
+                        onClick={() => addDisinfectant(d.name)}
+                      >
+                        {d.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </FormField>
+
+              {/* 메모 */}
+              <FormField label={<>방문 특이사항 <span className="text-muted-foreground font-normal text-sm">(소독증명서에 기재되지 않습니다)</span></>}>
+                <textarea
+                  className="w-full resize-none"
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </FormField>
+            </>
+          )}
         </div>
       </div>
 
@@ -427,7 +452,7 @@ export default function VisitDetailPage() {
             {/* 입력 */}
             <div className="space-y-2">
               <span className="text-muted-foreground text-base block mb-2">발급번호</span>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex flex-row items-center justify-between gap-3">
                 <span className="flex items-center gap-1 text-base">
                   제
                   <input
