@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Calendar, CalendarCheck, AlertTriangle, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format } from "date-fns";
 import { FACILITY_TYPES } from "@/lib/constants/facility-types";
 import { Spinner } from "@/components/ui/spinner";
 import { InstallBanner } from "@/components/pwa/install-banner";
@@ -97,12 +98,23 @@ export default function DashboardPage() {
     1
   );
 
+  const nowDate = new Date();
+  const weekStart = format(startOfWeek(nowDate, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const weekEnd = format(endOfWeek(nowDate, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const monthStart = format(startOfMonth(nowDate), "yyyy-MM-dd");
+  const monthEnd = format(endOfMonth(nowDate), "yyyy-MM-dd");
+
+  const cardClass = "rounded-xl bg-card border border-border hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer";
+
   return (
     <div>
       <InstallBanner />
       {/* 상단 요약 카드 4개 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="rounded-xl bg-card border border-border">
+        <Link
+          href={`/visits?date_from=${todayStr}&date_to=${todayStr}`}
+          className={cardClass}
+        >
           <div className="p-4 flex flex-col gap-2">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <Calendar size={22} strokeWidth={2} className="text-primary" />
@@ -110,9 +122,12 @@ export default function DashboardPage() {
             <p className="text-base text-foreground">오늘 방문 예정</p>
             <p className="text-2xl font-bold">{data.todayCount}건</p>
           </div>
-        </div>
+        </Link>
 
-        <div className="rounded-xl bg-card border border-border">
+        <Link
+          href={`/visits?date_from=${weekStart}&date_to=${weekEnd}`}
+          className={cardClass}
+        >
           <div className="p-4 flex flex-col gap-2">
             <div className="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
               <CalendarCheck size={22} strokeWidth={2} className="text-info" />
@@ -120,9 +135,12 @@ export default function DashboardPage() {
             <p className="text-base text-foreground">이번 주 예정</p>
             <p className="text-2xl font-bold">{data.weekCount}건</p>
           </div>
-        </div>
+        </Link>
 
-        <div className="rounded-xl bg-card border border-border">
+        <Link
+          href="/visits?status=missed"
+          className={cardClass}
+        >
           <div className="p-4 flex flex-col gap-2">
             <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
               <AlertTriangle size={22} strokeWidth={2} className="text-destructive" />
@@ -130,9 +148,12 @@ export default function DashboardPage() {
             <p className="text-base text-foreground">미완료 건</p>
             <p className="text-2xl font-bold text-destructive">{data.missedCount}건</p>
           </div>
-        </div>
+        </Link>
 
-        <div className="rounded-xl bg-card border border-border">
+        <Link
+          href={`/visits?status=completed&date_from=${monthStart}&date_to=${monthEnd}`}
+          className={cardClass}
+        >
           <div className="p-4 flex flex-col gap-2">
             <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
               <CheckCircle size={22} strokeWidth={2} className="text-success" />
@@ -140,7 +161,7 @@ export default function DashboardPage() {
             <p className="text-base text-foreground">이번 달 완료</p>
             <p className="text-2xl font-bold">{data.monthCompleted}건</p>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* 하단 2컬럼 */}

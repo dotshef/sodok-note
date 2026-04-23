@@ -97,6 +97,23 @@ create table push_subscriptions (
   updated_at timestamptz not null
 );
 
+-- 9. email_verification (이메일 인증번호 - 비번찾기/가입)
+-- purpose: 'password_reset' | 'signup'
+-- 인증번호 만료 후에는 무효. verified_at 기록 후 reset_token 발급 (짧은 일회용 토큰)
+create table email_verification (
+  id uuid primary key default gen_random_uuid(),
+  email text not null,
+  code text not null,
+  purpose text not null check (purpose in ('password_reset', 'signup')),
+  expires_at timestamptz not null,
+  verified_at timestamptz,
+  reset_token text,
+  reset_token_expires_at timestamptz,
+  used_at timestamptz,
+  created_at timestamptz not null,
+  updated_at timestamptz not null
+);
+
 -- 7. certificates (소독증명서)
 create table certificates (
   id uuid primary key default gen_random_uuid(),

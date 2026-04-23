@@ -7,7 +7,7 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 const COOKIE_NAME = "session";
 const TOKEN_MAX_AGE = 60 * 60 * 24; // 1일
 
-const PUBLIC_PATHS = ["/login", "/signup", "/install", "/api/auth/login", "/api/auth/signup"];
+const PUBLIC_PATHS = ["/login", "/signup", "/forgot-password", "/install", "/api/auth/login", "/api/auth/signup"];
 const ADMIN_ONLY_PATHS = ["/clients"];
 
 export async function proxy(request: NextRequest) {

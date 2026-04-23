@@ -56,11 +56,11 @@ export default function SignupPage() {
     <div className="flex min-h-dvh">
       {/* 회원가입 폼 */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
-        <div className="rounded-xl w-full max-w-md bg-card shadow-xl">
+        <div className="rounded-xl w-full max-w-md bg-card">
           <div className="p-6">
             <h2 className="text-2xl font-bold">회원가입</h2>
             <p className="text-muted-foreground mb-4">
-              업체 정보와 관리자 계정을 등록해주세요
+              업체 정보와 관리자 정보를 입력해주세요
             </p>
 
             {error && (
