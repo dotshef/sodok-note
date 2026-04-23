@@ -38,7 +38,7 @@ export function InstallBanner() {
         }
       : {
           title: "iPhone에서 앱처럼 사용",
-          body: "홈 화면 추가 방법을 알려드릴게요",
+          body: "알림을 받으시려면 앱을 다운받으세요",
           cta: "설치 방법 보기",
           onClick: () => router.push("/install"),
         };
@@ -58,8 +58,8 @@ export function InstallBanner() {
       >
         <X size={18} />
       </button>
-      <div className="p-4 pr-12 flex flex-col gap-3">
-        <div className="flex items-center gap-2">
+      <div className="p-4 flex flex-col gap-3">
+        <div className="flex items-center gap-2 pr-10">
           <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
             <Download size={18} className="text-primary" />
           </div>
