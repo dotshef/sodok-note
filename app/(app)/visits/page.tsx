@@ -4,9 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { FACILITY_TYPES } from "@/constants/facility-types";
-import { FACILITY_CATEGORIES } from "@/constants/facility-category";
-import { getClientFacilityLabel } from "@/utils/facility-display";
 import { VisitCreateModal } from "@/components/visits/visit-create-modal";
 import { FilterSelect } from "@/components/ui/filter-select";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -66,8 +63,6 @@ export default function VisitsPage() {
   const [dateFrom, setDateFrom] = useState(searchParams.get("date_from") || "");
   const [dateTo, setDateTo] = useState(searchParams.get("date_to") || "");
   const [userIdFilter, setUserIdFilter] = useState(searchParams.get("user_id") || "");
-  const [facilityCategoryFilter, setFacilityCategoryFilter] = useState(searchParams.get("facility_category") || "");
-  const [facilityTypeFilter, setFacilityTypeFilter] = useState(searchParams.get("facility_type") || "");
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -112,8 +107,6 @@ export default function VisitsPage() {
       if (dateFrom) params.set("date_from", dateFrom);
       if (dateTo) params.set("date_to", dateTo);
       if (userIdFilter) params.set("user_id", userIdFilter);
-      if (facilityCategoryFilter) params.set("facility_category", facilityCategoryFilter);
-      if (facilityCategoryFilter === "mandatory" && facilityTypeFilter) params.set("facility_type", facilityTypeFilter);
       params.set("page", String(page));
 
       const res = await fetch(`/api/visits?${params}`);
@@ -127,9 +120,8 @@ export default function VisitsPage() {
     return () => {
       ignore = true;
     };
-  }, [debouncedSearch, statusFilter, dateFrom, dateTo, userIdFilter, facilityCategoryFilter, facilityTypeFilter, page, refreshKey]);
+  }, [debouncedSearch, statusFilter, dateFrom, dateTo, userIdFilter, page, refreshKey]);
 
-  const showTypeFilter = facilityCategoryFilter === "mandatory";
   const badgeBase = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
 
   function getStatusBadge(status: string) {
@@ -165,45 +157,6 @@ export default function VisitsPage() {
           />
         </div>
 
-        <FilterSelect
-          value={statusFilter}
-          onChange={(v) => { setStatusFilter(v); setPage(1); setData(null); }}
-          options={[
-            { value: "", label: "전체 상태" },
-            { value: "scheduled", label: "예정" },
-            { value: "completed", label: "완료" },
-            { value: "missed", label: "미완료" },
-          ]}
-          className="w-full md:w-36"
-        />
-
-        <FilterSelect
-          value={facilityCategoryFilter}
-          onChange={(v) => {
-            setFacilityCategoryFilter(v);
-            if (v !== "mandatory") setFacilityTypeFilter("");
-            setPage(1);
-            setData(null);
-          }}
-          options={[
-            { value: "", label: "전체 시설 분류" },
-            ...FACILITY_CATEGORIES.map((c) => ({ value: c.id, label: c.label })),
-          ]}
-          className="w-full md:w-40"
-        />
-
-        {showTypeFilter && (
-          <FilterSelect
-            value={facilityTypeFilter}
-            onChange={(v) => { setFacilityTypeFilter(v); setPage(1); setData(null); }}
-            options={[
-              { value: "", label: "전체 의무 시설" },
-              ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
-            ]}
-            className="w-full md:w-56"
-          />
-        )}
-
         <div className="contents md:flex md:items-center md:gap-2">
           <DatePicker
             value={dateFrom}
@@ -231,15 +184,27 @@ export default function VisitsPage() {
           />
         </div>
 
+        <FilterSelect
+          value={statusFilter}
+          onChange={(v) => { setStatusFilter(v); setPage(1); setData(null); }}
+          options={[
+            { value: "", label: "전체 상태" },
+            { value: "scheduled", label: "예정" },
+            { value: "completed", label: "완료" },
+            { value: "missed", label: "미완료" },
+          ]}
+          className="w-full md:w-36"
+        />
+
         {role === "admin" && (
           <FilterSelect
             value={userIdFilter}
             onChange={(v) => { setUserIdFilter(v); setPage(1); setData(null); }}
             options={[
-              { value: "", label: "전체 담당자" },
+              { value: "", label: "전체 직원" },
               ...activeMembers.map((m) => ({ value: m.id, label: m.name })),
             ]}
-            className="col-span-2 w-full md:col-span-1 md:w-40"
+            className="w-full md:w-40"
           />
         )}
 
@@ -284,17 +249,13 @@ export default function VisitsPage() {
                   {getStatusBadge(visit.status)}
                 </div>
                 <div className="font-medium text-base mb-1">{visit.clients?.name || "-"}</div>
-                <div className="flex items-center gap-2 text-base text-muted-foreground">
-                  <span>{getClientFacilityLabel(visit.clients)}</span>
-                  <span>·</span>
-                  <span>{visit.scheduled_date}</span>
-                  {visit.users?.name && (
-                    <>
-                      <span>·</span>
-                      <span>{visit.users.name}</span>
-                    </>
-                  )}
-                </div>
+                {visit.clients?.address && (
+                  <div className="text-base text-muted-foreground">{visit.clients.address}</div>
+                )}
+                <div className="text-base text-muted-foreground">{visit.scheduled_date}</div>
+                {visit.users?.name && (
+                  <div className="text-base text-muted-foreground">{visit.users.name}</div>
+                )}
               </Link>
               {/* 하단: 다운로드 버튼 */}
               {visit.certificates && (
@@ -328,12 +289,12 @@ export default function VisitsPage() {
 
       {/* 데스크탑 테이블 */}
       <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
-        <table className="data-table">
+        <table className="data-table data-table-truncate">
           <thead>
             <tr>
-              <th style={{ width: "15%" }}>코드</th>
+              <th style={{ width: "15%" }}>방문 코드</th>
               <th style={{ width: "13%" }}>시설명</th>
-              <th style={{ width: "19%" }}>시설 유형</th>
+              <th style={{ width: "19%" }}>주소</th>
               <th style={{ width: "10%" }}>담당자</th>
               <th style={{ width: "10%" }}>상태</th>
               <th style={{ width: "11%" }}>날짜</th>
@@ -368,27 +329,14 @@ export default function VisitsPage() {
                       <span className="text-base text-muted-foreground">-</span>
                     )}
                   </td>
-                  <td>
-                    {visit.clients ? (
-                      <Link
-                        href={`/clients/${visit.clients.id}`}
-                        className="font-medium text-primary hover:underline !text-base"
-                      >
-                        {visit.clients.name}
-                      </Link>
-                    ) : (
-                      <span className="text-base">-</span>
-                    )}
-                  </td>
-                  <td className="text-base">
-                    {getClientFacilityLabel(visit.clients)}
-                  </td>
+                  <td className="text-base font-medium">{visit.clients?.name || "-"}</td>
+                  <td className="text-base">{visit.clients?.address || "-"}</td>
                   <td className="text-base">{visit.users?.name || "-"}</td>
                   <td>{getStatusBadge(visit.status)}</td>
                   <td className="text-base">{visit.scheduled_date}</td>
                   <td>
                     {visit.certificates ? (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1 justify-center">
                         <button
                           type="button"
                           className="inline-flex items-center justify-center px-3 py-1 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer"

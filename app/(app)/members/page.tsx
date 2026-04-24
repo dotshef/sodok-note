@@ -138,7 +138,7 @@ export default function MembersPage() {
 
       {/* 데스크탑 테이블 */}
       <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
-        <table className="data-table">
+        <table className="data-table data-table-truncate">
           <thead>
             <tr>
               <th style={{ width: "12%" }}>이름</th>

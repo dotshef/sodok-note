@@ -62,15 +62,15 @@ export default function ClientsPage() {
   return (
     <div>
       {/* 검색 + 필터 + 고객 등록 */}
-      <div className="flex flex-wrap items-center gap-3 mb-4">
-        <div className="flex">
+      <div className="grid grid-cols-2 gap-2 mb-4 md:flex md:flex-wrap md:items-center md:gap-3">
+        <div className="flex col-span-2 md:col-span-1">
           <div className="flex items-center px-3 bg-muted border border-r-0 border-border rounded-l-lg">
             <Search size={16} className="text-muted-foreground" />
           </div>
           <input
             type="text"
             placeholder="시설명, 담당자명 검색"
-            className="w-64 !rounded-l-none"
+            className="flex-1 min-w-0 md:flex-none md:w-64 !rounded-l-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -91,7 +91,7 @@ export default function ClientsPage() {
             { value: "", label: "전체 시설 분류" },
             ...FACILITY_CATEGORIES.map((c) => ({ value: c.id, label: c.label })),
           ]}
-          className="w-40"
+          className="w-full md:w-40"
         />
         {showTypeFilter && (
           <FilterSelect
@@ -101,12 +101,16 @@ export default function ClientsPage() {
               { value: "", label: "전체 의무 시설" },
               ...FACILITY_TYPES.map((ft) => ({ value: ft.id, label: ft.label })),
             ]}
-            className="w-80"
+            className="w-full md:w-80"
           />
         )}
-        <Link href="/clients/new" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors cursor-pointer ml-auto">
-          <Plus size={16} />
-          고객 등록
+        <Link
+          href="/clients/new"
+          aria-label="고객 등록"
+          className="fixed z-40 right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] size-14 rounded-full shadow-lg flex items-center justify-center bg-primary text-primary-foreground transition-colors cursor-pointer md:static md:ml-auto md:h-auto md:w-auto md:rounded-lg md:shadow-none md:px-4 md:py-2 md:gap-2"
+        >
+          <Plus className="w-6 h-6 md:w-4 md:h-4" />
+          <span className="hidden md:inline text-base font-medium">고객 등록</span>
         </Link>
       </div>
 
@@ -146,7 +150,7 @@ export default function ClientsPage() {
                 {getFacilityCategoryLabel(client.facility_category)}
                 {client.facility_category === "mandatory" && client.facility_type && (
                   <>
-                    {" · "}
+                    {" / "}
                     {FACILITY_TYPE_MAP.get(client.facility_type as FacilityTypeId)?.label ?? client.facility_type}
                   </>
                 )}
@@ -164,14 +168,14 @@ export default function ClientsPage() {
 
       {/* 데스크탑 테이블 */}
       <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
-        <table className="data-table">
+        <table className="data-table data-table-truncate">
           <thead>
             <tr>
               <th style={{ width: "14%" }}>시설명</th>
               <th style={{ width: "11%" }}>시설 분류</th>
               <th style={{ width: "22%" }}>의무소독시설 유형</th>
               <th style={{ width: "30%" }}>주소</th>
-              <th style={{ width: "13%" }}>시설 담당자</th>
+              <th style={{ width: "13%" }}>담당자명</th>
               <th style={{ width: "10%" }}>상태</th>
             </tr>
           </thead>

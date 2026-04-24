@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle, XCircle, FileText, Download, Link as LinkIcon, Trash2, Send } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { getClientFacilityLabel } from "@/utils/facility-display";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "@/components/providers/session-provider";
@@ -263,23 +262,15 @@ export default function VisitDetailPage() {
               </p>
             </div>
             <div>
-              <span className="text-muted-foreground">
-                시설 {visit.clients?.facility_category === "mandatory" ? "유형" : "분류"}
-              </span>
-              <p className="font-medium">
-                {getClientFacilityLabel(visit.clients)}
-              </p>
+              <span className="text-muted-foreground">방문일</span>
+              <p className="font-medium">{visit.scheduled_date}</p>
             </div>
-            <div>
+            <div className="col-span-2">
               <span className="text-muted-foreground">주소</span>
               <p className="font-medium">{visit.clients?.address || "-"}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">방문일</span>
-              <p className="font-medium">{visit.scheduled_date}</p>
-            </div>
-            <div>
-              <span className="text-muted-foreground">담당자</span>
+              <span className="text-muted-foreground">담당자명</span>
               <p className="font-medium">{visit.clients?.contact_name || "-"}</p>
             </div>
             <div>
@@ -338,7 +329,7 @@ export default function VisitDetailPage() {
                 />
                 {recentMethods.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    <span className="text-muted-foreground text-sm mr-1">최근:</span>
+                    <span className="text-muted-foreground text-sm mr-1">최근 사용:</span>
                     {recentMethods.map((m) => (
                       <button
                         key={m.id}
@@ -415,7 +406,7 @@ export default function VisitDetailPage() {
                 </div>
                 {recentDisinfectants.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    <span className="text-muted-foreground text-sm mr-1">최근:</span>
+                    <span className="text-muted-foreground text-sm mr-1">최근 사용:</span>
                     {recentDisinfectants.map((d) => (
                       <button
                         key={d.id}

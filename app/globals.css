@@ -50,7 +50,7 @@ textarea:disabled {
 }
 
 .data-table th {
-  text-align: left;
+  text-align: center;
   padding: 0.75rem 1rem;
   font-weight: 500;
   color: var(--color-muted-foreground);
@@ -65,6 +65,15 @@ textarea:disabled {
   border-bottom: 1px solid var(--color-border);
   word-break: keep-all;
   overflow-wrap: break-word;
+  text-align: center;
+}
+
+.data-table-truncate td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 /* ── 컬러 토큰 ── */

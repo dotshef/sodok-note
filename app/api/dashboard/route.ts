@@ -25,7 +25,7 @@ export async function GET() {
   // 오늘 방문 예정
   let todayQuery = supabase
     .from("visits")
-    .select("id, visit_code, scheduled_date, status, clients(id, name, facility_category, facility_type), users(id, name)")
+    .select("id, visit_code, scheduled_date, status, clients(id, name, address), users(id, name)")
     .eq("tenant_id", session.tenantId)
     .eq("scheduled_date", todayStr)
     .order("created_at", { ascending: true });

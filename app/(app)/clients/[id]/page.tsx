@@ -183,7 +183,7 @@ export default function ClientDetailPage() {
             <h3 className="text-base font-semibold">시설 담당자 정보</h3>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base mt-2">
               <div>
-                <span className="text-muted-foreground">시설 담당자</span>
+                <span className="text-muted-foreground">담당자명</span>
                 <p className="font-medium">{client.contact_name || "-"}</p>
               </div>
               <div>

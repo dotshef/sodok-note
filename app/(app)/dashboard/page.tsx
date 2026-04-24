@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Calendar, CalendarCheck, AlertTriangle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format } from "date-fns";
-import { getClientFacilityLabel } from "@/utils/facility-display";
 import { Spinner } from "@/components/ui/spinner";
 import { InstallBanner } from "@/components/pwa/install-banner";
 
@@ -18,7 +17,7 @@ interface DashboardData {
     visit_code: string | null;
     scheduled_date: string;
     status: string;
-    clients: { id: string; name: string; facility_category: string; facility_type: string | null } | null;
+    clients: { id: string; name: string; address: string | null } | null;
     users: { id: string; name: string } | null;
   }[];
   missedVisits: {
@@ -171,52 +170,84 @@ export default function DashboardPage() {
                 오늘 예정된 방문이 없습니다
               </p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "18%" }}>방문 코드</th>
-                      <th style={{ width: "20%" }}>시설명</th>
-                      <th style={{ width: "27%" }}>시설 유형</th>
-                      <th style={{ width: "15%" }}>담당 직원</th>
-                      <th style={{ width: "20%" }}>상태</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.todayVisits.map((visit) => {
-                      const client = visit.clients as unknown as { id: string; name: string; facility_category: string; facility_type: string | null } | null;
-                      const user = visit.users as unknown as { id: string; name: string } | null;
-                      return (
-                        <tr key={visit.id}>
-                          <td>
-                            <Link
-                              href={`/visits/${visit.id}`}
-                              className="text-primary hover:underline font-medium !text-base"
-                            >
-                              {visit.visit_code || "-"}
-                            </Link>
-                          </td>
-                          <td>
-                            {client ? (
+              <>
+                {/* 모바일 카드 */}
+                <div className="md:hidden space-y-3">
+                  {data.todayVisits.map((visit) => {
+                    const client = visit.clients as unknown as { id: string; name: string; address: string | null } | null;
+                    const user = visit.users as unknown as { id: string; name: string } | null;
+                    return (
+                      <Link
+                        key={visit.id}
+                        href={`/visits/${visit.id}`}
+                        className="block rounded-xl bg-card border border-border p-4 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-base text-primary">
+                            {visit.visit_code || "-"}
+                          </span>
+                          {getStatusBadge(visit.status)}
+                        </div>
+                        {client && (
+                          <div className="text-base font-medium mb-1">{client.name}</div>
+                        )}
+                        {client?.address && (
+                          <div className="text-base text-muted-foreground mb-1">{client.address}</div>
+                        )}
+                        {user?.name && (
+                          <div className="text-base text-muted-foreground">{user.name}</div>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* 데스크탑 테이블 */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="data-table data-table-truncate">
+                    <thead>
+                      <tr>
+                        <th style={{ width: "18%" }}>방문 코드</th>
+                        <th style={{ width: "20%" }}>시설명</th>
+                        <th style={{ width: "27%" }}>주소</th>
+                        <th style={{ width: "15%" }}>담당 직원</th>
+                        <th style={{ width: "20%" }}>상태</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.todayVisits.map((visit) => {
+                        const client = visit.clients as unknown as { id: string; name: string; address: string | null } | null;
+                        const user = visit.users as unknown as { id: string; name: string } | null;
+                        return (
+                          <tr key={visit.id}>
+                            <td>
                               <Link
-                                href={`/clients/${client.id}`}
+                                href={`/visits/${visit.id}`}
                                 className="text-primary hover:underline font-medium !text-base"
                               >
-                                {client.name}
+                                {visit.visit_code || "-"}
                               </Link>
-                            ) : "-"}
-                          </td>
-                          <td className="text-base">
-                            {getClientFacilityLabel(client)}
-                          </td>
-                          <td className="text-base">{user?.name || "-"}</td>
-                          <td>{getStatusBadge(visit.status)}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                            </td>
+                            <td>
+                              {client ? (
+                                <Link
+                                  href={`/clients/${client.id}`}
+                                  className="text-primary hover:underline font-medium !text-base"
+                                >
+                                  {client.name}
+                                </Link>
+                              ) : "-"}
+                            </td>
+                            <td className="text-base">{client?.address || "-"}</td>
+                            <td className="text-base">{user?.name || "-"}</td>
+                            <td>{getStatusBadge(visit.status)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         </div>

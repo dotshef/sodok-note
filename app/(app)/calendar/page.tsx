@@ -177,7 +177,7 @@ export default function CalendarPage() {
                   )}
 
                   {/* 데스크탑: 텍스트 표시 */}
-                  <div className="mt-0.5 space-y-0.5 hidden md:block">
+                  <div className="mt-0.5 space-y-0.5 hidden md:block w-full min-w-0">
                     {dayVisits.slice(0, 3).map((v) => (
                       <div
                         key={v.id}
@@ -241,23 +241,6 @@ export default function CalendarPage() {
                 </div>
               )}
 
-              {/* 상태 범례 */}
-              <div className="mt-6 pt-4 border-t border-border">
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2 text-base">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
-                    예정
-                  </div>
-                  <div className="flex items-center gap-2 text-base">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-success" />
-                    완료
-                  </div>
-                  <div className="flex items-center gap-2 text-base">
-                    <span className="w-2.5 h-2.5 rounded-sm bg-destructive" />
-                    미완료
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
