@@ -43,21 +43,3 @@ export function visitTomorrowPayload(args: {
   };
 }
 
-export function visitUpcomingPayload(args: {
-  visitId: string;
-  clientName: string;
-  address: string | null;
-}): PushPayload {
-  return {
-    title: "1시간 후 방문",
-    body: args.address ? `${args.clientName} — ${args.address}` : args.clientName,
-    icon: ICON,
-    badge: BADGE,
-    tag: `visit-upcoming-${args.visitId}`,
-    data: {
-      url: `/visits/${args.visitId}`,
-      type: "visit_upcoming",
-      entityId: args.visitId,
-    },
-  };
-}
