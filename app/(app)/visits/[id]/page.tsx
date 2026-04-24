@@ -464,44 +464,46 @@ export default function VisitDetailPage() {
           <div className="py-4 px-6 space-y-4">
             <h3 className="font-semibold text-lg">소독증명서</h3>
 
-            {/* 입력 */}
-            <div className="space-y-2">
-              <span className="text-muted-foreground text-base block mb-2">발급번호</span>
-              <div className="flex flex-row items-center justify-between gap-3">
-                <span className="flex items-center gap-1 text-base">
-                  제
-                  <input
-                    type="number"
-                    min="1"
-                    placeholder="0"
-                    className="w-20 min-h-[44px] px-3 py-2 rounded-lg border border-border text-base text-center focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    value={issueNumber}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      if (v === "" || Number(v) >= 1) setIssueNumber(v);
-                    }}
-                  />
-                  호
-                </span>
-                <button
-                  className={`inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-base font-medium transition-colors disabled:opacity-50 cursor-pointer ${
-                    visit.certificates
-                      ? "border border-border hover:bg-muted"
-                      : "bg-primary text-primary-foreground"
-                  }`}
-                  disabled={generatingCert}
-                  onClick={handleGenerateCert}
-                >
-                  {generatingCert ? (
-                    <Spinner size="sm" />
-                  ) : visit.certificates ? (
-                    "증명서 재생성"
-                  ) : (
-                    "증명서 생성"
-                  )}
-                </button>
+            {/* 입력 (admin only) */}
+            {role === "admin" && (
+              <div className="space-y-2">
+                <span className="text-muted-foreground text-base block mb-2">발급번호</span>
+                <div className="flex flex-row items-center justify-between gap-3">
+                  <span className="flex items-center gap-1 text-base">
+                    제
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="0"
+                      className="w-20 min-h-[44px] px-3 py-2 rounded-lg border border-border text-base text-center focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      value={issueNumber}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v === "" || Number(v) >= 1) setIssueNumber(v);
+                      }}
+                    />
+                    호
+                  </span>
+                  <button
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-base font-medium transition-colors disabled:opacity-50 cursor-pointer ${
+                      visit.certificates
+                        ? "border border-border hover:bg-muted"
+                        : "bg-primary text-primary-foreground"
+                    }`}
+                    disabled={generatingCert}
+                    onClick={handleGenerateCert}
+                  >
+                    {generatingCert ? (
+                      <Spinner size="sm" />
+                    ) : visit.certificates ? (
+                      "증명서 재생성"
+                    ) : (
+                      "증명서 생성"
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* 파일 */}
             {(visit.certificates?.hwpx_file_url || visit.certificates?.pdf_file_url) && (
@@ -537,8 +539,8 @@ export default function VisitDetailPage() {
               </>
             )}
 
-            {/* 이메일 발송 */}
-            {visit.certificates?.pdf_file_url && (
+            {/* 이메일 발송 (admin only) */}
+            {role === "admin" && visit.certificates?.pdf_file_url && (
               <>
                 <hr className="border-border" />
                 <div className="space-y-2">

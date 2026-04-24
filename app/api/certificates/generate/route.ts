@@ -8,6 +8,9 @@ import { format } from "date-fns";
 export async function POST(request: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (session.role !== "admin") {
+    return NextResponse.json({ error: "관리자만 생성할 수 있습니다" }, { status: 403 });
+  }
 
   const { visitId, issueNumber } = await request.json();
   if (!visitId) {

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const FROM_ADDRESS = "소독노트 <contact@dotshef.com>";
+const FROM_ADDRESS = "소독노트 <no-reply@dotshef.com>";
 
 let client: Resend | null = null;
 
