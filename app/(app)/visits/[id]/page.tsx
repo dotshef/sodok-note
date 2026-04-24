@@ -399,7 +399,7 @@ export default function VisitDetailPage() {
                   <input
                     type="text"
                     placeholder="약품명 입력 후 추가"
-                    className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 min-w-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     value={newDisinfectant}
                     onChange={(e) => setNewDisinfectant(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addDisinfectant(newDisinfectant))}
@@ -407,7 +407,7 @@ export default function VisitDetailPage() {
                   />
                   <button
                     type="button"
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center shrink-0 whitespace-nowrap px-4 py-2 rounded-lg text-base font-medium border border-border hover:bg-muted transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => addDisinfectant(newDisinfectant)}
                     disabled={isBeforeScheduled}
                   >
