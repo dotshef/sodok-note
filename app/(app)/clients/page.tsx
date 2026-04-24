@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { FACILITY_TYPES } from "@/constants/facility-types";
-import { FACILITY_CATEGORIES } from "@/constants/facility-category";
-import { getClientFacilityLabel } from "@/utils/facility-display";
+import { FACILITY_TYPES, FACILITY_TYPE_MAP, type FacilityTypeId } from "@/constants/facility-types";
+import { FACILITY_CATEGORIES, getFacilityCategoryLabel } from "@/constants/facility-category";
 import { FilterSelect } from "@/components/ui/filter-select";
 
 interface Client {
@@ -144,15 +143,19 @@ export default function ClientsPage() {
                 </span>
               </div>
               <div className="text-base text-muted-foreground mb-1">
-                {getClientFacilityLabel(client)}
+                {getFacilityCategoryLabel(client.facility_category)}
+                {client.facility_category === "mandatory" && client.facility_type && (
+                  <>
+                    {" · "}
+                    {FACILITY_TYPE_MAP.get(client.facility_type as FacilityTypeId)?.label ?? client.facility_type}
+                  </>
+                )}
               </div>
               {client.address && (
                 <div className="text-base text-muted-foreground mb-1">{client.address}</div>
               )}
-              {(client.contact_name || client.contact_phone) && (
-                <div className="text-base text-muted-foreground">
-                  {[client.contact_name, client.contact_phone].filter(Boolean).join(" · ")}
-                </div>
+              {client.contact_name && (
+                <div className="text-base text-muted-foreground">{client.contact_name}</div>
               )}
             </Link>
           ))
@@ -164,11 +167,11 @@ export default function ClientsPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th style={{ width: "13%" }}>시설명</th>
-              <th style={{ width: "22%" }}>시설 유형</th>
-              <th style={{ width: "28%" }}>주소</th>
+              <th style={{ width: "14%" }}>시설명</th>
+              <th style={{ width: "11%" }}>시설 분류</th>
+              <th style={{ width: "22%" }}>의무소독시설 유형</th>
+              <th style={{ width: "30%" }}>주소</th>
               <th style={{ width: "13%" }}>시설 담당자</th>
-              <th style={{ width: "14%" }}>연락처</th>
               <th style={{ width: "10%" }}>상태</th>
             </tr>
           </thead>
@@ -196,10 +199,14 @@ export default function ClientsPage() {
                       {client.name}
                     </Link>
                   </td>
-                  <td className="text-base">{getClientFacilityLabel(client)}</td>
+                  <td className="text-base">{getFacilityCategoryLabel(client.facility_category)}</td>
+                  <td className="text-base">
+                    {client.facility_category === "mandatory" && client.facility_type
+                      ? FACILITY_TYPE_MAP.get(client.facility_type as FacilityTypeId)?.label ?? client.facility_type
+                      : "-"}
+                  </td>
                   <td className="text-base">{client.address || "-"}</td>
                   <td className="text-base">{client.contact_name || "-"}</td>
-                  <td className="text-base">{client.contact_phone || "-"}</td>
                   <td>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium ${
                       client.is_active

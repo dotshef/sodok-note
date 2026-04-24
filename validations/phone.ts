@@ -29,3 +29,13 @@ export const phoneSchema = z
     { message: "연락처는 숫자만 입력해주세요" },
   )
   .transform((v) => (v ? formatKoreanPhone(v) : v));
+
+/** 필수 phone 스키마 */
+export const requiredPhoneSchema = z
+  .string()
+  .min(1, "연락처를 입력해주세요")
+  .refine(
+    (v) => /^[\d\-]+$/.test(v),
+    { message: "연락처는 숫자만 입력해주세요" },
+  )
+  .transform((v) => formatKoreanPhone(v));

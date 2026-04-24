@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { FACILITY_TYPE_IDS } from "@/constants/facility-types";
 import { FACILITY_CATEGORY_IDS } from "@/constants/facility-category";
-import { phoneSchema } from "./phone";
+import { requiredPhoneSchema } from "./phone";
 
 export const createClientSchema = z
   .object({
@@ -17,10 +17,10 @@ export const createClientSchema = z
     area: z.number().nullable().optional(),
     areaPyeong: z.number().nullable().optional(),
     volume: z.number().nullable().optional(),
-    address: z.string().optional(),
-    contactName: z.string().optional(),
-    contactPhone: phoneSchema,
-    contactPosition: z.string().optional(),
+    address: z.string().min(1, "주소를 입력해주세요"),
+    contactName: z.string().min(1, "담당자명을 입력해주세요"),
+    contactPhone: requiredPhoneSchema,
+    contactPosition: z.string().min(1, "직위를 입력해주세요"),
     contactEmail: z
       .string()
       .email("올바른 이메일 형식이 아닙니다")
@@ -50,10 +50,10 @@ export const updateClientSchema = z
     area: z.number().nullable().optional(),
     areaPyeong: z.number().nullable().optional(),
     volume: z.number().nullable().optional(),
-    address: z.string().optional(),
-    contactName: z.string().optional(),
-    contactPhone: phoneSchema,
-    contactPosition: z.string().optional(),
+    address: z.string().min(1, "주소를 입력해주세요").optional(),
+    contactName: z.string().min(1, "담당자명을 입력해주세요").optional(),
+    contactPhone: requiredPhoneSchema.optional(),
+    contactPosition: z.string().min(1, "직위를 입력해주세요").optional(),
     contactEmail: z
       .string()
       .email("올바른 이메일 형식이 아닙니다")

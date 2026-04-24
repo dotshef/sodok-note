@@ -181,12 +181,13 @@ export default function EditClientPage() {
               </FormField>
             )}
 
-            <FormField label="주소">
+            <FormField label={<>주소 <span className="text-destructive">*</span></>}>
               <input
                 type="text"
                 className="w-full"
                 value={form.address}
                 onChange={(e) => updateField("address", e.target.value)}
+                required
               />
             </FormField>
 
@@ -224,29 +225,32 @@ export default function EditClientPage() {
             <h3 className="font-semibold">시설 담당자 정보</h3>
 
             <div className="grid grid-cols-3 gap-3">
-              <FormField label="담당자명">
+              <FormField label={<>담당자명 <span className="text-destructive">*</span></>}>
                 <input
                   type="text"
                   className="w-full"
                   value={form.contactName}
                   onChange={(e) => updateField("contactName", e.target.value)}
+                  required
                 />
               </FormField>
-              <FormField label="직위">
+              <FormField label={<>직위 <span className="text-destructive">*</span></>}>
                 <input
                   type="text"
                   placeholder="예: 점장, 대표"
                   className="w-full"
                   value={form.contactPosition}
                   onChange={(e) => updateField("contactPosition", e.target.value)}
+                  required
                 />
               </FormField>
-              <FormField label="연락처">
+              <FormField label={<>연락처 <span className="text-destructive">*</span></>}>
                 <input
                   type="tel"
                   className="w-full"
                   value={form.contactPhone}
                   onChange={(e) => updateField("contactPhone", e.target.value)}
+                  required
                 />
               </FormField>
             </div>

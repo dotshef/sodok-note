@@ -1,9 +1,6 @@
-# React 규칙
+# React 훅 규칙 (reference)
 
-## 폰트 크기
-- 최소 폰트 크기: `text-base` (16px) — 모바일/데스크탑 동일
-- `text-sm` (14px) 이하는 사용하지 말 것
-- 뱃지, 보조 텍스트 등 모든 요소에 동일 적용
+데이터 페칭 useEffect 작성 시 참조.
 
 ## useEffect 내 데이터 페칭
 
