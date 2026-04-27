@@ -6,6 +6,7 @@ import Link from "next/link";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format } from "date-fns";
 import { Spinner } from "@/components/ui/spinner";
 import { InstallBanner } from "@/components/pwa/install-banner";
+import { VisitStatusBadge } from "@/components/ui/visit-status-badge";
 
 interface DashboardData {
   todayCount: number;
@@ -66,18 +67,6 @@ export default function DashboardPage() {
       (now - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)
     );
     return diff;
-  }
-
-  function getStatusBadge(status: string) {
-    const base = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
-    switch (status) {
-      case "completed":
-        return <span className={`${base} bg-success/10 text-success`}>완료</span>;
-      case "missed":
-        return <span className={`${base} bg-destructive/10 text-destructive`}>미완료</span>;
-      default:
-        return <span className={`${base} bg-primary/10 text-primary`}>예정</span>;
-    }
   }
 
   if (loading) {
@@ -187,7 +176,7 @@ export default function DashboardPage() {
                           <span className="font-medium text-base text-primary">
                             {visit.visit_code || "-"}
                           </span>
-                          {getStatusBadge(visit.status)}
+                          <VisitStatusBadge status={visit.status} />
                         </div>
                         <div className="text-base font-medium mb-1">{visit.client_name}</div>
                         {visit.client_address && (
@@ -236,7 +225,7 @@ export default function DashboardPage() {
                             </td>
                             <td className="text-base">{visit.client_address || "-"}</td>
                             <td className="text-base">{user?.name || "-"}</td>
-                            <td>{getStatusBadge(visit.status)}</td>
+                            <td><VisitStatusBadge status={visit.status} /></td>
                           </tr>
                         );
                       })}

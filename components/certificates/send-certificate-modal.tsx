@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
+import { Modal } from "@/components/ui/modal";
 import { toast } from "sonner";
 
 interface SendCertificateModalProps {
@@ -38,23 +39,6 @@ export function SendCertificateModal({
     }
   }, [open, defaultEmail, clientHasEmail]);
 
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", handleKey);
-
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [open, onClose]);
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
@@ -87,86 +71,59 @@ export function SendCertificateModal({
     }
   }
 
-  if (!open) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="send-certificate-modal-title"
-    >
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <Modal open={open} onClose={onClose} title="증명서 이메일 발송">
+      {error && (
+        <div className="flex items-center gap-3 rounded-lg p-3 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
+          <span>{error}</span>
+        </div>
+      )}
 
-      <div className="relative w-full max-w-lg rounded-xl bg-popover border border-border shadow-xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h3 id="send-certificate-modal-title" className="text-lg font-bold">
-            증명서 이메일 발송
-          </h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField label={<>수신자 이메일 <span className="text-destructive">*</span></>}>
+          <input
+            type="email"
+            className="w-full"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example@domain.com"
+            required
+            autoFocus
+          />
+        </FormField>
+
+        <label className="flex items-center gap-2 text-base cursor-pointer">
+          <input
+            type="checkbox"
+            checked={updateClientEmail}
+            onChange={(e) => setUpdateClientEmail(e.target.checked)}
+          />
+          <span>이 이메일로 시설 담당자 정보도 함께 업데이트</span>
+        </label>
+
+        <div className="rounded-lg border border-border p-3 flex items-center gap-2 text-base bg-muted/40">
+          <FileText size={16} className="text-muted-foreground" />
+          <span className="break-all">{pdfFileName}</span>
+        </div>
+
+        <div className="flex gap-3 justify-end pt-2">
           <button
             type="button"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
             onClick={onClose}
-            className="inline-flex items-center justify-center p-1 rounded-lg hover:bg-muted transition-colors cursor-pointer"
-            aria-label="닫기"
+            disabled={submitting}
           >
-            <X size={18} />
+            취소
+          </button>
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
+            disabled={submitting}
+          >
+            {submitting ? <Spinner size="sm" /> : "발송"}
           </button>
         </div>
-
-        <div className="px-6 py-5">
-          {error && (
-            <div className="flex items-center gap-3 rounded-lg p-3 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <FormField label={<>수신자 이메일 <span className="text-destructive">*</span></>}>
-              <input
-                type="email"
-                className="w-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@domain.com"
-                required
-                autoFocus
-              />
-            </FormField>
-
-            <label className="flex items-center gap-2 text-base cursor-pointer">
-              <input
-                type="checkbox"
-                checked={updateClientEmail}
-                onChange={(e) => setUpdateClientEmail(e.target.checked)}
-              />
-              <span>이 이메일로 시설 담당자 정보도 함께 업데이트</span>
-            </label>
-
-            <div className="rounded-lg border border-border p-3 flex items-center gap-2 text-base bg-muted/40">
-              <FileText size={16} className="text-muted-foreground" />
-              <span className="break-all">{pdfFileName}</span>
-            </div>
-
-            <div className="flex gap-3 justify-end pt-2">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
-                onClick={onClose}
-                disabled={submitting}
-              >
-                취소
-              </button>
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
-                disabled={submitting}
-              >
-                {submitting ? <Spinner size="sm" /> : "발송"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }

@@ -9,6 +9,7 @@ import { VisitCreateModal } from "@/components/visits/visit-create-modal";
 import { FilterSelect } from "@/components/ui/filter-select";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Pagination } from "@/components/ui/pagination";
+import { VisitStatusBadge } from "@/components/ui/visit-status-badge";
 import { useSession } from "@/components/providers/session-provider";
 
 interface Visit {
@@ -122,19 +123,6 @@ export default function VisitsPage() {
     };
   }, [debouncedSearch, statusFilter, dateFrom, dateTo, userIdFilter, page, refreshKey]);
 
-  const badgeBase = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
-
-  function getStatusBadge(status: string) {
-    switch (status) {
-      case "completed":
-        return <span className={`${badgeBase} bg-success/10 text-success`}>완료</span>;
-      case "missed":
-        return <span className={`${badgeBase} bg-destructive/10 text-destructive`}>미완료</span>;
-      default:
-        return <span className={`${badgeBase} bg-primary/10 text-primary`}>예정</span>;
-    }
-  }
-
   const activeMembers = members.filter((m) => m.is_active);
 
   return (
@@ -238,7 +226,7 @@ export default function VisitsPage() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-base font-mono text-muted-foreground">{visit.visit_code || "-"}</span>
-                  {getStatusBadge(visit.status)}
+                  <VisitStatusBadge status={visit.status} />
                 </div>
                 <div className="font-medium text-base mb-1">{visit.client_name || "-"}</div>
                 {visit.client_address && (
@@ -324,7 +312,7 @@ export default function VisitsPage() {
                   <td className="text-base font-medium">{visit.client_name || "-"}</td>
                   <td className="text-base">{visit.client_address || "-"}</td>
                   <td className="text-base">{visit.users?.name || "-"}</td>
-                  <td>{getStatusBadge(visit.status)}</td>
+                  <td><VisitStatusBadge status={visit.status} /></td>
                   <td className="text-base">{visit.scheduled_date}</td>
                   <td>
                     {visit.certificates ? (

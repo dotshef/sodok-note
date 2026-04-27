@@ -12,6 +12,7 @@ import { useSession } from "@/components/providers/session-provider";
 import { toast } from "sonner";
 import { SendCertificateModal } from "@/components/certificates/send-certificate-modal";
 import { TenantAddressModal } from "@/components/tenant/tenant-address-modal";
+import { VisitStatusBadge } from "@/components/ui/visit-status-badge";
 
 interface VisitDetail {
   id: string;
@@ -236,7 +237,6 @@ export default function VisitDetailPage() {
   const isCompleted = visit.status === "completed";
   const today = format(new Date(), "yyyy-MM-dd");
   const isBeforeScheduled = !isCompleted && visit.scheduled_date > today;
-  const badgeBase = "inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium";
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -246,17 +246,7 @@ export default function VisitDetailPage() {
           <ArrowLeft size={18} />
         </button>
         <h2 className="text-2xl font-bold flex-1">방문 상세</h2>
-        <span
-          className={`${badgeBase} ${
-            visit.status === "completed"
-              ? "bg-success/10 text-success"
-              : visit.status === "missed"
-              ? "bg-destructive/10 text-destructive"
-              : "bg-primary/10 text-primary"
-          }`}
-        >
-          {visit.status === "completed" ? "완료" : visit.status === "missed" ? "미완료" : "예정"}
-        </span>
+        <VisitStatusBadge status={visit.status} />
       </div>
 
       {error && (

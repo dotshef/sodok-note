@@ -14,6 +14,10 @@ import {
 } from "@/utils/calendar";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  VisitStatusBadge,
+  getVisitStatusSolidBgClass,
+} from "@/components/ui/visit-status-badge";
 
 interface Visit {
   id: string;
@@ -67,22 +71,6 @@ export default function CalendarPage() {
     if (day.getDay() === 0) return "text-destructive";
     if (day.getDay() === 6) return "text-primary";
     return "";
-  }
-
-  function getStatusColor(status: string) {
-    switch (status) {
-      case "completed": return "bg-success";
-      case "missed": return "bg-destructive";
-      default: return "bg-primary";
-    }
-  }
-
-  function getStatusLabel(status: string) {
-    switch (status) {
-      case "completed": return "완료";
-      case "missed": return "미완료";
-      default: return "예정";
-    }
   }
 
   function handlePrev() {
@@ -165,7 +153,7 @@ export default function CalendarPage() {
                       {dayVisits.slice(0, 3).map((v) => (
                         <span
                           key={v.id}
-                          className={`w-2 h-2 rounded-full ${getStatusColor(v.status)}`}
+                          className={`w-2 h-2 rounded-full ${getVisitStatusSolidBgClass(v.status)}`}
                         />
                       ))}
                       {dayVisits.length > 3 && (
@@ -179,7 +167,7 @@ export default function CalendarPage() {
                     {dayVisits.slice(0, 3).map((v) => (
                       <div
                         key={v.id}
-                        className={`text-base px-1 py-0.5 rounded truncate text-white ${getStatusColor(v.status)}`}
+                        className={`text-base px-1 py-0.5 rounded truncate text-white ${getVisitStatusSolidBgClass(v.status)}`}
                       >
                         {v.client_name}
                       </div>
@@ -229,11 +217,7 @@ export default function CalendarPage() {
                       <div className="text-base text-muted-foreground mt-0.5">
                         {visit.client_address || "주소 없음"}
                       </div>
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium mt-1.5 text-white ${getStatusColor(visit.status)}`}
-                      >
-                        {getStatusLabel(visit.status)}
-                      </span>
+                      <VisitStatusBadge status={visit.status} variant="solid" className="mt-1.5" />
                     </Link>
                   ))}
                 </div>
@@ -271,11 +255,7 @@ export default function CalendarPage() {
                     <div className="font-medium text-base">{visit.client_name}</div>
                     <div className="text-base text-muted-foreground">{visit.client_address || "주소 없음"}</div>
                   </div>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium text-white shrink-0 ${getStatusColor(visit.status)}`}
-                  >
-                    {getStatusLabel(visit.status)}
-                  </span>
+                  <VisitStatusBadge status={visit.status} variant="solid" className="shrink-0" />
                 </Link>
               ))}
             </div>

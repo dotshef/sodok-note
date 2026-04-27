@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
 import { FilterSelect } from "@/components/ui/filter-select";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Modal } from "@/components/ui/modal";
 
 interface ClientOption {
   id: string;
@@ -73,24 +73,6 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
     }
   }, [open]);
 
-  // ESC 키로 닫기 + body 스크롤 잠금
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", handleKey);
-
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [open, onClose]);
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
@@ -130,121 +112,89 @@ export function VisitCreateModal({ open, onClose, onCreated }: VisitCreateModalP
     }
   }
 
-  if (!open) return null;
-
   const activeMembers = (members || []).filter((m) => m.is_active);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="visit-create-modal-title"
-    >
-      {/* 배경 */}
-      <div
-        className="absolute inset-0 bg-black/40"
-        onClick={onClose}
-      />
+    <Modal open={open} onClose={onClose} title="방문 일정 등록">
+      {error && (
+        <div className="flex items-center gap-3 rounded-lg p-3 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
+          <span>{error}</span>
+        </div>
+      )}
 
-      {/* 콘텐츠 */}
-      <div className="relative w-full max-w-lg rounded-xl bg-popover border border-border shadow-xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h3 id="visit-create-modal-title" className="text-lg font-bold">
-            방문 일정 등록
-          </h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField label={<>고객 시설 <span className="text-destructive">*</span></>}>
+          <FilterSelect
+            value={clientId}
+            onChange={setClientId}
+            options={[
+              { value: "", label: clients === null ? "불러오는 중..." : "시설 선택" },
+              ...(clients || []).map((c) => ({ value: c.id, label: c.name })),
+            ]}
+          />
+          <p className="text-base text-muted-foreground mt-1">
+            새로운 고객의 일정인가요?{" "}
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                router.push("/clients/new");
+              }}
+              className="text-primary font-medium hover:underline cursor-pointer"
+            >
+              새 고객 등록
+            </button>
+          </p>
+        </FormField>
+
+        <FormField label={<>방문 예정일 <span className="text-destructive">*</span></>}>
+          <DatePicker
+            value={scheduledDate}
+            onChange={setScheduledDate}
+            placeholder="날짜 선택"
+          />
+        </FormField>
+
+        <FormField label="담당 기사">
+          <FilterSelect
+            value={userId}
+            onChange={setUserId}
+            options={[
+              { value: "", label: "미배정" },
+              ...activeMembers.map((m) => ({ value: m.id, label: m.name })),
+            ]}
+          />
+        </FormField>
+
+        <FormField label="메모">
+          <textarea
+            className="w-full"
+            rows={3}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            maxLength={1000}
+            placeholder="사전 전달사항 (선택)"
+          />
+        </FormField>
+
+        <div className="flex gap-3 justify-end pt-2">
           <button
             type="button"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
             onClick={onClose}
-            className="inline-flex items-center justify-center p-1 rounded-lg hover:bg-muted transition-colors cursor-pointer"
-            aria-label="닫기"
+            disabled={submitting}
           >
-            <X size={18} />
+            취소
+          </button>
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
+            disabled={submitting}
+          >
+            {submitting ? <Spinner size="sm" /> : "등록"}
           </button>
         </div>
-
-        <div className="px-6 py-5">
-          {error && (
-            <div className="flex items-center gap-3 rounded-lg p-3 bg-destructive/10 text-destructive border border-destructive/20 text-base mb-4">
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <FormField label={<>고객 시설 <span className="text-destructive">*</span></>}>
-              <FilterSelect
-                value={clientId}
-                onChange={setClientId}
-                options={[
-                  { value: "", label: clients === null ? "불러오는 중..." : "시설 선택" },
-                  ...(clients || []).map((c) => ({ value: c.id, label: c.name })),
-                ]}
-              />
-              <p className="text-base text-muted-foreground mt-1">
-                새로운 고객의 일정인가요?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    router.push("/clients/new");
-                  }}
-                  className="text-primary font-medium hover:underline cursor-pointer"
-                >
-                  새 고객 등록
-                </button>
-              </p>
-            </FormField>
-
-            <FormField label={<>방문 예정일 <span className="text-destructive">*</span></>}>
-              <DatePicker
-                value={scheduledDate}
-                onChange={setScheduledDate}
-                placeholder="날짜 선택"
-              />
-            </FormField>
-
-            <FormField label="담당 기사">
-              <FilterSelect
-                value={userId}
-                onChange={setUserId}
-                options={[
-                  { value: "", label: "미배정" },
-                  ...activeMembers.map((m) => ({ value: m.id, label: m.name })),
-                ]}
-              />
-            </FormField>
-
-            <FormField label="메모">
-              <textarea
-                className="w-full"
-                rows={3}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                maxLength={1000}
-                placeholder="사전 전달사항 (선택)"
-              />
-            </FormField>
-
-            <div className="flex gap-3 justify-end pt-2">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer"
-                onClick={onClose}
-                disabled={submitting}
-              >
-                취소
-              </button>
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
-                disabled={submitting}
-              >
-                {submitting ? <Spinner size="sm" /> : "등록"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }
