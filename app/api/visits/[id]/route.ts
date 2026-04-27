@@ -162,7 +162,7 @@ export async function PATCH(
       return NextResponse.json({ error: "배정에 실패했습니다" }, { status: 500 });
     }
 
-    if (newUserId && newUserId !== existing?.user_id) {
+    if (newUserId && newUserId !== existing?.user_id && newUserId !== session.userId) {
       const { data: visitInfo } = await supabase
         .from("visits")
         .select("scheduled_date, client_name")
