@@ -17,13 +17,15 @@ interface DashboardData {
     visit_code: string | null;
     scheduled_date: string;
     status: string;
-    clients: { id: string; name: string; address: string | null } | null;
+    client_id: string;
+    client_name: string;
+    client_address: string | null;
     users: { id: string; name: string } | null;
   }[];
   missedVisits: {
     id: string;
     scheduled_date: string;
-    clients: { id: string; name: string } | null;
+    client_name: string;
   }[];
   weeklyChart: {
     label: string;
@@ -174,7 +176,6 @@ export default function DashboardPage() {
                 {/* 모바일 카드 */}
                 <div className="md:hidden space-y-3">
                   {data.todayVisits.map((visit) => {
-                    const client = visit.clients as unknown as { id: string; name: string; address: string | null } | null;
                     const user = visit.users as unknown as { id: string; name: string } | null;
                     return (
                       <Link
@@ -188,11 +189,9 @@ export default function DashboardPage() {
                           </span>
                           {getStatusBadge(visit.status)}
                         </div>
-                        {client && (
-                          <div className="text-base font-medium mb-1">{client.name}</div>
-                        )}
-                        {client?.address && (
-                          <div className="text-base text-muted-foreground mb-1">{client.address}</div>
+                        <div className="text-base font-medium mb-1">{visit.client_name}</div>
+                        {visit.client_address && (
+                          <div className="text-base text-muted-foreground mb-1">{visit.client_address}</div>
                         )}
                         {user?.name && (
                           <div className="text-base text-muted-foreground">{user.name}</div>
@@ -216,7 +215,6 @@ export default function DashboardPage() {
                     </thead>
                     <tbody>
                       {data.todayVisits.map((visit) => {
-                        const client = visit.clients as unknown as { id: string; name: string; address: string | null } | null;
                         const user = visit.users as unknown as { id: string; name: string } | null;
                         return (
                           <tr key={visit.id}>
@@ -229,16 +227,14 @@ export default function DashboardPage() {
                               </Link>
                             </td>
                             <td>
-                              {client ? (
-                                <Link
-                                  href={`/clients/${client.id}`}
-                                  className="text-primary hover:underline font-medium !text-base"
-                                >
-                                  {client.name}
-                                </Link>
-                              ) : "-"}
+                              <Link
+                                href={`/clients/${visit.client_id}`}
+                                className="text-primary hover:underline font-medium !text-base"
+                              >
+                                {visit.client_name}
+                              </Link>
                             </td>
-                            <td className="text-base">{client?.address || "-"}</td>
+                            <td className="text-base">{visit.client_address || "-"}</td>
                             <td className="text-base">{user?.name || "-"}</td>
                             <td>{getStatusBadge(visit.status)}</td>
                           </tr>
@@ -265,7 +261,6 @@ export default function DashboardPage() {
               ) : (
                 <div className="space-y-2">
                   {data.missedVisits.map((visit) => {
-                    const client = visit.clients as unknown as { id: string; name: string } | null;
                     const daysAgo = getDaysAgo(visit.scheduled_date);
                     return (
                       <Link
@@ -274,7 +269,7 @@ export default function DashboardPage() {
                         className="flex items-center justify-between p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
                       >
                         <div>
-                          <p className="text-base font-medium">{client?.name || "-"}</p>
+                          <p className="text-base font-medium">{visit.client_name || "-"}</p>
                           <p className="text-base text-muted-foreground">
                             {visit.scheduled_date}
                           </p>

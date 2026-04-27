@@ -16,3 +16,10 @@ globs: ["**/*.sql", "lib/supabase/**", "app/api/**"]
 - 모든 쿼리에 tenant_id 조건 명시적 추가
 - Supabase 클라이언트는 `getSupabase()` (lazy 초기화) 사용
 - INSERT/UPDATE 시 created_at, updated_at을 `new Date().toISOString()`으로 직접 전달
+
+## visits.client_* 박제 컬럼
+- visits 테이블의 `client_*` 컬럼은 **방문 생성 시점의 고객 정보 박제값** (immutable)
+- clients 테이블이 나중에 수정돼도 visit의 client_* 값은 변하지 않음 — 증명서와 항상 일치 보장
+- 방문 목록·상세 화면, 검색·필터, 증명서 생성 모두 **박제값 기준** (`clients` join으로 표시 금지)
+- 방문 후 고객 정보가 바뀌어 반영하려면 방문을 삭제하고 재등록해야 함 (live sync 아님)
+- `clients` join은 "고객 상세로 이동" 같은 link 용도로만 사용 (id만 필요)

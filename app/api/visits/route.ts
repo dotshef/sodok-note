@@ -50,7 +50,7 @@ export async function GET(request: Request) {
       .from("visits")
       .select(`
         id, visit_code, scheduled_date, completed_at, status, method, disinfectants_used, notes, user_id,
-        clients(id, name, facility_category, facility_type, address),
+        client_id, client_name, client_address, client_facility_category, client_facility_type,
         certificates(id, certificate_number, hwpx_file_url, pdf_file_url)
       `)
       .eq("tenant_id", session.tenantId)
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
     .select(
       `
       id, visit_code, scheduled_date, completed_at, status, method, disinfectants_used, notes, user_id,
-      clients!inner(id, name, facility_category, facility_type, address),
+      client_id, client_name, client_address, client_facility_category, client_facility_type,
       users(id, name),
       certificates(id, certificate_number, pdf_file_url)
     `,
@@ -112,9 +112,9 @@ export async function GET(request: Request) {
   if (status) query = query.eq("status", status);
   if (dateFrom) query = query.gte("scheduled_date", dateFrom);
   if (dateTo) query = query.lte("scheduled_date", dateTo);
-  if (search) query = query.ilike("clients.name", `%${search}%`);
-  if (facilityCategory) query = query.eq("clients.facility_category", facilityCategory);
-  if (facilityType) query = query.eq("clients.facility_type", facilityType);
+  if (search) query = query.ilike("client_name", `%${search}%`);
+  if (facilityCategory) query = query.eq("client_facility_category", facilityCategory);
+  if (facilityType) query = query.eq("client_facility_type", facilityType);
 
   // 역할별 강제 필터:
   // - member: 반드시 본인 담당 건만 (클라이언트 파라미터 무시)
@@ -159,10 +159,12 @@ export async function POST(request: Request) {
   const { clientId, scheduledDate, userId, notes } = parsed.data;
   const supabase = getSupabase();
 
-  // clientId가 같은 tenant 소속인지 확인
+  // clientId가 같은 tenant 소속인지 확인 + 박제할 고객 정보 조회
   const { data: client, error: clientError } = await supabase
     .from("clients")
-    .select("id, is_active")
+    .select(
+      "id, is_active, name, address, facility_category, facility_type, area, area_pyeong, volume, contact_name, contact_position"
+    )
     .eq("id", clientId)
     .eq("tenant_id", session.tenantId)
     .single();
@@ -202,6 +204,15 @@ export async function POST(request: Request) {
       status: "scheduled",
       notes: notes || null,
       visit_code: visitCode,
+      client_name: client.name,
+      client_address: client.address,
+      client_facility_category: client.facility_category,
+      client_facility_type: client.facility_type,
+      client_area: client.area,
+      client_area_pyeong: client.area_pyeong,
+      client_volume: client.volume,
+      client_contact_name: client.contact_name,
+      client_contact_position: client.contact_position,
       created_at: now,
     })
     .select("id")
@@ -212,23 +223,14 @@ export async function POST(request: Request) {
   }
 
   if (userId) {
-    const { data: clientInfo } = await supabase
-      .from("clients")
-      .select("name")
-      .eq("id", clientId)
-      .eq("tenant_id", session.tenantId)
-      .single();
-
-    if (clientInfo) {
-      await sendPush(
-        userId,
-        visitAssignedPayload({
-          visitId: inserted.id,
-          clientName: clientInfo.name,
-          scheduledDate,
-        })
-      ).catch((e) => console.error("배정 알림 발송 실패", e));
-    }
+    await sendPush(
+      userId,
+      visitAssignedPayload({
+        visitId: inserted.id,
+        clientName: client.name,
+        scheduledDate,
+      })
+    ).catch((e) => console.error("배정 알림 발송 실패", e));
   }
 
   return NextResponse.json({ id: inserted.id }, { status: 201 });

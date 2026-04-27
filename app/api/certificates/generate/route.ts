@@ -19,12 +19,14 @@ export async function POST(request: Request) {
 
   const supabase = getSupabase();
 
-  // 방문 정보 조회
+  // 방문 정보 조회 (고객 정보는 visit의 박제값 사용; clients.code만 채번용으로 live)
   const { data: visit } = await supabase
     .from("visits")
     .select(`
       id, scheduled_date, completed_at, method, disinfectants_used,
-      clients(id, code, name, area, volume, address, contact_name, contact_position)
+      client_name, client_address, client_area, client_volume,
+      client_contact_name, client_contact_position,
+      clients(code)
     `)
     .eq("id", visitId)
     .eq("tenant_id", session.tenantId)
@@ -63,13 +65,8 @@ export async function POST(request: Request) {
     .eq("visit_id", visitId)
     .single();
 
-  const client = visit.clients as unknown as {
-    id: string; code: string; name: string;
-    area: number | null; volume: number | null;
-    address: string | null; contact_name: string | null; contact_position: string | null;
-  } | null;
-
-  const clientCode = client?.code || "C00000";
+  const clientLink = visit.clients as unknown as { code: string | null } | null;
+  const clientCode = clientLink?.code || "C00000";
 
   // certificate_number 채번: CERT-{client_code}-{순번} (MAX 기반)
   const { data: lastCert } = await supabase
@@ -93,15 +90,15 @@ export async function POST(request: Request) {
   // 발급일 (증명서 생성 시점)
   const now = new Date();
 
-  // CertificateInput 조립
+  // CertificateInput 조립 (visit 박제값 사용)
   const certInput = {
     issueNumber: issueNumber || "",
-    businessName: client?.name || "",
-    areaM2: client?.area?.toString() || "",
-    areaM3: client?.volume?.toString() || "",
-    address: client?.address || "",
-    position: client?.contact_position || "",
-    managerName: client?.contact_name || "",
+    businessName: visit.client_name || "",
+    areaM2: visit.client_area?.toString() || "",
+    areaM3: visit.client_volume?.toString() || "",
+    address: visit.client_address || "",
+    position: visit.client_contact_position || "",
+    managerName: visit.client_contact_name || "",
     periodStart: completedDate,
     periodEnd: completedDate,
     disinfectionType: visit.method || "",
@@ -124,7 +121,7 @@ export async function POST(request: Request) {
 
   // 파일명 생성
   const completedDateCompact = format(new Date(visit.completed_at!), "yyyyMMdd");
-  const baseFileName = `소독증명서_${client!.name}_${tenant.name}_${completedDateCompact}`;
+  const baseFileName = `소독증명서_${visit.client_name}_${tenant.name}_${completedDateCompact}`;
   const hwpxFileName = `${baseFileName}.hwpx`;
   const pdfFileName = `${baseFileName}.pdf`;
 

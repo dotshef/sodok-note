@@ -22,13 +22,19 @@ interface VisitDetail {
   disinfectants_used: { name: string; quantity: string; unit: string }[] | null;
   notes: string | null;
   user_id: string | null;
+  client_id: string;
+  client_name: string;
+  client_address: string | null;
+  client_facility_category: string;
+  client_facility_type: string | null;
+  client_area: number | null;
+  client_area_pyeong: number | null;
+  client_volume: number | null;
+  client_contact_name: string | null;
+  client_contact_position: string | null;
+  // 박제하지 않은 운영용 필드 (현재 시점 값)
   clients: {
     id: string;
-    name: string;
-    facility_category: string;
-    facility_type: string | null;
-    address: string | null;
-    contact_name: string | null;
     contact_phone: string | null;
     contact_email: string | null;
   } | null;
@@ -267,8 +273,8 @@ export default function VisitDetailPage() {
             <div>
               <span className="text-muted-foreground">시설명</span>
               <p className="font-medium">
-                <Link href={`/clients/${visit.clients?.id}`} className="text-primary hover:underline">
-                  {visit.clients?.name}
+                <Link href={`/clients/${visit.client_id}`} className="text-primary hover:underline">
+                  {visit.client_name}
                 </Link>
               </p>
             </div>
@@ -278,11 +284,11 @@ export default function VisitDetailPage() {
             </div>
             <div className="col-span-2">
               <span className="text-muted-foreground">주소</span>
-              <p className="font-medium">{visit.clients?.address || "-"}</p>
+              <p className="font-medium">{visit.client_address || "-"}</p>
             </div>
             <div>
               <span className="text-muted-foreground">담당자명</span>
-              <p className="font-medium">{visit.clients?.contact_name || "-"}</p>
+              <p className="font-medium">{visit.client_contact_name || "-"}</p>
             </div>
             <div>
               <span className="text-muted-foreground">연락처</span>

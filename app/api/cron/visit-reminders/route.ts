@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
   const { data: visits, error } = await supabase
     .from("visits")
-    .select("id, user_id, clients(name), users!inner(is_active)")
+    .select("id, user_id, client_name, users!inner(is_active)")
     .eq("status", "scheduled")
     .eq("scheduled_date", tomorrowStr)
     .eq("users.is_active", true)
@@ -35,13 +35,11 @@ export async function GET(request: Request) {
   const grouped = new Map<string, { count: number; firstClientName: string }>();
   for (const v of visits || []) {
     if (!v.user_id) continue;
-    const client = v.clients as unknown as { name: string } | null;
-    const name = client?.name || "";
     const entry = grouped.get(v.user_id);
     if (entry) {
       entry.count += 1;
     } else {
-      grouped.set(v.user_id, { count: 1, firstClientName: name });
+      grouped.set(v.user_id, { count: 1, firstClientName: v.client_name || "" });
     }
   }
 

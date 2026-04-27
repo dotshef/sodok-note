@@ -32,7 +32,7 @@ export async function POST(
     .from("certificates")
     .select(`
       id, certificate_number, pdf_file_url, pdf_file_name,
-      visits(completed_at, clients(id, name, contact_name)),
+      visits(completed_at, client_id, client_name, client_contact_name),
       tenants(name)
     `)
     .eq("id", id)
@@ -49,12 +49,13 @@ export async function POST(
 
   const visit = cert.visits as unknown as {
     completed_at: string | null;
-    clients: { id: string; name: string; contact_name: string | null } | null;
+    client_id: string;
+    client_name: string;
+    client_contact_name: string | null;
   } | null;
-  const client = visit?.clients ?? null;
   const tenant = cert.tenants as unknown as { name: string } | null;
 
-  if (!client || !tenant || !visit?.completed_at) {
+  if (!visit || !tenant || !visit.completed_at) {
     return NextResponse.json({ error: "발송에 필요한 정보가 부족합니다" }, { status: 500 });
   }
 
@@ -73,8 +74,8 @@ export async function POST(
 
   try {
     const { subject, html, attachments } = renderCertificateEmail({
-      recipientName: client.contact_name,
-      clientName: client.name,
+      recipientName: visit.client_contact_name,
+      clientName: visit.client_name,
       tenantName: tenant.name,
       completedDate,
       pdfBuffer,
@@ -98,7 +99,7 @@ export async function POST(
     await supabase
       .from("clients")
       .update({ contact_email: to, updated_at: sentAt })
-      .eq("id", client.id)
+      .eq("id", visit.client_id)
       .eq("tenant_id", session.tenantId);
   }
 

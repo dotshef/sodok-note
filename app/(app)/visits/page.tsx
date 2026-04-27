@@ -20,13 +20,11 @@ interface Visit {
   disinfectants_used: { name: string; quantity: string; unit: string }[] | null;
   notes: string | null;
   user_id: string | null;
-  clients: {
-    id: string;
-    name: string;
-    facility_category: string;
-    facility_type: string | null;
-    address: string | null;
-  } | null;
+  client_id: string;
+  client_name: string;
+  client_address: string | null;
+  client_facility_category: string;
+  client_facility_type: string | null;
   users: {
     id: string;
     name: string;
@@ -241,9 +239,9 @@ export default function VisitsPage() {
                   <span className="text-base font-mono text-muted-foreground">{visit.visit_code || "-"}</span>
                   {getStatusBadge(visit.status)}
                 </div>
-                <div className="font-medium text-base mb-1">{visit.clients?.name || "-"}</div>
-                {visit.clients?.address && (
-                  <div className="text-base text-muted-foreground">{visit.clients.address}</div>
+                <div className="font-medium text-base mb-1">{visit.client_name || "-"}</div>
+                {visit.client_address && (
+                  <div className="text-base text-muted-foreground">{visit.client_address}</div>
                 )}
                 <div className="text-base text-muted-foreground">{visit.scheduled_date}</div>
                 {visit.users?.name && (
@@ -322,8 +320,8 @@ export default function VisitsPage() {
                       <span className="text-base text-muted-foreground">-</span>
                     )}
                   </td>
-                  <td className="text-base font-medium">{visit.clients?.name || "-"}</td>
-                  <td className="text-base">{visit.clients?.address || "-"}</td>
+                  <td className="text-base font-medium">{visit.client_name || "-"}</td>
+                  <td className="text-base">{visit.client_address || "-"}</td>
                   <td className="text-base">{visit.users?.name || "-"}</td>
                   <td>{getStatusBadge(visit.status)}</td>
                   <td className="text-base">{visit.scheduled_date}</td>

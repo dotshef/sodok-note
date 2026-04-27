@@ -139,12 +139,7 @@ export default function EditClientPage() {
             <h3 className="font-semibold">시설 정보</h3>
 
             <FormField label="고객 코드">
-              <input
-                type="text"
-                className="w-full bg-muted"
-                value={clientCode}
-                readOnly
-              />
+              <p className="font-medium font-mono">{clientCode || "-"}</p>
             </FormField>
 
             <FormField label={<>시설명 <span className="text-destructive">*</span></>}>

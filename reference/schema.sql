@@ -51,6 +51,8 @@ create table clients (
 );
 
 -- 4. visits (실제 방문 기록)
+-- client_* 컬럼은 방문 생성 시점의 고객 정보 박제값 (immutable).
+-- clients 테이블 수정과 무관하며, 검색·증명서 발급은 모두 박제값 기준.
 create table visits (
   id uuid primary key default gen_random_uuid(),
   client_id uuid not null references clients(id) on delete cascade,
@@ -63,6 +65,15 @@ create table visits (
   disinfectants_used jsonb,
   notes text,
   visit_code text,
+  client_name text not null,
+  client_address text,
+  client_facility_category text not null check (client_facility_category in ('home','business','mandatory')),
+  client_facility_type text,
+  client_area numeric,
+  client_area_pyeong numeric,
+  client_volume numeric,
+  client_contact_name text,
+  client_contact_position text,
   created_at timestamptz not null,
   unique (tenant_id, visit_code)
 );

@@ -15,11 +15,13 @@ export async function GET(
   const { id } = await params;
   const supabase = getSupabase();
 
+  // 박제값(client_*)은 visit row에서 직접 가져옴.
+  // clients 조인은 "고객 상세로 이동" link용 id + 박제 안 한 운영용 필드(phone/email)에만 사용.
   const { data, error } = await supabase
     .from("visits")
     .select(`
       *,
-      clients(id, name, facility_category, facility_type, address, contact_name, contact_phone, contact_email),
+      clients(id, contact_phone, contact_email),
       certificates(id, certificate_number, hwpx_file_url, hwpx_file_name, pdf_file_url, pdf_file_name, sent_at, sent_to)
     `)
     .eq("id", id)
@@ -138,18 +140,17 @@ export async function PATCH(
     if (newUserId && newUserId !== existing?.user_id) {
       const { data: visitInfo } = await supabase
         .from("visits")
-        .select("scheduled_date, clients(name)")
+        .select("scheduled_date, client_name")
         .eq("id", id)
         .eq("tenant_id", session.tenantId)
         .single();
 
-      const client = visitInfo?.clients as unknown as { name: string } | null;
-      if (visitInfo && client) {
+      if (visitInfo) {
         await sendPush(
           newUserId,
           visitAssignedPayload({
             visitId: id,
-            clientName: client.name,
+            clientName: visitInfo.client_name,
             scheduledDate: visitInfo.scheduled_date,
           })
         ).catch((e) => console.error("배정 알림 발송 실패", e));

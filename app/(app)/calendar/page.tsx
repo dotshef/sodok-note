@@ -22,13 +22,11 @@ interface Visit {
   completed_at: string | null;
   method: string | null;
   user_id: string | null;
-  clients: {
-    id: string;
-    name: string;
-    facility_category: string;
-    facility_type: string | null;
-    address: string | null;
-  } | null;
+  client_id: string;
+  client_name: string;
+  client_address: string | null;
+  client_facility_category: string;
+  client_facility_type: string | null;
 }
 
 export default function CalendarPage() {
@@ -183,7 +181,7 @@ export default function CalendarPage() {
                         key={v.id}
                         className={`text-base px-1 py-0.5 rounded truncate text-white ${getStatusColor(v.status)}`}
                       >
-                        {v.clients?.name}
+                        {v.client_name}
                       </div>
                     ))}
                     {dayVisits.length > 3 && (
@@ -226,10 +224,10 @@ export default function CalendarPage() {
                       className="block p-3 rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer"
                     >
                       <div className="font-semibold text-base">
-                        {visit.clients?.name}
+                        {visit.client_name}
                       </div>
                       <div className="text-base text-muted-foreground mt-0.5">
-                        {visit.clients?.address || "주소 없음"}
+                        {visit.client_address || "주소 없음"}
                       </div>
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium mt-1.5 text-white ${getStatusColor(visit.status)}`}
@@ -270,8 +268,8 @@ export default function CalendarPage() {
                   className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-muted transition-colors"
                 >
                   <div>
-                    <div className="font-medium text-base">{visit.clients?.name}</div>
-                    <div className="text-base text-muted-foreground">{visit.clients?.address || "주소 없음"}</div>
+                    <div className="font-medium text-base">{visit.client_name}</div>
+                    <div className="text-base text-muted-foreground">{visit.client_address || "주소 없음"}</div>
                   </div>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-medium text-white shrink-0 ${getStatusColor(visit.status)}`}
