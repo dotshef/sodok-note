@@ -5,19 +5,55 @@ import { hashPassword } from "@/lib/auth/password";
 import { createMemberSchema } from "@/validations/member";
 
 // 멤버 목록 조회
-export async function GET() {
+// page 파라미터가 있으면 페이지네이션 모드 (total/page/totalPages 반환),
+// 없으면 전체 반환 (방문 모달·필터 같은 셀렉트용 호출 호환)
+export async function GET(request: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { searchParams } = new URL(request.url);
+  const pageParam = searchParams.get("page");
+  const limitParam = searchParams.get("limit");
+  const roleParam = searchParams.get("role");
+  const search = searchParams.get("search");
+  const isPaginated = pageParam !== null;
+
   const supabase = getSupabase();
-  const { data, error } = await supabase
+  let query = supabase
     .from("users")
-    .select("id, email, name, phone, role, is_active, created_at")
+    .select("id, email, name, phone, role, is_active, created_at", isPaginated ? { count: "exact" } : {})
     .eq("tenant_id", session.tenantId)
     .order("created_at", { ascending: true });
 
+  if (roleParam === "admin" || roleParam === "member") {
+    query = query.eq("role", roleParam);
+  }
+  if (search) {
+    query = query.ilike("name", `%${search}%`);
+  }
+
+  let page = 1;
+  let limit = 20;
+  if (isPaginated) {
+    page = Math.max(1, parseInt(pageParam!) || 1);
+    limit = Math.min(100, Math.max(1, parseInt(limitParam || "12") || 12));
+    const from = (page - 1) * limit;
+    query = query.range(from, from + limit - 1);
+  }
+
+  const { data, count, error } = await query;
+
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (isPaginated) {
+    return NextResponse.json({
+      members: data || [],
+      total: count || 0,
+      page,
+      totalPages: Math.max(1, Math.ceil((count || 0) / limit)),
+    });
   }
 
   return NextResponse.json({ members: data || [] });

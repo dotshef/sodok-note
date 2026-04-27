@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { useSession } from "@/components/providers/session-provider";
 import { RegisterFab } from "@/components/ui/register-fab";
+import { Pagination } from "@/components/ui/pagination";
+import { FilterSelect } from "@/components/ui/filter-select";
 
 interface Member {
   id: string;
@@ -15,26 +18,45 @@ interface Member {
   created_at: string;
 }
 
+interface MembersResponse {
+  members: Member[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
 export default function MembersPage() {
   const { userId } = useSession();
-  const [members, setMembers] = useState<Member[] | null>(null);
+  const [data, setData] = useState<MembersResponse | null>(null);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [roleFilter, setRoleFilter] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const loading = !members;
+  const loading = !data;
+  const members = data?.members;
 
-  async function fetchMembers() {
-    const res = await fetch("/api/members");
-    const data = await res.json();
-    setMembers(data.members || []);
-  }
+  // 검색어 debounce (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     let ignore = false;
 
     async function load() {
-      const res = await fetch("/api/members");
-      const data = await res.json();
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      if (debouncedSearch) params.set("search", debouncedSearch);
+      if (roleFilter) params.set("role", roleFilter);
+      const res = await fetch(`/api/members?${params}`);
+      const json = await res.json();
       if (!ignore) {
-        setMembers(data.members || []);
+        setData(json);
       }
     }
 
@@ -43,7 +65,12 @@ export default function MembersPage() {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [page, debouncedSearch, roleFilter, refreshKey]);
+
+  function fetchMembers() {
+    setData(null);
+    setRefreshKey((k) => k + 1);
+  }
 
   async function handleToggleActive(member: Member) {
     if (member.id === userId) return;
@@ -66,7 +93,32 @@ export default function MembersPage() {
 
   return (
     <div>
-      <div className="md:flex md:justify-end md:mb-4">
+      <div className="grid grid-cols-2 gap-2 mb-4 md:flex md:flex-wrap md:items-center md:gap-3">
+        <div className="flex col-span-2 md:col-span-1">
+          <div className="flex items-center px-3 bg-muted border border-r-0 border-border rounded-l-lg">
+            <Search size={16} className="text-muted-foreground" />
+          </div>
+          <input
+            type="text"
+            placeholder="이름 검색"
+            className="flex-1 min-w-0 md:flex-none md:w-56 !rounded-l-none"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <FilterSelect
+          value={roleFilter}
+          onChange={(v) => { setRoleFilter(v); setPage(1); setData(null); }}
+          options={[
+            { value: "", label: "전체" },
+            { value: "admin", label: "관리자" },
+            { value: "member", label: "직원" },
+          ]}
+          className="w-full md:w-36"
+        />
         <RegisterFab label="직원 등록" href="/members/new" />
       </div>
 
@@ -208,6 +260,15 @@ export default function MembersPage() {
           </tbody>
         </table>
       </div>
+
+      {/* 페이지네이션 */}
+      {data && (
+        <Pagination
+          page={page}
+          totalPages={data.totalPages}
+          onPageChange={(p) => { setPage(p); setData(null); }}
+        />
+      )}
     </div>
   );
 }

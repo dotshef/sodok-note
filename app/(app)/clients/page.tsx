@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { RegisterFab } from "@/components/ui/register-fab";
 import { FACILITY_TYPES, FACILITY_TYPE_MAP, type FacilityTypeId } from "@/constants/facility-types";
 import { FACILITY_CATEGORIES, getFacilityCategoryLabel } from "@/constants/facility-category";
 import { FilterSelect } from "@/components/ui/filter-select";
+import { Pagination } from "@/components/ui/pagination";
 
 interface Client {
   id: string;
@@ -222,28 +223,12 @@ export default function ClientsPage() {
       </div>
 
       {/* 페이지네이션 */}
-      {data && data.totalPages > 1 && (
-        <div className="flex justify-center mt-4">
-          <div className="flex">
-            <button
-              className="inline-flex items-center justify-center p-2 border border-border bg-card rounded-l-lg hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
-              disabled={page <= 1}
-              onClick={() => { setPage(page - 1); setData(null); }}
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button className="px-4 py-2 border-y border-border bg-card text-base" disabled>
-              {page} / {data.totalPages}
-            </button>
-            <button
-              className="inline-flex items-center justify-center p-2 border border-border bg-card rounded-r-lg hover:bg-muted transition-colors disabled:opacity-50 cursor-pointer"
-              disabled={page >= data.totalPages}
-              onClick={() => { setPage(page + 1); setData(null); }}
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+      {data && (
+        <Pagination
+          page={page}
+          totalPages={data.totalPages}
+          onPageChange={(p) => { setPage(p); setData(null); }}
+        />
       )}
     </div>
   );

@@ -90,7 +90,7 @@ export async function GET(request: Request) {
 
   // === 목록 모드 (신규) ===
   const page = Math.max(1, parseInt(pageParam || "1"));
-  const limit = Math.min(100, Math.max(1, parseInt(limitParam || "20")));
+  const limit = Math.min(100, Math.max(1, parseInt(limitParam || "12")));
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
