@@ -24,7 +24,7 @@ function urlBase64ToArrayBuffer(base64String: string): ArrayBuffer {
   return buffer;
 }
 
-const SW_PATH = "/sw.js";
+const SW_PATH = "/service-worker.js";
 
 async function getServiceWorkerRegistration(): Promise<ServiceWorkerRegistration> {
   const existing = await navigator.serviceWorker.getRegistration(SW_PATH);

@@ -8,7 +8,7 @@ import {
   isPushSupported,
   subscribeToPush,
   unsubscribeFromPush,
-} from "@/lib/push/browser";
+} from "@/lib/push/subscription-manage";
 import { Spinner } from "@/components/ui/spinner";
 
 interface DeviceRow {

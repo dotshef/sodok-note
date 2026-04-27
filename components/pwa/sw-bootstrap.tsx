@@ -12,9 +12,9 @@ export function ServiceWorkerBootstrap() {
 
     async function register() {
       try {
-        const existing = await navigator.serviceWorker.getRegistration("/sw.js");
+        const existing = await navigator.serviceWorker.getRegistration("/service-worker.js");
         if (!cancelled && !existing) {
-          await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+          await navigator.serviceWorker.register("/service-worker.js", { scope: "/" });
         }
       } catch (err) {
         console.error("SW 등록 실패", err);

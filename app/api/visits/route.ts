@@ -3,7 +3,7 @@ import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
 import { createVisitSchema } from "@/validations/visit";
 import { generateVisitCode } from "@/utils/visit-code";
-import { sendPush } from "@/lib/push/send";
+import { sendPushToUsers } from "@/lib/push/notify";
 import { visitAssignedPayload } from "@/lib/push/templates";
 
 // 방문 건 목록 조회 (캘린더 모드 + 목록 모드)
@@ -223,14 +223,14 @@ export async function POST(request: Request) {
   }
 
   if (userId) {
-    await sendPush(
-      userId,
+    await sendPushToUsers(
+      [userId],
       visitAssignedPayload({
         visitId: inserted.id,
         clientName: client.name,
         scheduledDate,
       })
-    ).catch((e) => console.error("배정 알림 발송 실패", e));
+    ).catch((e: unknown) => console.error("배정 알림 발송 실패", e));
   }
 
   return NextResponse.json({ id: inserted.id }, { status: 201 });

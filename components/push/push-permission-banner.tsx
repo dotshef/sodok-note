@@ -6,7 +6,7 @@ import {
   getPermissionState,
   isPushSupported,
   subscribeToPush,
-} from "@/lib/push/browser";
+} from "@/lib/push/subscription-manage";
 
 const DISMISS_KEY = "push-banner-dismissed";
 

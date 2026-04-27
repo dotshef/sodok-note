@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
-import { sendPush } from "@/lib/push/send";
+import { sendPushToUsers } from "@/lib/push/notify";
 import { visitTomorrowPayload } from "@/lib/push/templates";
 
 export async function GET(request: Request) {
@@ -45,8 +45,8 @@ export async function GET(request: Request) {
 
   let totalSent = 0;
   for (const [userId, info] of grouped) {
-    const result = await sendPush(
-      userId,
+    const result = await sendPushToUsers(
+      [userId],
       visitTomorrowPayload({
         count: info.count,
         firstClientName: info.firstClientName,

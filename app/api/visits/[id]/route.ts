@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
-import { sendPush, sendPushToUsers } from "@/lib/push/send";
+import { sendPushToUsers } from "@/lib/push/notify";
 import { visitAssignedPayload, visitCompletedPayload } from "@/lib/push/templates";
 
 // 방문 상세 조회
@@ -171,14 +171,14 @@ export async function PATCH(
         .single();
 
       if (visitInfo) {
-        await sendPush(
-          newUserId,
+        await sendPushToUsers(
+          [newUserId],
           visitAssignedPayload({
             visitId: id,
             clientName: visitInfo.client_name,
             scheduledDate: visitInfo.scheduled_date,
           })
-        ).catch((e) => console.error("배정 알림 발송 실패", e));
+        ).catch((e: unknown) => console.error("배정 알림 발송 실패", e));
       }
     }
 
