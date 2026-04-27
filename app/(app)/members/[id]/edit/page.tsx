@@ -28,16 +28,25 @@ export default function EditMemberPage() {
     let ignore = false;
 
     async function fetchMember() {
-      const res = await fetch("/api/members");
-      const data = await res.json();
-      const member = data.members?.find((m: { id: string }) => m.id === id);
-      if (!member) {
-        router.push("/members");
-        return;
-      }
-      if (!ignore) {
-        setForm({ name: member.name, phone: member.phone || "", email: member.email || "", password: "", passwordConfirm: "", role: member.role || "member" });
-        setLoaded(true);
+      try {
+        const res = await fetch(`/api/members/${id}`);
+        if (!res.ok) {
+          if (!ignore) {
+            setError(`불러오기 실패 (status ${res.status})`);
+            setLoaded(true);
+          }
+          return;
+        }
+        const member = await res.json();
+        if (!ignore) {
+          setForm({ name: member.name, phone: member.phone || "", email: member.email || "", password: "", passwordConfirm: "", role: member.role || "member" });
+          setLoaded(true);
+        }
+      } catch (e) {
+        if (!ignore) {
+          setError(`네트워크/파싱 에러: ${e instanceof Error ? e.message : String(e)}`);
+          setLoaded(true);
+        }
       }
     }
 
@@ -46,7 +55,7 @@ export default function EditMemberPage() {
     return () => {
       ignore = true;
     };
-  }, [id, router]);
+  }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -66,7 +75,8 @@ export default function EditMemberPage() {
     setSaving(true);
 
     try {
-      const payload: Record<string, string> = { name: form.name, phone: form.phone, email: form.email, role: form.role };
+      const payload: Record<string, string> = { name: form.name, phone: form.phone, email: form.email };
+      if (!isSelf) payload.role = form.role;
       if (changePassword && form.password) payload.password = form.password;
 
       const res = await fetch(`/api/members/${id}`, {

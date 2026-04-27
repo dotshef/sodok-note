@@ -4,6 +4,30 @@ import { getSession } from "@/lib/auth/jwt";
 import { updateMemberSchema } from "@/validations/member";
 import { hashPassword } from "@/lib/auth/password";
 
+// 멤버 단건 조회
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, email, name, phone, role, is_active")
+    .eq("id", id)
+    .eq("tenant_id", session.tenantId)
+    .single();
+
+  if (error || !data) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(data);
+}
+
 // 멤버 수정
 export async function PATCH(
   request: Request,

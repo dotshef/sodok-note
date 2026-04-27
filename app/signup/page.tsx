@@ -6,6 +6,8 @@ import Link from "next/link";
 import { FormField } from "@/components/ui/form-field";
 import { Spinner } from "@/components/ui/spinner";
 
+type VerifyState = "idle" | "code-sent" | "verified";
+
 export default function SignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -16,17 +18,95 @@ export default function SignupPage() {
     address: "",
     email: "",
     password: "",
+    passwordConfirm: "",
     name: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [verifyState, setVerifyState] = useState<VerifyState>("idle");
+  const [code, setCode] = useState("");
+  const [sending, setSending] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+
   function updateField(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
+  function updateEmail(value: string) {
+    updateField("email", value);
+    if (verifyState !== "idle") {
+      setVerifyState("idle");
+      setCode("");
+      setVerifyError("");
+    }
+  }
+
+  async function handleSendCode() {
+    if (!form.email) {
+      setVerifyError("이메일을 입력해주세요");
+      return;
+    }
+    setVerifyError("");
+    setSending(true);
+
+    try {
+      const res = await fetch("/api/auth/signup/send-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setVerifyError(data.error);
+        return;
+      }
+      setVerifyState("code-sent");
+      setCode("");
+    } catch {
+      setVerifyError("인증번호 발송에 실패했습니다");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function handleVerifyCode() {
+    if (!/^\d{6}$/.test(code)) {
+      setVerifyError("인증번호 6자리를 입력해주세요");
+      return;
+    }
+    setVerifyError("");
+    setVerifying(true);
+
+    try {
+      const res = await fetch("/api/auth/signup/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setVerifyError(data.error);
+        return;
+      }
+      setVerifyState("verified");
+      setCode("");
+    } catch {
+      setVerifyError("인증에 실패했습니다");
+    } finally {
+      setVerifying(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (verifyState !== "verified") {
+      setError("이메일 인증을 완료해주세요");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
@@ -80,7 +160,7 @@ export default function SignupPage() {
               <FormField label={<>업체명 <span className="text-destructive">*</span></>}>
                 <input
                   type="text"
-                  placeholder="예: 그린방역"
+                  placeholder=""
                   className="w-full"
                   value={form.companyName}
                   onChange={(e) => updateField("companyName", e.target.value)}
@@ -88,7 +168,7 @@ export default function SignupPage() {
                 />
               </FormField>
 
-              <FormField label="사업자등록번호">
+              <FormField label={<>사업자등록번호 <span className="text-destructive">*</span></>}>
                 <input
                   type="text"
                   placeholder="000-00-00000"
@@ -97,16 +177,18 @@ export default function SignupPage() {
                   onChange={(e) =>
                     updateField("businessNumber", e.target.value)
                   }
+                  required
                 />
               </FormField>
 
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="대표자명">
+                <FormField label={<>대표자명 <span className="text-destructive">*</span></>}>
                   <input
                     type="text"
                     className="w-full"
                     value={form.ownerName}
                     onChange={(e) => updateField("ownerName", e.target.value)}
+                    required
                   />
                 </FormField>
                 <FormField label="전화번호">
@@ -139,15 +221,70 @@ export default function SignupPage() {
               </FormField>
 
               <FormField label={<>이메일 <span className="text-destructive">*</span></>}>
-                <input
-                  type="email"
-                  placeholder="name@company.com"
-                  className="w-full"
-                  value={form.email}
-                  onChange={(e) => updateField("email", e.target.value)}
-                  required
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    placeholder="name@company.com"
+                    className="flex-1"
+                    value={form.email}
+                    onChange={(e) => updateEmail(e.target.value)}
+                    required
+                    disabled={verifyState === "verified"}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSendCode}
+                    disabled={sending || verifyState === "verified" || !form.email}
+                    className={`shrink-0 px-3 rounded-lg text-base font-medium transition-colors disabled:opacity-50 cursor-pointer ${
+                      verifyState === "verified"
+                        ? "bg-success/10 text-success border border-success/20"
+                        : "bg-primary text-primary-foreground"
+                    }`}
+                  >
+                    {verifyState === "verified" ? (
+                      "인증됨"
+                    ) : sending ? (
+                      <Spinner size="sm" />
+                    ) : verifyState === "code-sent" ? (
+                      "재발송"
+                    ) : (
+                      "인증하기"
+                    )}
+                  </button>
+                </div>
+                {verifyError && (
+                  <p className="text-base text-destructive mt-1">{verifyError}</p>
+                )}
               </FormField>
+
+              {verifyState === "code-sent" && (
+                <FormField label="인증번호">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="6자리"
+                      maxLength={6}
+                      className="flex-1"
+                      value={code}
+                      onChange={(e) =>
+                        setCode(e.target.value.replace(/[^\d]/g, ""))
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={handleVerifyCode}
+                      disabled={verifying || code.length !== 6}
+                      className="shrink-0 px-3 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      {verifying ? <Spinner size="sm" /> : "확인"}
+                    </button>
+                  </div>
+                  <p className="text-base text-muted-foreground mt-1">
+                    인증번호를 입력하신 이메일로 발송했습니다
+                  </p>
+                </FormField>
+              )}
 
               <FormField label={<>비밀번호 <span className="text-destructive">*</span></>}>
                 <input
@@ -161,10 +298,25 @@ export default function SignupPage() {
                 />
               </FormField>
 
+              <FormField label={<>비밀번호 확인 <span className="text-destructive">*</span></>}>
+                <input
+                  type="password"
+                  placeholder="비밀번호를 다시 입력"
+                  className="w-full"
+                  value={form.passwordConfirm}
+                  onChange={(e) => updateField("passwordConfirm", e.target.value)}
+                  required
+                  minLength={8}
+                />
+                {form.passwordConfirm && form.password !== form.passwordConfirm && (
+                  <p className="text-base text-destructive mt-1">비밀번호가 일치하지 않습니다</p>
+                )}
+              </FormField>
+
               <button
                 type="submit"
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 mt-2 cursor-pointer"
-                disabled={loading}
+                disabled={loading || verifyState !== "verified"}
               >
                 {loading ? <Spinner size="sm" /> : "회원가입"}
               </button>

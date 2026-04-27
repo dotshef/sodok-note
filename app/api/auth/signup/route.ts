@@ -32,6 +32,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // 이메일 인증 확인
+    const { data: verification } = await getSupabase()
+      .from("email_verification")
+      .select("id")
+      .eq("email", email)
+      .eq("purpose", "signup")
+      .not("verified_at", "is", null)
+      .order("verified_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!verification) {
+      return NextResponse.json(
+        { error: "이메일 인증을 완료해주세요" },
+        { status: 400 }
+      );
+    }
+
     const now = new Date().toISOString();
     const passwordHash = await hashPassword(password);
 
