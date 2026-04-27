@@ -13,6 +13,7 @@ import {
   Users,
   Settings,
   UserPen,
+  MessageSquare,
   LogOut,
   Download,
 } from "lucide-react";
@@ -36,6 +37,7 @@ const moreItems: NavItem[] = [
   { href: "/members", label: "직원 관리", icon: <Users size={22} />, adminOnly: true },
   { href: "/settings", label: "업체 설정", icon: <Settings size={22} /> },
   { href: "/my-info", label: "내 정보", icon: <UserPen size={22} /> },
+  { href: "/contact", label: "문의하기", icon: <MessageSquare size={22} /> },
 ];
 
 export function BottomNav({ role }: { role: "admin" | "member" }) {

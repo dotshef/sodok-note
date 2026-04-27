@@ -11,6 +11,7 @@ import {
   Users,
   Settings,
   UserPen,
+  MessageSquare,
   LogOut,
 } from "lucide-react";
 
@@ -92,6 +93,17 @@ export function Sidebar({ role }: { role: "admin" | "member" }) {
         >
           <UserPen size={22} />
           내 정보
+        </Link>
+        <Link
+          href="/contact"
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-lg font-medium transition-colors ${
+            pathname.startsWith("/contact")
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted"
+          }`}
+        >
+          <MessageSquare size={22} />
+          문의하기
         </Link>
         <button
           onClick={handleLogout}

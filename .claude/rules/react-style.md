@@ -23,3 +23,10 @@
 - 상세 페이지 2분할 카드 레이아웃: `md:grid-cols-2`
 - 필터바/툴바 가로 배치
 - 같은 페이지 안에서는 동일 기준 유지 (상단 카드 `md`면 하단 리스트도 `md`)
+
+## 드롭다운 / select
+- **금지**: 네이티브 `<select>` / `<option>` 사용 (필터·폼 어디서든 예외 없음)
+- **필수**: `@/components/ui/filter-select`의 `FilterSelect` 사용
+  - 사용 예: `<FilterSelect value={...} onChange={(v) => ...} options={[{ value, label }, ...]} />`
+  - "선택 안 함" 옵션이 필요하면 `{ value: "", label: "..." }`을 옵션 배열 맨 앞에 추가
+- 이유: 모바일에서 OS 기본 select UI는 디자인 일관성·접근성·키보드 동작이 깨짐. 프로젝트는 div 기반 커스텀 드롭다운으로 통일.

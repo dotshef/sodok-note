@@ -22,6 +22,7 @@ interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
+  replyTo?: string;
   attachments?: EmailAttachment[];
 }
 
@@ -29,6 +30,7 @@ export async function sendEmail({
   to,
   subject,
   html,
+  replyTo,
   attachments,
 }: SendEmailParams): Promise<void> {
   const { error } = await getResendClient().emails.send({
@@ -36,6 +38,7 @@ export async function sendEmail({
     to,
     subject,
     html,
+    ...(replyTo ? { replyTo } : {}),
     ...(attachments?.length ? { attachments } : {}),
   });
 

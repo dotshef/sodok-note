@@ -11,6 +11,7 @@ const pageTitles: Record<string, string> = {
   "/members": "직원 관리",
   "/settings": "업체 설정",
   "/my-info": "내 정보",
+  "/contact": "문의하기",
 };
 
 export function Header({ session }: { session: JwtPayload }) {
