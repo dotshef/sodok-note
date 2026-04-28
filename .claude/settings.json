@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git --no-pager show 5d604d3^ -- 'app/api/certificates/generate/route.ts')",
+      "Bash(git --no-pager show 5d604d3~1:app/api/certificates/generate/route.ts)",
+      "Bash(git --no-pager diff --stat)"
+    ],
+    "additionalDirectories": [
+      "\\tmp",
+      "C:\\D\\pest-control\\sodok-note\\app\\api\\certificates\\[id]\\send",
+      "C:\\D\\pest-control\\sodok-note\\app\\(app)\\visits\\[id]"
+    ]
+  }
+}

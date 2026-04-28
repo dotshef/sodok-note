@@ -135,7 +135,6 @@ create table certificates (
   tenant_id uuid not null references tenants(id) on delete cascade,
   certificate_number text not null unique,
   issue_number text,
-  disinfection_date date not null,
   hwpx_file_url text,
   hwpx_file_name text,
   pdf_file_url text,

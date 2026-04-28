@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { format } from "date-fns";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
 import { renderCertificateEmail } from "@/lib/email/templates/certificate";
@@ -30,8 +31,8 @@ export async function POST(
   const { data: cert } = await supabase
     .from("certificates")
     .select(`
-      id, certificate_number, disinfection_date, pdf_file_url, pdf_file_name,
-      visits(client_id, client_name, client_contact_name),
+      id, certificate_number, pdf_file_url, pdf_file_name,
+      visits(completed_at, client_id, client_name, client_contact_name),
       tenants(name)
     `)
     .eq("id", id)
@@ -47,17 +48,18 @@ export async function POST(
   }
 
   const visit = cert.visits as unknown as {
+    completed_at: string | null;
     client_id: string;
     client_name: string;
     client_contact_name: string | null;
   } | null;
   const tenant = cert.tenants as unknown as { name: string } | null;
 
-  if (!visit || !tenant || !cert.disinfection_date) {
+  if (!visit || !tenant || !visit.completed_at) {
     return NextResponse.json({ error: "발송에 필요한 정보가 부족합니다" }, { status: 500 });
   }
 
-  const completedDate = (cert.disinfection_date as string).replace(/-/g, ".");
+  const completedDate = format(new Date(visit.completed_at), "yyyy.MM.dd");
 
   const { data: fileData, error: dlError } = await supabase.storage
     .from("certificates")
