@@ -8,6 +8,7 @@ import { FACILITY_TYPE_MAP, type FacilityTypeId } from "@/constants/facility-typ
 import { getFacilityCategoryLabel } from "@/constants/facility-category";
 import { getCycleMonths } from "@/utils/cycle";
 import { Spinner } from "@/components/ui/spinner";
+import { ConfirmModal } from "@/components/modal/confirm-modal";
 
 interface Visit {
   id: string;
@@ -41,6 +42,7 @@ export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [client, setClient] = useState<ClientDetail | null>(null);
+  const [toggleConfirmOpen, setToggleConfirmOpen] = useState(false);
 
   const loading = !client;
 
@@ -66,10 +68,8 @@ export default function ClientDetailPage() {
     };
   }, [id, router]);
 
-  async function handleToggleActive() {
-    const action = client?.is_active ? "비활성화" : "활성화";
-    if (!confirm(`이 고객을 ${action}하시겠습니까?`)) return;
-
+  async function handleConfirmToggle() {
+    setToggleConfirmOpen(false);
     if (client?.is_active) {
       await fetch(`/api/clients/${id}`, { method: "DELETE" });
     } else {
@@ -129,7 +129,7 @@ export default function ClientDetailPage() {
           <Pencil size={14} className="hidden md:inline" />
           <span className="hidden md:inline">수정</span>
         </Link>
-        <button onClick={handleToggleActive} aria-label={client.is_active ? "비활성화" : "활성화"} className={`inline-flex items-center justify-center gap-2 p-2 md:px-4 md:py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer ${
+        <button onClick={() => setToggleConfirmOpen(true)} aria-label={client.is_active ? "비활성화" : "활성화"} className={`inline-flex items-center justify-center gap-2 p-2 md:px-4 md:py-2 rounded-lg text-base font-medium hover:bg-muted transition-colors cursor-pointer ${
           client.is_active ? "text-destructive" : "text-success"
         }`}>
           <Trash2 size={18} className="md:hidden" />
@@ -377,6 +377,16 @@ export default function ClientDetailPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmModal
+        open={toggleConfirmOpen}
+        onClose={() => setToggleConfirmOpen(false)}
+        onConfirm={handleConfirmToggle}
+        title={client.is_active ? "고객 비활성화" : "고객 활성화"}
+        description={`이 고객을 ${client.is_active ? "비활성화" : "활성화"}하시겠습니까?`}
+        confirmLabel={client.is_active ? "비활성화" : "활성화"}
+        destructive={client.is_active}
+      />
     </div>
   );
 }

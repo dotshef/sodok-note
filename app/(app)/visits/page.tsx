@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { RegisterFab } from "@/components/ui/register-fab";
-import { VisitCreateModal } from "@/components/visits/visit-create-modal";
+import { VisitCreateModal } from "@/components/modal/visit-create-modal";
 import { FilterSelect } from "@/components/ui/filter-select";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Pagination } from "@/components/ui/pagination";

@@ -7,6 +7,7 @@ import { useSession } from "@/components/providers/session-provider";
 import { RegisterFab } from "@/components/ui/register-fab";
 import { Pagination } from "@/components/ui/pagination";
 import { FilterSelect } from "@/components/ui/filter-select";
+import { ConfirmModal } from "@/components/modal/confirm-modal";
 
 interface Member {
   id: string;
@@ -33,6 +34,7 @@ export default function MembersPage() {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [roleFilter, setRoleFilter] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [toggleTarget, setToggleTarget] = useState<Member | null>(null);
 
   const loading = !data;
   const members = data?.members;
@@ -72,15 +74,20 @@ export default function MembersPage() {
     setRefreshKey((k) => k + 1);
   }
 
-  async function handleToggleActive(member: Member) {
+  function handleToggleActive(member: Member) {
     if (member.id === userId) return;
-    const action = member.is_active ? "비활성화" : "활성화";
-    if (!confirm(`${member.name}님을 ${action}하시겠습니까?`)) return;
+    setToggleTarget(member);
+  }
 
-    if (member.is_active) {
-      await fetch(`/api/members/${member.id}`, { method: "DELETE" });
+  async function handleConfirmToggle() {
+    if (!toggleTarget) return;
+    const target = toggleTarget;
+    setToggleTarget(null);
+
+    if (target.is_active) {
+      await fetch(`/api/members/${target.id}`, { method: "DELETE" });
     } else {
-      await fetch(`/api/members/${member.id}`, {
+      await fetch(`/api/members/${target.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_active: true }),
@@ -269,6 +276,20 @@ export default function MembersPage() {
           onPageChange={(p) => { setPage(p); setData(null); }}
         />
       )}
+
+      <ConfirmModal
+        open={toggleTarget !== null}
+        onClose={() => setToggleTarget(null)}
+        onConfirm={handleConfirmToggle}
+        title={toggleTarget?.is_active ? "직원 비활성화" : "직원 활성화"}
+        description={
+          toggleTarget
+            ? `${toggleTarget.name}님을 ${toggleTarget.is_active ? "비활성화" : "활성화"}하시겠습니까?`
+            : ""
+        }
+        confirmLabel={toggleTarget?.is_active ? "비활성화" : "활성화"}
+        destructive={toggleTarget?.is_active === true}
+      />
     </div>
   );
 }

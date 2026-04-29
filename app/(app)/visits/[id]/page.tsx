@@ -10,8 +10,9 @@ import { FilterSelect } from "@/components/ui/filter-select";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "@/components/providers/session-provider";
 import { toast } from "sonner";
-import { SendCertificateModal } from "@/components/certificates/send-certificate-modal";
-import { TenantAddressModal } from "@/components/tenant/tenant-address-modal";
+import { SendCertificateModal } from "@/components/modal/send-certificate-modal";
+import { TenantAddressModal } from "@/components/modal/tenant-address-modal";
+import { ConfirmModal } from "@/components/modal/confirm-modal";
 import { VisitStatusBadge } from "@/components/ui/visit-status-badge";
 
 interface VisitDetail {
@@ -66,6 +67,10 @@ export default function VisitDetailPage() {
   const [generatingCert, setGeneratingCert] = useState(false);
   const [sendModalOpen, setSendModalOpen] = useState(false);
   const [addressModalOpen, setAddressModalOpen] = useState(false);
+  const [uncompleteModalOpen, setUncompleteModalOpen] = useState(false);
+  const [completeConfirmOpen, setCompleteConfirmOpen] = useState(false);
+  const [missingEmailConfirmOpen, setMissingEmailConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [issueNumber, setIssueNumber] = useState("1");
   const [recentMethods, setRecentMethods] = useState<{ id: string; name: string }[]>([]);
   const [recentDisinfectants, setRecentDisinfectants] = useState<{ id: string; name: string }[]>([]);
@@ -131,8 +136,8 @@ export default function VisitDetailPage() {
     setDisinfectants((prev) => prev.map((d, i) => (i === index ? { ...d, [field]: value } : d)));
   }
 
-  async function handleComplete() {
-    if (!confirm("소독 완료 처리하시겠습니까?")) return;
+  async function handleConfirmComplete() {
+    setCompleteConfirmOpen(false);
     setError("");
     setSaving(true);
 
@@ -166,10 +171,14 @@ export default function VisitDetailPage() {
   function handleOpenSendModal() {
     const clientEmail = visit?.clients?.contact_email;
     if (!clientEmail) {
-      if (!confirm("시설 담당자 이메일이 등록되어 있지 않습니다. 지금 입력해서 발송하시겠습니까?")) {
-        return;
-      }
+      setMissingEmailConfirmOpen(true);
+      return;
     }
+    setSendModalOpen(true);
+  }
+
+  function handleConfirmMissingEmail() {
+    setMissingEmailConfirmOpen(false);
     setSendModalOpen(true);
   }
 
@@ -200,9 +209,8 @@ export default function VisitDetailPage() {
     }
   }
 
-  async function handleDelete() {
-    if (!confirm("이 방문 기록을 삭제하시겠습니까? 관련 증명서도 함께 삭제됩니다.")) return;
-
+  async function handleConfirmDelete() {
+    setDeleteConfirmOpen(false);
     const res = await fetch(`/api/visits/${id}`, { method: "DELETE" });
     if (res.ok) {
       router.push("/visits");
@@ -212,9 +220,8 @@ export default function VisitDetailPage() {
     }
   }
 
-  async function handleUncomplete() {
-    if (!confirm("완료를 취소하시겠습니까?")) return;
-
+  async function handleConfirmUncomplete() {
+    setUncompleteModalOpen(false);
     const res = await fetch(`/api/visits/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -237,6 +244,18 @@ export default function VisitDetailPage() {
   const isCompleted = visit.status === "completed";
   const today = format(new Date(), "yyyy-MM-dd");
   const isBeforeScheduled = !isCompleted && visit.scheduled_date > today;
+  const hasMethod = method.trim().length > 0;
+  const hasDisinfectants = disinfectants.length > 0 && disinfectants.every((d) => d.name.trim().length > 0);
+  const canComplete = hasMethod && hasDisinfectants;
+  const completeDisabledReason = isBeforeScheduled
+    ? `방문 예정일(${visit.scheduled_date}) 이후에 완료 처리할 수 있습니다`
+    : !hasMethod && !hasDisinfectants
+    ? "소독 방법과 사용 약품을 입력해 주세요"
+    : !hasMethod
+    ? "소독 방법을 입력해 주세요"
+    : !hasDisinfectants
+    ? "사용 약품을 입력해 주세요"
+    : undefined;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -605,13 +624,60 @@ export default function VisitDetailPage() {
         onSaved={() => handleGenerateCert()}
       />
 
+      <ConfirmModal
+        open={completeConfirmOpen}
+        onClose={() => setCompleteConfirmOpen(false)}
+        onConfirm={handleConfirmComplete}
+        title="소독 완료"
+        description="소독 완료 처리하시겠습니까?"
+        confirmLabel="완료"
+      />
+
+      <ConfirmModal
+        open={missingEmailConfirmOpen}
+        onClose={() => setMissingEmailConfirmOpen(false)}
+        onConfirm={handleConfirmMissingEmail}
+        title="이메일 미등록"
+        description="시설 담당자 이메일이 등록되어 있지 않습니다. 지금 입력해서 발송하시겠습니까?"
+        confirmLabel="입력하고 발송"
+      />
+
+      <ConfirmModal
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="방문 기록 삭제"
+        description="이 방문 기록을 삭제하시겠습니까? 관련 증명서도 함께 삭제됩니다."
+        confirmLabel="삭제"
+        destructive
+      />
+
+      <ConfirmModal
+        open={uncompleteModalOpen}
+        onClose={() => setUncompleteModalOpen(false)}
+        onConfirm={handleConfirmUncomplete}
+        title="완료 취소"
+        description="이 방문의 소독 완료 처리를 취소하시겠습니까?"
+        confirmLabel="완료 취소"
+        destructive
+      >
+        <div className="rounded-lg p-3 bg-destructive/10 text-destructive border border-destructive/20 text-base mt-3">
+          완료 취소 후 다시 완료 처리하면 <strong className="font-semibold">소독 완료 시각</strong>이 새로 기록되어, 이미 발급된 증명서의 소독 완료일과 어긋날 수 있습니다.
+        </div>
+      </ConfirmModal>
+
 
       {/* 액션 버튼 */}
+      {!isCompleted && !isBeforeScheduled && !canComplete && (
+        <p className="text-base text-muted-foreground text-right mb-2">
+          {completeDisabledReason}
+        </p>
+      )}
       <div className="flex gap-3 justify-end">
         {role === "admin" && (
           <button
             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-destructive text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-            onClick={handleDelete}
+            onClick={() => setDeleteConfirmOpen(true)}
           >
             <Trash2 size={14} />
             삭제
@@ -620,9 +686,9 @@ export default function VisitDetailPage() {
         {!isCompleted ? (
           <button
             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-primary text-primary-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            onClick={handleComplete}
-            disabled={saving || isBeforeScheduled}
-            title={isBeforeScheduled ? `방문 예정일(${visit.scheduled_date}) 이후에 완료 처리할 수 있습니다` : undefined}
+            onClick={() => setCompleteConfirmOpen(true)}
+            disabled={saving || isBeforeScheduled || !canComplete}
+            title={completeDisabledReason}
           >
             {saving ? (
               <Spinner size="sm" />
@@ -636,7 +702,7 @@ export default function VisitDetailPage() {
         ) : (
           <button
             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-base font-medium border border-destructive text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-            onClick={handleUncomplete}
+            onClick={() => setUncompleteModalOpen(true)}
           >
             <XCircle size={14} />
             완료 취소
