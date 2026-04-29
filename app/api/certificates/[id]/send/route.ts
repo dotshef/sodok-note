@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { format } from "date-fns";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
 import { renderCertificateEmail } from "@/lib/email/templates/certificate";
 import { sendEmail } from "@/lib/email/resend";
+import { kstDateString } from "@/lib/date/kst";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -59,7 +59,7 @@ export async function POST(
     return NextResponse.json({ error: "발송에 필요한 정보가 부족합니다" }, { status: 500 });
   }
 
-  const completedDate = format(new Date(visit.completed_at), "yyyy.MM.dd");
+  const completedDate = kstDateString(visit.completed_at).replace(/-/g, ".");
 
   const { data: fileData, error: dlError } = await supabase.storage
     .from("certificates")

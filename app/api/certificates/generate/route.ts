@@ -3,7 +3,7 @@ import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
 import { generateCertificateHwpx } from "@/lib/hwpx/generate-certificate";
 import { generateCertificatePdf } from "@/lib/pdf/generate-certificate-pdf";
-import { format } from "date-fns";
+import { kstDateString, kstParts } from "@/lib/date/kst";
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -85,10 +85,10 @@ export async function POST(request: Request) {
   }
   const certificateNumber = `CERT-${clientCode}-${String(nextSeq).padStart(5, "0")}`;
 
-  // 소독 완료일 (소독기간용)
-  const completedDate = format(new Date(visit.completed_at!), "yyyy.MM.dd");
-  // 발급일 (증명서 생성 시점)
-  const now = new Date();
+  // 소독 완료일 (소독기간용) — KST 기준 yyyy.MM.dd
+  const completedDate = kstDateString(visit.completed_at!).replace(/-/g, ".");
+  // 발급일 (증명서 생성 시점) — KST 기준
+  const issueParts = kstParts();
 
   // CertificateInput 조립 (visit 박제값 사용)
   const certInput = {
@@ -105,9 +105,9 @@ export async function POST(request: Request) {
     chemicals: (visit.disinfectants_used as { name: string; quantity: string; unit: string }[] | null)
       ?.map((d) => d.quantity ? `${d.name} ${d.quantity}${d.unit}` : d.name)
       .join(", ") || "",
-    year: String(now.getFullYear()),
-    month: String(now.getMonth() + 1).padStart(2, "0"),
-    day: String(now.getDate()).padStart(2, "0"),
+    year: String(issueParts.year),
+    month: String(issueParts.month).padStart(2, "0"),
+    day: String(issueParts.day).padStart(2, "0"),
     operatorName: tenant.name,
     operatorAddress: tenant.address || "",
     operatorCeo: tenant.owner_name || "",
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
   const pdfBuffer = await generateCertificatePdf(certInput);
 
   // 파일명 생성
-  const completedDateCompact = format(new Date(visit.completed_at!), "yyyyMMdd");
+  const completedDateCompact = kstDateString(visit.completed_at!).replace(/-/g, "");
   const baseFileName = `소독증명서_${visit.client_name}_${tenant.name}_${completedDateCompact}`;
   const hwpxFileName = `${baseFileName}.hwpx`;
   const pdfFileName = `${baseFileName}.pdf`;

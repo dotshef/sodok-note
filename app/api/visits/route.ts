@@ -5,6 +5,7 @@ import { createVisitSchema } from "@/validations/visit";
 import { generateVisitCode } from "@/utils/visit-code";
 import { sendPushToUsers } from "@/lib/push/notify";
 import { visitAssignedPayload } from "@/lib/push/templates";
+import { todayKst } from "@/lib/date/kst";
 
 // 방문 건 목록 조회 (캘린더 모드 + 목록 모드)
 export async function GET(request: Request) {
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
   const supabase = getSupabase();
 
   // 미완료 건 자동 업데이트 (예정일 경과한 scheduled → missed)
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = todayKst();
   await supabase
     .from("visits")
     .update({ status: "missed" })

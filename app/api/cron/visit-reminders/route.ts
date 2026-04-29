@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { sendPushToUsers } from "@/lib/push/notify";
 import { visitTomorrowPayload } from "@/lib/push/templates";
+import { tomorrowKst } from "@/lib/date/kst";
 
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
@@ -14,10 +15,7 @@ export async function GET(request: Request) {
 
   const supabase = getSupabase();
 
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+  const tomorrowStr = tomorrowKst();
 
   const { data: visits, error } = await supabase
     .from("visits")

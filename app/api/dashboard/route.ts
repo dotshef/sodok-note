@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/jwt";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, eachDayOfInterval } from "date-fns";
+import { todayKst, weekRangeKst, monthRangeKst } from "@/lib/date/kst";
 
 export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const supabase = getSupabase();
-  const now = new Date();
-  const todayStr = format(now, "yyyy-MM-dd");
+  const todayStr = todayKst();
 
   // 미완료 건 자동 업데이트
   await supabase
@@ -32,9 +31,8 @@ export async function GET() {
   if (isMember) todayQuery = todayQuery.eq("user_id", session.userId);
   const { data: todayVisits } = await todayQuery;
 
-  // 이번 주 예정
-  const weekStart = format(startOfWeek(now, { weekStartsOn: 1 }), "yyyy-MM-dd");
-  const weekEnd = format(endOfWeek(now, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  // 이번 주 예정 (KST 기준 월~일)
+  const { start: weekStart, end: weekEnd, days: weekDayStrs } = weekRangeKst();
   let weekCountQuery = supabase
     .from("visits")
     .select("id", { count: "exact", head: true })
@@ -55,9 +53,8 @@ export async function GET() {
   if (isMember) missedQuery = missedQuery.eq("user_id", session.userId);
   const { data: missedVisits } = await missedQuery;
 
-  // 이번 달 완료
-  const monthStart = format(startOfMonth(now), "yyyy-MM-dd");
-  const monthEnd = format(endOfMonth(now), "yyyy-MM-dd");
+  // 이번 달 완료 (KST 기준)
+  const { start: monthStart, end: monthEnd } = monthRangeKst();
   let monthQuery = supabase
     .from("visits")
     .select("id", { count: "exact", head: true })
@@ -69,11 +66,6 @@ export async function GET() {
   const { count: monthCompleted } = await monthQuery;
 
   // 이번 주 요일별 데이터 (차트용)
-  const weekDays = eachDayOfInterval({
-    start: startOfWeek(now, { weekStartsOn: 1 }),
-    end: endOfWeek(now, { weekStartsOn: 1 }),
-  });
-
   let weekVisitsQuery = supabase
     .from("visits")
     .select("scheduled_date, status")
@@ -84,8 +76,7 @@ export async function GET() {
   const { data: weekVisits } = await weekVisitsQuery;
 
   const dayLabels = ["월", "화", "수", "목", "금", "토", "일"];
-  const weeklyChart = weekDays.map((day, i) => {
-    const dateStr = format(day, "yyyy-MM-dd");
+  const weeklyChart = weekDayStrs.map((dateStr, i) => {
     const dayVisits = (weekVisits || []).filter((v) => v.scheduled_date === dateStr);
     return {
       label: dayLabels[i],
