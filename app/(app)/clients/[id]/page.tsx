@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Phone } from "lucide-react";
 import Link from "next/link";
 import { FACILITY_TYPE_MAP, type FacilityTypeId } from "@/constants/facility-types";
 import { getFacilityCategoryLabel } from "@/constants/facility-category";
@@ -193,7 +193,20 @@ export default function ClientDetailPage() {
               </div>
               <div>
                 <span className="text-muted-foreground">연락처</span>
-                <p className="font-medium">{client.contact_phone || "-"}</p>
+                {client.contact_phone ? (
+                  <p className="font-medium flex items-center gap-2">
+                    <span>{client.contact_phone}</span>
+                    <a
+                      href={`tel:${client.contact_phone}`}
+                      aria-label="전화 걸기"
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+                    >
+                      <Phone size={14} />
+                    </a>
+                  </p>
+                ) : (
+                  <p className="font-medium">-</p>
+                )}
               </div>
               <div>
                 <span className="text-muted-foreground">이메일</span>

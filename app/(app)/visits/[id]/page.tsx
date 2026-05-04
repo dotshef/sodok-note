@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle, XCircle, FileText, Download, Trash2, Send } from "lucide-react";
+import { ArrowLeft, CheckCircle, XCircle, FileText, Download, Trash2, Send, Phone } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { FormField } from "@/components/ui/form-field";
@@ -301,7 +301,20 @@ export default function VisitDetailPage() {
             </div>
             <div>
               <span className="text-muted-foreground">연락처</span>
-              <p className="font-medium">{visit.clients?.contact_phone || "-"}</p>
+              {visit.clients?.contact_phone ? (
+                <p className="font-medium flex items-center gap-2">
+                  <span>{visit.clients.contact_phone}</span>
+                  <a
+                    href={`tel:${visit.clients.contact_phone}`}
+                    aria-label="전화 걸기"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+                  >
+                    <Phone size={14} />
+                  </a>
+                </p>
+              ) : (
+                <p className="font-medium">-</p>
+              )}
             </div>
           </div>
         </div>
